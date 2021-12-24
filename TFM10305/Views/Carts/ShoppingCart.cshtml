@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "購物車";
+
+}
+<style>
+    .green {
+        background-color: lightgreen;
+    }
+</style>
+
+<fieldset id="cart">
+    <legend>購物車</legend>
+    <div class="font-italic text-danger" style="font-size:24px;"></div>
+    <table class="table table-light ">
+        <thead>
+            <tr>
+                <td><input type="checkbox">全選</td>
+                <td>編號</td>
+                <td>商品名稱</td>
+                <td>總額</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="pd in cartsData">
+                <td><input type="checkbox" id="cbxcheck"></td>
+                <td>{{pd.tempID}}</td>
+                <td>{{pd.productName}}</td>
+                <td>{{pd.total}}</td>
+                <td>
+                    <button v-on:click="modifyItem($event,pd.customerID)" class="btn btn-primary">詳細</button>
+                    <button v-on:click="deleteItem($event,pd.customerID,pd.productID,pd.tempID)" class="btn btn-primary">刪除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!--刪除資料確認對話盒-->
+    <div id="delDialog" title="刪除客戶資料">
+        <div v-if="isDelete">
+            <div>是否確認刪除 {{cart.productName}} ?</div>
+        </div>
+
+    </div>
+
+    <button class="btn btn-primary">確定購買</button>
+</fieldset>
+<script>
+        var app = new Vue
+            (
+                {
+                    el: '#cart',
+                    data: {
+                        cartsData: Array,
+                        checked:false,
+                        cart: {},
+                        isDelete:false
+                    },
+                    mounted() {                      
+                        let showstring = window.location.origin +'/Carts/GetCart';                      
+                        $.ajax
+                            ({
+                                url: showstring,
+                                type: 'GET',
+                                success: function (result, status, xhr) {
+                                    if (result.length == 0) {
+                                        alert("失敗");
+                                    } else {                                   
+                                        app.cartsData = result;                                    
+                                        for (i = 0; i < app.cartsData.length; i++) {                                          
+                                            app.cartsData[i].tempID = i + 1;
+                                            app.cartsData[i].total =
+                                       app.cartsData[i].unitPrice * app.cartsData[i].quantity * (1-app.cartsData[i].discount/10);
+                                        }
+                                    }
+                                }
+                            });
+                    },
+                    methods:
+                    {
+                        modifyItem: function (e, account) {
+                            //let product = app.productsData.find(c => c.account == account);
+                            //app.court = product;
+                            //alert(app.court);
+                        },
+                        deleteItem: function (e, cid, pid, tid) {
+                            console.log(cid);
+                            console.log(pid);
+                            console.log(tip);
+                           app.isDelete = true;
+                            $("#delDialog").dialog({
+                                modal: true,
+                                buttons: {
+                                    確定: function () {
+                                        let deletestring = window.location.origin + '/Carts/cartDelete?cid=' + cid + '&&pid=' + pid;
+                                        console.log(deletestring);
+                                        $.ajax(
+                                            {
+                                                url: deletestring,
+                                                type: 'DELETE',
+                                                success: function (data, status, xhr) {
+                                                    app.cartsData.splice(tid - 1, 1);
+                                                    alert(data.Msg);
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    alert("錯誤");
+                                                }
+                                            }
+                                        );
+                                        $("#delDialog").dialog("close");
+                                    },
+                                    取消: function () {
+                                        $("#delDialog").dialog("close");
+                                    }
+                                }
+                                });
+                        }
+
+                    }//methods
+                }
+            )
+            ;
+
+</script>
