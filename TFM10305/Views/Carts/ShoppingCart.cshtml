@@ -39,7 +39,7 @@
     <!--修改相對客戶資料元件-->
     <div id="editdialog">
         <div v-if="isEdit" title="購物車詳細資料">
-            
+
             <fieldset >
                 <legend>資料編輯</legend>
                 <table v-bind="cart">
@@ -95,6 +95,7 @@
         <div v-if="isDelete">
             <div>是否確認刪除 {{cart.productName}} ?</div>
         </div>
+
     </div>
 
     <button class="btn btn-primary" v-on:click="ToOrderStep1">確定購買</button>
@@ -122,7 +123,7 @@
                                         alert("失敗");
                                     } else {                                   
                                         app.cartsData = result;                                    
-                                        for (i = 0; i < app.cartsData.length; i++) {
+                                        for (i = 0; i < app.cartsData.length; i++) {                                          
                                             app.cartsData[i].index = i;
                                         }
                                         console.log(app.cartsData);
@@ -153,7 +154,7 @@
                             
                         },
                         deleteItem: function (e, pid) {                   
-                            app.isDelete = true;                                               
+                           app.isDelete = true;
                             $("#delDialog").dialog({
                                 modal: true,
                                 buttons: {
@@ -171,7 +172,7 @@
                                                 },
                                                 error: function (xhr, status, error) {
                                                     console.log("錯誤");
-                                                }
+                                            }
                                                  
                                             });
                                         let index = app.cartsData.indexOf(curcart);
@@ -204,7 +205,7 @@
                                 }
                             );
                             
-                            
+
                         }
                     }//methods
                 }

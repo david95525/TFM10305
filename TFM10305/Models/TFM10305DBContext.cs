@@ -67,7 +67,22 @@ namespace TFM10305.Models
 
                 entity.Property(e => e.Sugarlevel).HasMaxLength(10);
 
-          
+                entity.HasOne(d => d.Customer)
+                    .WithMany()
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Courts_Customers");
+
+                entity.HasOne(d => d.DiscountNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.DiscountId)
+                    .HasConstraintName("FK_Courts_Discount");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany()
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Courts_Products");
             });
 
             modelBuilder.Entity<Customer>(entity =>

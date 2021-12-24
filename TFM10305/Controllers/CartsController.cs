@@ -15,7 +15,7 @@ namespace TFM10305.Controllers
 
         private readonly TFM10305DBContext _db;
         private IHttpClientFactory _factory;
-   
+
         public CartsController(TFM10305DBContext _context, IHttpClientFactory _factory)
         {
             _db = _context;
@@ -37,7 +37,11 @@ namespace TFM10305.Controllers
         {
             string cid = "John001";
             List<Cart> carts 
-              = _db.Carts.Where(c => c.CustomerId == cid).Select(c => c).ToList<Cart>();        
+              = _db.Carts.Where(c => c.CustomerId == cid).Select(c => c).ToList<Cart>();
+            foreach(Cart item in carts)
+            {
+                Console.WriteLine(item);
+            }
             return carts;
         }
 
