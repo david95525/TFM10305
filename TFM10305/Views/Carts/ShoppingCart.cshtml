@@ -1,0 +1,214 @@
+﻿@{
+    ViewData["Title"] = "購物車";
+
+}
+<style>
+    .green {
+        background-color: lightgreen;
+    }
+</style>
+
+<fieldset id="cart">
+    <legend>購物車</legend>
+    <div class="font-italic text-danger" style="font-size:24px;"></div>
+    <table class="table table-light ">
+        <thead>
+            <tr>
+                
+                <td>編號</td>
+                <td>商品名稱</td>
+                <td>總額</td>
+                <td>折扣</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="pd in cartsData">
+                <td>{{pd.index+1}}</td>
+                <td>{{pd.productName}}</td>
+                <td>{{pd.unitPrice * pd.quantity * (1 - pd.discount/ 10)}}</td>
+                <td v-if="pd.discount> 0 ">{{pd.discount}}折</td>
+                <td v-if="pd.discount===0">無</td>
+                <td>
+                    <button v-on:click="modifyItem($event,pd.productId)" class="btn btn-primary">詳細</button>
+                    <button v-on:click="deleteItem($event,pd.productId)" class="btn btn-primary"> 刪除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!--修改相對客戶資料元件-->
+    <div id="editdialog">
+        <div v-if="isEdit" title="購物車詳細資料">
+            
+            <fieldset >
+                <legend>資料編輯</legend>
+                <table v-bind="cart">
+                    <tr>
+                        <td>客戶ID</td>
+                        <td><span>{{cart.customerId}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>商品名稱</td>
+                        <td><span>{{cart.productName}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>單價</td>
+                        <td><span>{{cart.unitPrice}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>數量</td>
+                        <td><input type="text" v-model:text="cart.quantity" /></td>
+                    </tr>
+                    <tr>
+                        <td>甜度</td>
+                        <td>
+                            <select>
+                                <option >{{cart.sugarlevel}}</option>
+                            </select>
+                        </td>
+                        <td>冰塊</td>
+                        <td>
+                            <select>
+                                <option >{{cart.icelevel}}</option>
+                            </select>
+                        </td>
+                        <td>加料</td>
+                        <td>
+                            <select>
+                                <option ></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                    <td>備註</td>
+                    <td> <textarea>{{cart.description}}</textarea>
+                    </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+
+
+    <!--刪除資料確認對話盒-->
+    <div id="delDialog" title="刪除客戶資料">
+        <div v-if="isDelete">
+            <div>是否確認刪除 {{cart.productName}} ?</div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" v-on:click="ToOrderStep1">確定購買</button>
+</fieldset>
+<script>
+        var app = new Vue
+            (
+                {
+                    el: '#cart',
+                    data: {
+                        cartsData: Array,
+                        checked: false,
+                        cart: {},
+                        isDelete: false,
+                        isEdit: false                                         
+                    },
+                    mounted() {                      
+                        let showstring = window.location.origin +'/Carts/GetCart';                      
+                        $.ajax
+                            ({
+                                url: showstring,
+                                type: 'GET',
+                                success: function (result, status, xhr) {
+                                    if (result.length == 0) {
+                                        alert("失敗");
+                                    } else {                                   
+                                        app.cartsData = result;                                    
+                                        for (i = 0; i < app.cartsData.length; i++) {
+                                            app.cartsData[i].index = i;
+                                        }
+                                        console.log(app.cartsData);
+                                    }
+                                }
+                            });
+                    },
+                    methods:
+                    {
+                        modifyItem: function (e, pid) {
+                            
+                            app.cart = app.cartsData.find(c => c.productId == pid);
+                       
+                            app.isEdit = true;
+                            $('#editdialog').dialog(
+                                {
+                                    modal: true, 
+                                    width: 500,
+                                    buttons: {
+                                        更新: function () {
+                                        },
+                                        取消: function () {
+                                            $('#editdialog').dialog('close');
+                                        }
+                                    }
+                                }
+                            );
+                            
+                        },
+                        deleteItem: function (e, pid) {                   
+                            app.isDelete = true;                                               
+                            $("#delDialog").dialog({
+                                modal: true,
+                                buttons: {
+                                    確定: function () {
+                                        let curcart = app.cartsData.find(c => c.productId == pid);
+                                        var cid = curcart.customerId;
+                                        let deletestring = window.location.origin + '/Carts/CartDelete?cid='+cid+'&&pid='+pid;
+                                   
+                                        $.ajax(
+                                            {
+                                                url: deletestring,
+                                                type: 'DELETE',
+                                                success: function (data, status, xhr) {
+                                                    onsole.log(data.msg);
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.log("錯誤");
+                                                }
+                                                 
+                                            });
+                                        let index = app.cartsData.indexOf(curcart);
+                                        app.cartsData.splice(index,1);
+                                        $("#delDialog").dialog("close");
+                                    },
+                                    取消: function () {
+                                        $("#delDialog").dialog("close");
+                                    }
+                                }
+                                });
+                        }
+                        ,
+                        ToOrderStep1: function () {
+                            let sessionstring = window.location.origin + '/Carts/SaveSession'
+                            $.ajax(
+                                {
+                                    url: sessionstring,
+                                    type: 'Post',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(app.cartsData),
+
+                                    success: function (data, status, xhr) {
+                                     
+                                        window.location.href = window.location.origin + '/CartOrder/OrderStep1';
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert("錯誤");
+                                    }
+                                }
+                            );
+                            
+                            
+                        }
+                    }//methods
+                }
+            )
+            ;
+
+</script>
