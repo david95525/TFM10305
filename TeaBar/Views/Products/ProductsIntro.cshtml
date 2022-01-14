@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewData["Title"] = "茶飲介紹";
+}
+
+@*綁vue*@
+<div id="productsIntro">
+    <!--product modal-->
+    <div class="modal" tabindex="-1" id="productModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">茶飲介紹-{{modalData.name}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <img :src="modalData.imgUrl" :alt="modalData.name" style="width:100vh;" />
+                        </div>
+                        <div class="row">
+                            <h4 class="align-middle">{{modalData.name}}</h4>
+                        </div>
+                        <div class="row">
+                            <p class="">{{modalData.description}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--menu modal-->
+    <div class="modal" tabindex="-1" id="nemuModal">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{distVal}}價目表</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img :src="imgUrl" alt="" style="width: 100vh; height: 100%; margin: auto;" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Bootstrap廣告輪播功能-->
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="@Url.Content("~/images/banner/tea-g27a7b882b_1280.jpg")" class="d-block w-100 img-fluid" />
+            </div>
+            <div class="carousel-item">
+                <img src="@Url.Content("~/images/banner/tea-gea09fa6fc_1280.jpg")" class="d-block w-100 img-fluid" />
+            </div>
+            <div class="carousel-item">
+                <img src="@Url.Content("~/images/banner/tea-time-ga80ac5a1b_1280.jpg")" class="d-block w-100 img-fluid" />
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!--Title-->
+    <div class="topic">
+        <h3 class="h3">Products</h3>
+        <h3 class="h3">茶飲介紹</h3>
+    </div>
+    <!--價目表查詢-->
+    <div id="menu">
+        <select @@change="changeItem" v-model="distVal" class="form-select" id="menuSelect">
+            <option value="" selected>選擇區域價目表</option>
+            <option :value="dist.item" v-for="dist in district">{{dist.item}}</option>
+        </select>
+        <button class="btn btn-outline-dark" @@click="showMenu" data-bs-target="#nemuModal"> <i class="fas fa-search"></i> </button>
+    </div>
+    <!--分類-->
+    <div>
+        <div id="category">
+            <span>
+                <label class="btn btn-outline-dark btnCategory"><input type="radio" name="category" value="all" v-model="categorySelect" style="display: none;" />全部商品</label>
+            </span>
+            <span v-for="c in productsCategory">
+                <label class="btn btn-outline-dark btnCategory"><input type="radio" name="category" :value="c.categoryId" v-model="categorySelect" style="display: none;" />{{c.categoryName}}</label>
+            </span>
+        </div>
+        <!--商品清單card-->
+        <div class="row show_product">
+            <div class="col-md-3" v-for="item in showProduct">
+                <div class="card">
+                    <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="modalProduct(item.productId)" class="productImg img-fluid shadow p-3 mb-5 bg-body rounded" />
+                    <h5 class="card-title">{{item.productName}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var app = new Vue(
+        {
+            el: "#productsIntro",
+            data: {
+                distVal: "",
+                district: [
+                    { item: "北部" },
+                    { item: "中部" },
+                    { item: "南部" },
+                ],
+                productsData: [], //全部商品資料
+                productsCategory: [],
+                isQuery: false,
+                imgUrl: "",
+                categorySelect: "all", //預設全部商品
+                modalData: {
+                    imgUrl: "",
+                    name: "",
+                    description: "",
+                },
+
+
+            },
+            methods: {
+                showMenu: function () {
+                    switch (this.distVal) {
+                        case this.district[0].item:
+                            this.imgUrl = "@Url.Content("~/images/menu/menu1.jpg")";
+                            break;
+                        case this.district[1].item:
+                            this.imgUrl = "@Url.Content("~/images/menu/menu2.jpg")";
+                            break;
+                        case this.district[2].item:
+                            this.imgUrl = "@Url.Content("~/images/menu/menu3.jpg")";
+                            break;
+                        default:
+                            this.imgUrl = "";
+                            break;
+                    }
+                    this.isQuery = true;
+                    if (this.distVal != "") {
+                        $("#nemuModal").modal('show');
+                    }
+                },
+                changeItem: function () {
+                    this.isQuery = false;
+                },
+                modalProduct: function (id) {
+                    const modalProduct = this.productsData.filter(x => x.productId == id);//只挑我點的那個商品
+                    this.modalData.description = modalProduct[0].description;//商品描述
+                    this.modalData.imgUrl = modalProduct[0].picture;//商品圖片
+                    this.modalData.name = modalProduct[0].productName;//商品名稱
+                },
+            },
+            computed: {
+                showProduct: function () {
+                    const arr = { item: [] };
+                    if (this.categorySelect=="all"){
+                        //預設選全部商品
+                        arr.item = this.productsData;
+                    }else {
+                        //有篩選
+                        arr.item = this.productsData.filter(element => this.categorySelect.indexOf(element.categoryId) != -1)
+                    }
+                    return arr.item;
+                },
+
+            },
+            created: async function () {
+                await axios.get('/api/ProductsService/Products')
+                    .then(response => { this.productsData = response.data })
+                    .catch(error => console.log(error));
+
+                await axios.get('/api/ProductsService/Category')
+                    .then(response => { this.productsCategory = response.data })
+                    .catch(error => console.log(error));
+            },
+        }
+    )
+</script>

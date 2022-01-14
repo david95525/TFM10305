@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TeaBar</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <script src="~/js/vue.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!--axios-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!--Vue cdn-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!--Font aweson-->
+    <link href="/lib/font-awesome/css/all.min.css" rel="stylesheet" />
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+
+    <style>
+        .menu:hover {
+            background-color: lemonchiffon;
+            font-style: italic;
+            font-weight: bold !important;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <!-- 導覽列 -->
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid ">
+                <!-- LOGO -->
+                <div class="justify-content-center">
+                    <a class="navbar-brand mb-0 h1" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/icon_logo.png" class="me-2 ms-3" height="50" alt="TeaBar Logo" />
+                        <span class="fs-3">TeaBar茶</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCentered" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                <!-- MENU -->
+                <div class="collapse navbar-collapse justify-content-center" id="navbarCentered">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item mx-2 mb-lg-0">
+                            <a class="nav-link active menu" style="font-size: x-large; font-family: DFKai-SB;" href="#">門市據點</a>
+                        </li>
+                        <li class="nav-item mx-2 mb-lg-0">
+                            <a class="nav-link active menu" style="font-size: x-large; font-family: DFKai-SB;" href="#">最新消息</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active menu" style="font-size: x-large; font-family: DFKai-SB;" href="#">TeaBar飲品</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link active menu" style="font-size: x-large; font-family: DFKai-SB;" href="#">線上點餐</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 右側選單 -->
+                <div class="navbar-collapse collapse d-flex justify-content-end">
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!--Footer-->
+    <footer class="text-center text-white" style="background-color:aliceblue;">
+        <!-- Grid container -->
+        <div class="container pt-3">
+            <!-- Section: Social media -->
+            <section class="mb-3">
+                <!-- Facebook -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button" data-mdb-ripple-color="dark">
+                    <img src="~/images/icon_facebook.png" />
+                </a>
+                <!-- Twitter -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button" data-mdb-ripple-color="dark">
+                    <img src="~/images/icon_twitter.png" />
+                </a>
+                <!-- Instagram -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button" data-mdb-ripple-color="dark">
+                    <img src="~/images/icon_instagram.png" />
+                </a>
+                <!-- Line -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button" data-mdb-ripple-color="dark">
+                    <img src="~/images/icon_line.png" />
+                </a>
+            </section>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center text-dark p-3" style="background-color:lightgrey;">
+            © 2021 Copyright：
+            <a class="text-dark" href="#">TeaBar.com</a>
+        </div>
+    </footer>
+</body>
+</html>

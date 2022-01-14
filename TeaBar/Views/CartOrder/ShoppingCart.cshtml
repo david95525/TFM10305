@@ -1,0 +1,200 @@
+﻿
+@{
+    ViewData["Title"] = "購物車";
+}
+
+<style>
+    .green {
+        background-color: lightgreen;
+    }
+
+    #productpic {
+        width: 10%;
+        height: 10%;
+    }
+</style>
+
+<fieldset id="ShoppingCart">
+    <h1>購物車</h1>
+    <div>
+        <h2>{{name}}</h2>
+    </div>
+    <div v-if="isShow">
+        <h4>{{store.storeCity}} {{store.storeName}} </h4>
+    </div>
+    <div class="font-italic text-danger" style="font-size:24px;"></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <td></td>
+                <td>商品名稱</td>
+                <td>數量</td>
+                <td>其他加價</td>
+                <td>細項總額</td>
+                <td>詳細</td>
+            </tr>
+        </thead>
+        <tbody v-if="isShow">
+            <tr v-for="pd in cartsData">
+                <td>
+                    <img src="~/images/tea.jpg" id="productpic" />
+                </td>
+                <td>{{pd.productName}}</td>
+                <td>{{pd.quantity}}</td>
+                <td v-if="pd.isIngredient">{{pd.ingredient}}+10元</td>
+                <td v-if="!pd.isIngredient">無</td>
+                <td>{{pd.subtotal}}</td>
+                <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
+                <td>
+                    <div v-on:click="Todelete(pd.productId)">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="card" v-if="isShow">
+        <div class="card-header">
+            <label>小總計</label>
+        </div>
+        <div class="card-body" >
+            <div>
+                <div v-if="cartsData[0].discount> 0 ">折扣: {{cartsData[0].discount*10}}折</div>
+                <div v-if="!cartsData[0].discount===0 ">折扣:無</div>
+                <div>總額: ${{total}}</div>
+            </div>
+        </div>
+    </div>
+    <!--刪除資料確認對話盒-->
+    <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true" title="刪除客戶資料">
+        <div class="modal-dialog modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    確認刪除{{cart.productName}} ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" v-on:click="deleteItem" data-bs-dismiss="modal">是</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
+</fieldset>
+<script>
+    var app = new Vue(
+            {
+                el: '#ShoppingCart',
+                data: {
+                    cartsData: Array,
+                    checked: false,
+                    store: {},
+                    cart: {},
+                    total:0,
+                    name:"",
+                    isEdit: false,
+                    isShow: false,
+                    isIN: false
+                },
+            //獲取購物車資料
+            mounted: function () {
+                    $.ajax
+                        ({
+                            url: "@Url.Action("Readcart", "OrderAPI")",
+                            type: 'GET'
+                        }).done(
+                            function(result, status, xhr) {
+                                app.cartsData = result;
+                                if (app.cartsData.length == 0) {
+                                    alert("沒有商家");
+                                }
+                                else {
+                                    app.name = app.cartsData[0].userID;}
+                                for (let i = 0; i < app.cartsData.length; i++) {
+                                    app.cartsData[i].subtotal = app.cartsData[i].unitPrice *app.cartsData[i].quantity ;
+                                    if (app.cartsData[i].ingredient === "布丁" || app.cartsData[i].ingredient === "仙草凍"
+                                        || app.cartsData[i].ingredient === "芋圓") {
+                                        app.cartsData[i].subtotal = app.cartsData[i].subtotal + 10;
+                                        app.cartsData[i].isIngredient = true;
+                                    } else { app.cartsData[i].isIngredient = false; }
+                                    app.total = app.total + app.cartsData[i].subtotal;
+                                }
+                                app.total = Math.round( app.total * app.cartsData[0].discount);
+
+                            }).fail(function (err) {
+                            alert(err.responseText);
+                            });
+                    //獲取分店資料
+                       $.ajax
+                        ({
+                            url: "@Url.Action("GetStore", "OrderAPI")",
+                            type: 'GET'
+                        }).done(
+                            function(result, status, xhr) {
+                                app.store = result;
+                                app.isShow = true;
+                            }).fail(function (err) {
+                            alert(err.responseText);
+                            });
+
+                },
+                methods:
+                {
+                    //進入刪除確認
+                    Todelete: function (pid) {
+                        app.cart = app.cartsData.find(c => c.productId === pid);
+                    },//刪除
+                    deleteItem: function () {
+                        app.total = Math.round(app.total - app.cart.subtotal * app.cart.discount);
+                        let index = app.cartsData.indexOf(app.cart);
+                        app.cartsData.splice(index, 1);
+                        
+                            //存session
+                            $.ajax(
+                                {
+                                    url: "@Url.Action("Savecart", "OrderAPI")",
+                                    type: 'Post',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(app.cartsData),
+                                }).done(function (data, status, xhr) {
+                                    if (app.cartsData.length === 0) {
+                                        app.isShow= false;
+                                    }
+
+                                }).fail(function (err) {
+                                    alert(err.responseText);
+                                }
+                            );
+
+                    },
+                    //去結帳
+                    ToOrder: function () {
+                        if (app.cartsData.length != 0) {
+                            //存session
+                            $.ajax(
+                                {
+                                    url: "@Url.Action("Savecart", "OrderAPI")",
+                                    type: 'Post',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(app.cartsData),
+
+                                }).done(function (data, status, xhr) {
+                                    app.isShow = false;
+                                       location.href = "@Url.Action("OrderSteps", "CartOrder")";
+                                }).fail(function (err) {
+                                    alert(err.responseText);
+                                }
+                            );
+                        } else {
+                            alert("沒有商品");
+                        }
+                    }//ToOrder
+                }//methods
+            }
+    );
+</script>
+    

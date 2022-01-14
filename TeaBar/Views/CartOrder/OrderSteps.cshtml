@@ -1,0 +1,860 @@
+﻿
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+@{
+    ViewData["Title"] = "線上訂購資訊";
+}
+<!-- #region css-->
+<style>
+    .pointer {
+        cursor: pointer
+    }
+
+    .bg-color {
+        background-color: papayawhip;
+    }
+    /*#region 必填欄位*/
+    .redstar::before{
+        content:"*";
+        color:red;
+    }
+    /*#endregion */
+    /*#region 商品圖*/
+    .card-img-top {
+        width: 30%;
+        height: 30%;
+    }
+    /*#endregion */
+    /*#region 換頁動畫*/
+    .slide-leave-active {
+        transition: all .2s ease;
+    }
+
+    .slide-enter-active {
+        transition: all .5s ease;
+    }
+
+    .slide-enter-from {
+        transform: translateX(-100%);
+    }
+
+    .slide-leave-to {
+        transform: translateX(100%);
+    }
+    /*#endregion */
+    /*#region google地圖*/
+    iframe {
+        width: 100%;
+    }
+
+    #map {
+        height: 600px;
+    }
+
+    #store {
+        color: green;
+    }
+    /*#endregion*/
+    /*#region 頁首效果*/
+    #circleone {
+        width: 30px;
+        height: 30px;
+        border-radius: 999em;
+        background-color: forestgreen;
+        margin: 0 auto;
+    }
+
+    #circletwo {
+        width: 30px;
+        height: 30px;
+        border-radius: 999em;
+        background-color: black;
+        margin: 0 auto;
+    }
+
+    #circlethree {
+        width: 30px;
+        height: 30px;
+        border-radius: 999em;
+        background-color: black;
+        margin: 0 auto;
+    }
+
+    #stepnumber {
+        text-align: center;
+    }
+
+    #number {
+        color: white;
+    }
+    /*#endregion */
+</style>
+<!-- #endregion -->
+<div id="shoppingorders">
+    <!--#region 頁首-->
+    <div class="container">
+        <div class="row" id="stepnumber">
+            <div class="col">
+                <h3>訂單明細</h3>
+                <div id="circleone"><p id="number">1</p></div>
+            </div>
+            <div class="col ">
+                <h3>選擇付款</h3>
+                <div id="circletwo"><p id="number">2</p></div>
+            </div>
+            <div class="col ">
+                <h3>確認結帳</h3>
+                <div id="circlethree"><p id="number">3</p></div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    <!--#region 第一頁 訂單明細 -->
+    <transition name="slide">
+        <div v-if="link=='a'">
+            <!--#region 店家 -->
+            <div class="card">
+                <div class="card-body">
+                    <div v-for="s in store" id="store">
+                        <div><h5>Teabar{{s.storeCity}}{{s.storeName}}</h5></div>
+                        <div>{{s.storePhone}}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!--#region 取餐方式 -->
+            <div class="card">
+                <div class="card-header">
+                    <label class="redstar">取餐方式</label>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div>
+                            <input type="radio" class="form-check-input" name="how" v-if="isTakeout" checked v-on:click="How(0)">
+                            <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
+                            <label class="form-check-label"> 自取</label>
+                            <div v-if="isTakeout" class=" pointer">
+                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 點選地圖圖標查看</label>
+                                <span data-bs-toggle="modal" data-bs-target="#map">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="radio" class="form-check-input" name="how" v-if="isTakeout" v-on:click="How(1)">
+                            <input type="radio" class="form-check-input" name="how" v-if="isDelivery" checked v-on:click="How(1)">
+                            <label class="form-check-label"> 外送</label>
+                            <div v-if="isDelivery" class="pointer input-group" id="delivery">
+                                <div class="col-auto">
+                                    <label class="redstar">縣市</label>
+                                    <select class="form-select" id="county" v-model="shipData.county" v-on:change="ChangeCounty">
+                                        <option v-for="county in countyData">{{county.countyname}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <label class="redstar">區域</label>
+                                    <select class="form-select" id="district" v-model="shipData.district">
+                                        <option v-for="town in districtData">{{town.townname}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <label class="redstar">地址</label>
+                                    <div class="input-group">
+
+                                        <input type="text" class="form-control" placeholder="地址" id="address" v-model="shipData.address">
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <label class="redstar">地址備註</label>
+                                    <div class="input-group">
+
+                                        <input type="text" class="form-control" placeholder="公司/地標/樓層" id="addressdesc" v-model="shipData.desc">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <button class="btn btn-primary" v-on:click="How(2)">確定</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!--#region 警告外送資料輸入不完整 -->
+            <div class="alert alert-warning d-flex align-items-center" role="alert" v-if="!isDeliverydetail">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+                <div>
+                    外送資料請輸入完整
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!--#region 訂單內容 -->
+            <div class="card">
+                <div class="card-header">
+                    <label>訂單內容</label>
+                </div>
+                <div class="card-body">
+                    <div class="row" v-if="isIN">
+                        <div class="col-11">{{orderData[0].customerId}} </div>
+                    </div>
+                    <div class="row row-cols-1 row-cols-md-4 g-4">
+                        <div class="col" v-for="order in orderData">
+                            <div class="card" style="width: 18rem;">
+                                <img src="~/images/tea.jpg" class="pointer card-img-top" v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
+
+                                <div class="card-body">
+                                    <div v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
+
+                                        <div class="pointer">
+                                            <div class="bg-color">
+                                                <div>{{order.productName}}</div>
+                                            </div>
+                                            <div class="bg-color">
+                                                <div>{{order.size}}杯/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
+                                            </div>
+                                            <div class="bg-color">
+                                                <div>$ {{order.subtotal}}</div>
+                                            </div>
+                                            <div class="bg-color">
+                                                <div>備註: {{order.description}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-on:click="Todelete(order.productId)">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!--#region 訂單滙總 -->
+            <div class="card">
+                <div v-if="isIN">
+                    <div class="card-header">
+                        <label>訂單滙總</label>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-1">{{orderData[0].discount*10}}折</div>
+                        <div class="col-1">總金額  ${{total}}</div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+        </div>
+    </transition>
+    <!-- #endregion -->
+    <!-- #region 第二頁 付款資料 -->
+    <transition name="slide">
+        <div v-if="link=='b'">
+            <!--#region 取餐人資料-->
+            <div class="card">
+                <div class="card-body">
+                    <div>
+                        <label class="redstar">取餐人資料</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label redstar" >姓名</label>
+                        <input type="text" class="form-control" v-model:value="shipData.receiver">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label redstar">電話</label>
+                        <input type="text" class="form-control" v-model:value="shipData.phone">
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!--#region 警告取餐人資料輸入不完整 -->
+            <div class="alert alert-warning d-flex align-items-center" role="alert" v-if="!isReceiverdetail">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+                <div>
+                    取餐人資訊請輸入完整
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!--#region 發票 -->
+            <div class="card">
+                <div class="card-header">
+                    <label>開立發票</label>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('paper')" v-if="isPaper" checked>
+                        <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('paper')" v-if="!isPaper">
+                        <label class="form-check-label"> 紙本發票</label>
+                    </div>
+                    <div>
+                        <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="!isCellphone">
+                        <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="isCellphone" checked>
+                        <label class="form-check-label"> 手機載具</label>
+                        <div v-if="isCellphone"class="redstar">
+                            <input type="text" class="form-control" placeholder="首位為/ 字母為大寫" v-model:value="shipData.phonereceipt">
+                        </div>
+                    </div>
+                    <div>
+                        <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="!isDonate">
+                        <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="isDonate" checked>
+                        <label class="form-check-label"> 愛心捐贈</label>
+                    </div>
+                    <div>
+                        <label class="form-check-label">統一編號</label>
+                        <input type="text" class="form-control" placeholder="請輸入統一編號" v-model:value="shipData.companyreceipt">
+                    </div>
+                    <div class="alert alert-warning d-flex align-items-center" role="alert" v-if="!isCellphonedetail">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+                        <div>
+                            手機載具請輸入完整
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+        </div>
+    </transition>
+    <!-- #endregion -->
+    <!--#region 第三頁 最後確認 -->
+    <transition name="slide">
+        <div class="card" v-if="link=='c'">
+            <div class="card-header">
+                <label>確認訂購明細</label>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>訂購門市</td>
+                            <td>{{store[0].storeCity}}{{store[0].storeName}}</td>
+                        </tr>
+                        <tr>
+                            <td>取餐人</td>
+                            <td>{{shipData.receiver}}</td>
+                        </tr>
+                        <tr>
+                            <td>連絡電話</td>
+                            <td>{{shipData.phone}}</td>
+                        </tr>
+                        <tr>
+                            <td>取餐方式</td>
+                            <td v-if="isTakeout">自取</td>
+                            <td v-if="!isTakeout">外送</td>
+                        </tr>
+                        <tr>
+                            <td>開立發票形式</td>
+                            <td>{{shipData.receipt}}</td>
+                        </tr>
+                        <tr>
+                            <td>應付金額</td>
+                            <td>{{total}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </transition>
+    <!-- #endregion -->
+    <!--#region 固定頁尾 -->
+    <div>
+        <button class="btn btn-primary" v-if="link=='a'" v-on:click="Back">回購物車</button>
+        <button class="btn btn-primary" v-on:click.prevent="OneContactTwo" v-if="link=='a'">下一步</button>
+        <button class="btn btn-primary" v-on:click.prevent="OneContactTwo" v-if="link=='b'">上一步</button>
+        <button class="btn btn-primary" v-on:click.prevent="TwoContactThree" v-if="link=='b'">下一步</button>
+        <button class="btn btn-primary" v-on:click.prevent="TwoContactThree" v-if="link=='c'">上一步</button>
+        <button class="btn btn-primary" v-if="link=='c'" v-on:click="ToPay">付款確認</button>
+
+    </div>
+    <!-- #endregion -->
+    <!--#region 編輯訂單資訊對話盒 -->
+    <div class="modal fade" id="modifydialog" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered ">
+            <div class="modal-content" v-bind="order">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modifydialog">{{order.productName}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            v-on:click="LUEdit(false)"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="price">單價$</label>
+                        <input type="text" v-model:text="order.unitPrice" class="form-control" disabled />
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="size">杯型</label>
+                        <select class="form-select" id="size" v-model="order.size">
+                            <option v-for="size in sizelist">{{size}}</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="ice">冰塊</label>
+                        <select class="form-select" id="ice" v-model="order.ice">
+                            <option v-for="ice in icelist">{{ice}}</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="sweet">甜度</label>
+                        <select class="form-select" id="sweet" v-model="order.sweetness">
+                            <option v-for="st in sugarlist">{{st}}</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="ingredient">加料</label>
+                        <select class="form-select" id="ingredient" v-model="order.ingredient">
+                            <option v-for="ing in inglist">{{ing}}</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text">備註</label>
+                        <input type="text" v-model:text="order.description" class="form-control" />
+                    </div>
+                    <div class="col-4">
+                        <div class="pointer input-group mb-3">
+                            <i class="far fa-minus-square input-group-text" v-on:click="EditQ(order.productId,false)"></i>
+                            <input type="text" v-model:value="order.quantity" class="form-control" id="qty" />
+                            <i class="far fa-plus-square input-group-text" v-on:click="EditQ(order.productId,true)"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" v-on:click="LUEdit(true)">更新</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            v-on:click="LUEdit(false)">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    <!--#region 刪除資料確認對話盒-->
+    <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    確認刪除?
+                </div>
+                <div class="modal-footer" v-bind="order">
+                    <button type="button" class="btn btn-primary" v-on:click="deleteItem(order.productId)" data-bs-dismiss="modal">是</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    <!-- #region 取貨門市地址 -->
+    <div class="modal fade" id="map" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.4678303431388!2d121.54106421494481!3d25.052127983963906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abe6b0446815%3A0xf006dde8c27afcc7!2z57ev6IKyVGliYU1l6ZmE6Kit5Y-w5YyX6IG36KiT5Lit5b-D!5e0!3m2!1szh-TW!2stw!4v1641227477316!5m2!1szh-TW!2stw" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+</div>
+<!--#region Javascript和Vue-->
+<script>
+    var app = new Vue({
+        el: '#shoppingorders',
+        //#region Vue data
+        data: { //TODO vue data
+            orderData: [],  //訂單資料內容
+            shipData: {},//寄送資料
+            store: [],   //店家資料
+            temp: [],     //暫存
+            order: {}, //單一訂單內容
+            countyData: [],//縣市資料
+            districtData:[],//區域資料
+            sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
+            icelist: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
+            inglist: ["珍珠", "布丁", "仙草凍", "芋圓","無"],
+            sizelist: ["大", "中"],
+            total: 0,
+            isIN: false,
+            isDeliverydetail: true,//外送資訊完整
+            isReceiverdetail:true,//取餐人資訊完整
+            isTakeout: true,//自取
+            isDelivery: false,//外送
+            isPaper:true,//紙本發票
+            isCellphone: false,//手機載具
+            isCellphonedetail:true,//手機載具輸入完整
+            isDonate:false,//愛心捐贈
+            link: 'a'//分頁判斷
+
+        },
+        //#endregion
+        //#region mounted初始讀取購物車和店家
+        mounted() {
+            //讀店家
+            $.ajax({
+                url: "@Url.Action("GetStore", "OrderAPI")",
+                type: 'GET'
+            })
+            .done(
+                    function (result, status, xhr) {
+                    app.store[0] = result;
+                    console.log(app.store);
+                })
+            .fail(function (err) {
+                alert("error");
+             });
+            //讀購物車
+            $.ajax({
+                url: "@Url.Action("Readcart", "OrderAPI")",
+                type: 'GET'
+            })
+             .done(function (result) {
+                    if (result.length == 0) {
+                        alert("失敗");
+                    } else {
+                        app.orderData = result;
+                        app.isIN = true;
+                        for (let i = 0; i < app.orderData.length; i++) {                         
+                            Subtotal(i);
+                            if (app.orderData[i].ingredient === "布丁" || app.orderData[i].ingredient === "仙草凍"
+                                || app.orderData[i].ingredient === "芋圓") {
+                                app.orderData[i].subtotal = app.orderData[i].subtotal + 10;
+                            }
+                            app.total = app.total + app.orderData[i].subtotal;
+                        }
+                        app.total = Math.round(app.total * app.orderData[0].discount);
+                    }
+                })
+             .fail(function (err) {
+                    alert("error");
+             });
+        },
+        //#endregion
+        //#region Vue方法
+        methods: {
+            //#region 編輯數量
+            EditQ: function ( pid, PorM) {
+                let temp = app.orderData.find(c => c.productId == pid);
+                let i = app.orderData.indexOf(temp);
+                if (PorM === true) {
+                    app.orderData[i].quantity++;
+                } else {
+                    if (app.orderData[i].quantity > 1) {
+                        app.orderData[i].quantity--;
+                    }
+                    Subtotal(i);
+                }
+            },
+            //#endregion
+            //#region 進入編輯
+            ToEdit: function (pid) {
+                app.order = app.orderData.find(c => c.productId == pid);
+                //紀錄可修改資料原本狀態
+                app.temp[0] = app.order.ice;
+                app.temp[1] = app.order.sweetness;
+                app.temp[2] = app.order.description;
+                app.temp[3] = app.order.quantity;
+                app.temp[4] = app.order.ingredient;
+                app.temp[5] = app.order.subtotal;
+                app.temp[6] = app.order.size;
+            },
+            //#endregion
+            //#region 離開/更新 編輯
+            LUEdit: function ( TF) {
+                //還原原本狀態
+                if (TF === false) {
+                    app.order.icelevel = app.temp[0];
+                    app.order.sugarlevel = app.temp[1];
+                    app.order.description = app.temp[2];
+                    app.order.quantity = app.temp[3];
+                    app.order.ingredient = app.temp[4];
+                    app.order.subtotal = app.temp[5];
+                    app.order.size = app.temp[6];
+                } else {
+                    if (typeof (app.order.quantity) != "number") {
+                        alert("請輸入大於0的數字");
+                        app.order.quantity = app.temp[3];
+                        app.order.subtotal = app.temp[5];
+                    }
+                    //更新資料
+                    app.order.subtotal = app.order.unitPrice * app.order.quantity;
+                    if (app.order.ingredient === "布丁" || app.order.ingredient === "仙草凍"
+                        || app.order.ingredient === "芋圓") {
+                        app.order.subtotal = app.order.subtotal + 10;
+                    }
+                    app.total = Math.round(app.total - (app.temp[5] - app.order.subtotal) * app.order.discount);
+                   
+                    Save();
+                }
+            },
+            //#endregion
+            //#region 進入刪除商品確認
+            Todelete: function ( pid) {
+                app.order = app.orderData.find(c => c.productId == pid);
+            },
+            //#endregion
+            //#region 刪除商品
+            deleteItem: function (pid) {
+                let curorder = app.orderData.find(c => c.productId == pid);
+                let index = app.orderData.indexOf(curorder);
+                if (app.orderData.length == 1) {
+                    app.isIN = false;
+                }
+                app.total = app.total - app.orderData[index].subtotal;
+                app.orderData.splice(index, 1);
+                 //儲存session
+                Save();
+            },
+            //#endregion
+            //#region 第一頁和第二頁來往
+            OneContactTwo: function () {
+                if (app.isDelivery === true) {
+                    if (app.shipData.address === "" || app.shipData.desc === "") {
+                        app.isDeliverydetail = false;
+                    } else {
+                        let one = document.getElementById('circleone');
+                        let two = document.getElementById('circletwo');
+                        if (app.link === 'a') {
+                            app.link = 'b';
+                            one.style.backgroundColor = 'black';
+                            two.style.backgroundColor = 'forestgreen';
+
+                        } else {
+                            app.link = 'a';
+                            one.style.backgroundColor = 'forestgreen';
+                            two.style.backgroundColor = 'black';
+                        }
+                        Save();
+                    }
+                }
+                else {
+                    let one = document.getElementById('circleone');
+                    let two = document.getElementById('circletwo');
+                    if (app.link === 'a') {
+                        app.link = 'b';
+                        one.style.backgroundColor = 'black';
+                        two.style.backgroundColor = 'forestgreen';
+
+                    } else {
+                        app.link = 'a';
+                        one.style.backgroundColor = 'forestgreen';
+                        two.style.backgroundColor = 'black';
+                    }
+                    Save();
+                    if (JSON.stringify(app.shipData) === "{}") {
+                        app.shipData.phone = '';
+                        app.shipData.receiver = '';
+                        app.shipData.receipt = '';
+                        app.shipData.companyreceipt = '';
+                        app.shipData.phonereceipt = '';
+                    }
+                }
+            },
+            //#endregion
+            //#region 第二頁和第三頁往來
+            TwoContactThree: function () {
+                if (app.isCellphone === true && app.shipData.phonereceipt === '') {
+                    app.isCellphonedetail = false;//發票訊息要填寫完整警告
+                    if (app.shipData.receiver === ''|| app.shipData.phone === '') {
+                        app.isReceiverdetail = false; //取餐人跳出要填寫完整警告
+                    } else {
+                        app.isReceiverdetail = true;//取餐人警告收回
+                    }
+                }
+                else if (app.shipData.receiver ===''|| app.shipData.phone ==='') {
+                    app.isReceiverdetail = false; //取餐人跳出要填寫完整警告
+                    app.isCellphonedetail = true;
+                }
+                else {
+                    app.isReceiverdetail = true;//取餐人警告收回
+                    app.isCellphonedetail = true;//發票訊息警告收回
+                    //顯示第2頁到第3頁
+                    let three = document.getElementById('circlethree');
+                    let two = document.getElementById('circletwo');
+                    if (app.link === 'b') {
+                        app.link = 'c';
+                        two.style.backgroundColor = 'black';
+                        three.style.backgroundColor = 'forestgreen';
+                    } else {
+                        app.link = 'b';
+                        two.style.backgroundColor = 'forestgreen';
+                        three.style.backgroundColor = 'black';
+                    }
+                    if (app.isPaper === true) {
+                        app.shipData.receipt = '紙本發票';
+                    }
+
+                    Save();//存到session
+                }
+
+            },
+           // #endregion
+            //#region 發票形式
+            //TODO 發票
+            Receipt: function (status) {
+                if (status === 'cellphone') {
+                    app.isCellphone = true;
+                    app.isPaper = false;
+                    app.isDonate = false;
+                    if (app.shipData.phonereceipt != '') {
+                       app.shipData.receipt = '手機載具:' + app.shipData.phonereceipt;
+                        app.isCellphonedetail = true;
+                    } else { app.shipData.receipt = '';}
+
+                } else if (status === 'paper') {
+                    app.isCellphone = false;
+                    app.isPaper = true;
+                    app.isDonate = false;
+                    app.shipData.receipt = '紙本發票';
+                } else if (status === 'dt') {
+                    app.isCellphone = false;
+                    app.isPaper = false;
+                    app.isDonate= true;
+                    app.shipData.receipt = '愛心捐贈';
+                }
+                if (app.shipData.companyreceipt != '') { app.shipData.receipt = '統一編號' + app.shipData.companyreceipt;}
+            },
+            //#endregion
+            //#region 返回購物車
+            Back: function () {
+                window.location.href = "@Url.Action("ShoppingCart", "CartOrder")";
+            },
+            //#endregion
+            //#region 取餐方式
+            How: function (status) {
+                if (status === 0) {
+                    //顯示與否
+                    app.isTakeout = true;
+                    app.isDelivery = false;
+                } else if (status === 1) {
+                    readCountyorDistrict(0,"");
+                    //初始化shipData
+                    if (JSON.stringify(app.shipData) === '{}') {
+                        app.shipData.county = ''; app.shipData.countycode = 0; app.shipData.district = '';app.shipData.address = '';app.shipData.desc = '';app.shipData.phone = '';
+                        app.shipData.receiver = '';app.shipData.receipt = '';app.shipData.companyreceipt = '';app.shipData.phonereceipt = '';
+                    }
+                    //顯示與否
+                    app.isTakeout = false;
+                    app.isDelivery = true;
+                } else if (status === 2) {
+                    //去掉按鈕
+                    $('#delivery').hide();
+                }
+            },
+            //#endregion
+            //#region 縣市變動
+            ChangeCounty: function () {
+              let  name = $('#county').get(0).value;
+                readCountyorDistrict(1, name);
+            },
+            //#endregion
+            //#region 去金流頁面
+            ToPay: function () {
+                for (let i = 0; i < app.orderData.length; i++) {
+                //自取或外送資料
+                if (app.isTakeout) {
+                    app.orderData[i].note =
+                        "備註:自取-" + app.store[0].storeName + "地址:" + app.store[0].storeAddress;
+                } else {
+                    app.orderData[i].note =
+                        "備註:外送-" + app.shipData.county + app.shipData.district
+                        + app.shipData.addrsss + app.shipData.desc;
+                }
+                // 寄送資訊記在note
+                
+                    app.orderData[i].note = app.orderData[i].note
+                        + " 取貨人:" + app.shipData.receiver + "電話:" + app.shipData.phone +
+                        "發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
+                }             
+                   if (app.orderData.length != 0) {
+                    $.ajax({
+                        url: "@Url.Action("Savecart", "OrderAPI")",
+                        type: 'Post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(app.orderData)
+                    }).done(function () {
+                      location.href = "@Url.Action("Paybill","CashFlow")";
+                    }).fail(function (err) {
+                        console.log(err.responseText);
+                    });
+                } else {
+                    alert("沒有商品");
+                }
+            }
+           //#endregion
+        }
+        //#endregion
+    });//vue
+
+   //#region 重複利用的方法
+    //儲存session
+      function Save() {
+                if (app.orderData.length != 0) {
+                    $.ajax({
+                        url: "@Url.Action("Savecart", "OrderAPI")",
+                        type: 'Post',
+                        contentType: 'application/json',
+                        data: JSON.stringify(app.orderData)
+                    }).done(function (data, status, xhr) {
+                        console.log('更新' + data.msg);
+                    })
+                        .fail(function (err) {
+                            console.log(err.responseText);
+                        });
+                } else {
+                    alert("沒有商品");
+                }
+    }
+    //讀縣市或區域
+    function readCountyorDistrict(index,name) {
+               //讀縣市
+        if (index === 0) {
+            $.ajax({
+                url: "@Url.Action("readCounty", "CountyDistrict")",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                },
+                type: 'GET'
+            })
+                .done(function (data, status, xhr) {
+                    app.countyData = data;
+                })
+                .fail(function (xhr, status, error) {
+                    alert("error");
+                });
+        } //讀區域
+        else {
+            console.log(name);
+               $.ajax({
+                url: "@Url.Action("readDistrict", "CountyDistrict")",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                },
+                   type: 'POST',
+                   data: JSON.stringify( name)
+            })
+                .done(function (data, status, xhr) {
+                    app.districtData = data;
+                })
+                .fail(function (xhr, status, error) {
+                    alert("error");
+                });
+        }
+    }
+    //小合計
+      function Subtotal(i) {
+        app.orderData[i].subtotal =
+              app.orderData[i].unitPrice * app.orderData[i].quantity;
+    }
+    //#endregion
+</script>
+<!-- #endregion -->

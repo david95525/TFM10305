@@ -1,0 +1,295 @@
+﻿
+@{
+    ViewData["Title"] = "會員資料";
+}
+
+<fieldset id="customers">
+    <legend>@ViewData["Title"]</legend>
+    <!--區塊上層-->
+    <!--查詢結果輸出-->
+    <fieldset>
+        <form>
+            <!--帳號-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="inpAccount" class="col-form-label">帳號</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="inpAccount" class="form-control form-control-sm" v-model=customersData.customerId disabled>
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--姓名-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpLastName" class="form-label">姓　</label>
+                </div>
+                <div class="form-outline col-auto mr-4">
+                    <input type="text" class="form-control form-control-sm" id="InpLastName" v-model="customersData.lastName">
+                </div>
+                <div class="col-auto">
+                    <label for="InpFirstName" class="form-label">名　</label>
+                </div>
+                <div class="form-outline col-auto">
+                    <input type="text" class="form-control form-control-sm" id="InpFirstName" v-model="customersData.firstName">
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--Email-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpEmail" class="form-label">Email</label>
+                </div>
+                <div class="col-auto">
+                    <input type="email" class="form-control form-control-sm" id="InpEmail" v-model="customersData.email" required>
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--電話-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpPhone" class="form-label">電話</label>
+                </div>
+                <div class="col-auto">
+                    <input type="email" class="form-control form-control-sm" id="InpPhone" v-model="customersData.phone">
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--地址-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpAddress" class="form-label">地址</label>
+                </div>
+                <div class="col-auto">
+                    <select id="county" class="form-select form-select-sm" placeholder="請選擇縣市" v-on:change="selectDistrict">
+                        <!--縣市選單-->
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select id="district" class="form-select form-select-sm" placeholder="請選擇鄉鎮區">
+                        <!--鄉鎮區選單-->
+                    </select>
+                </div>
+                <div class="col-6">
+                    <input type="text" class="form-control form-control-sm" id="InpAddress" v-model="customersData.address">
+                </div>
+            </div>
+            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--生日-->
+            @*<div class="row g-3 align-items-center">
+                    <div class="col-1">
+                        <label for="InpBirth" class="form-label">生日</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" class="form-control form-control-sm" id="InpBirth" v-bind:value="customersData.birth">
+                    </div>
+                </div>
+                <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>*@
+        </form>
+    </fieldset>
+    <!--查詢結果輸出-->
+    <!--觸發修改作業按鈕-->
+    <div>
+        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveProfileDialog">儲存修改</button>
+    </div>
+
+    <!--確認儲存資料 對話盒-->
+    <div class="modal fade" id="saveProfileDialog" tabindex="-1" aria-labelledby="saveProfileDialogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saveProfileDialogLabel">會員資料變更</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">是否確定變更會員資料？</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" v-on:click="saveCustomerProfile">儲存變更</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--成功儲存資料 對話盒-->
+    <div class="modal fade" id="saveSuccessDialog" tabindex="-1" aria-labelledby="saveSuccessDialogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saveSuccessDialogLabel">會員資料變更成功</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">會員資料已更新</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</fieldset>
+
+
+<script>
+    //初始化--載入時進行查詢
+    $(document).ready(
+        function () {
+            app.customerID = "Test2";
+            let qryService = '/service/memberService/MemberService/qry/customers/' + app.customerID + '/rawdata';
+            $.ajax(
+                {
+                    url: qryService,
+                    type: 'GET'
+                }
+            ).done(function (result, status, xhr) {
+                app.customersData = result[0];
+                //設定初始縣市值為會員資料內的縣市值
+                app.selectCounty();
+            }).fail();
+        }
+    );
+
+
+    //Vue物件
+    var app = new Vue(
+        {
+            el: '#customers',
+            data: {
+                customerID: '',
+                customersData: [], //會員資料模組
+                countyData: [],
+                curCountycode: '',
+                districtData: []
+            },//data
+            methods: {
+                //縣市選單
+                selectCounty: function () {
+                    $.ajax(
+                        {
+                            url: '/CountyDistrict/readCounty',
+                            type: 'GET',
+                        })
+                        .done(function (data, status, xhr) {
+                            $.map(data, function (i) {
+                                $('#county').append($('<option>').val(i.countyname).text(i.countyname));
+                            });
+                            app.selectDistrict();
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert("Error");
+                        });
+                },
+                //鄉鎮市區選單
+                selectDistrict: function () {
+                    let countyValue = $('#county option:selected').val();
+                    let jsonData = JSON.stringify(countyValue);
+                    $.ajax(
+                        {
+                            url: '/CountyDistrict/readDistrict',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                            },
+                            type: 'POST',
+                            data: jsonData
+                        })
+                        .done(function (data, status, xhr) {
+                            //清空option內容
+                            $('#district').text("");
+                            $.map(data, function (i) {
+                                $('#district').append($('<option>').val(i.townname).text(i.townname));
+                            });
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert("Error");
+                        });
+                },
+                //OLD縣市選單
+                OLDselectCounty: function (countyId)
+                {
+                    $.ajax(
+                        {
+                            url: '/CountyDistrict/readCounty',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                            },
+                            type: 'GET',
+                        })
+                        .done(function (data, status, xhr) {
+                            //儲存縣市對應的countyCode值
+                            var counutycodeValue = null;
+                            $.map(data, function (i) {
+                                $('#county').append('<option value="' + i.countycode + '">' + i.countyname + '</option>');
+                                //設定預設值為與會員資料相同的縣市
+                                if (countyId == i.countyname)
+                                {
+                                    $('#county').get(0).value = i.countycode;
+                                    counutycodeValue = i.countycode;
+                                }
+                            });
+                            app.selectDistrict(counutycodeValue);
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert("Error");
+                        });
+                },
+                //OLD鄉鎮市區選單
+                OLDselectDistrict: function () {
+                    let countycode = $('#county option:selected').val();
+                    let jsonData = JSON.stringify(countycode);
+                    $.ajax(
+                        {
+                            url: 'readDistrict',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                            },
+                            type: 'POST',
+                            data: jsonData
+                        })
+                        .done(function (data, status, xhr) {
+                            //清空option內容
+                            $('#district').text("");
+                            $.map(data, function (i) {
+                                $('#district').append($('<option>').val(i.towncode).text(i.townname));
+                                //設定預設值為與會員資料相同的鄉鎮市區
+                                if (i.townname == app.customersData.district) {
+                                    $('#district').get(0).value = i.towncode;
+                                }
+                            });
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert("Error");
+                        });
+                },
+                //會員資料更新
+                saveCustomerProfile: function () {
+                    //更新會員資料模組
+                    app.customersData.lastName = $('#InpLastName').val();
+                    app.customersData.firstName = $('#InpFirstName').val();
+                    app.customersData.email = $('#InpEmail').val();
+                    app.customersData.phone = $('#InpPhone').val();
+                    app.customersData.city = $('#county option:selected').text();
+                    app.customersData.district = $('#district option:selected').text();
+                    app.customersData.address = $('#InpAddress').val();
+                    let jsonData = JSON.stringify(app.customersData);
+                    //更新資料庫
+                    $.ajax(
+                        {
+                            url: '/service/memberService/MemberService/update/customers/rawdata',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                            },
+                            type: 'PUT',
+                            data: jsonData
+                        })
+                        .done(function (data, status, xhr) {
+                            $('#saveProfileDialog').modal('hide');
+                            $('#saveSuccessDialog').modal('show');
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert(data.msg);
+                        });
+                }
+            }//methods
+        }
+    );
+</script>
+

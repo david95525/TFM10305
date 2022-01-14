@@ -1,0 +1,98 @@
+﻿@model System.Collections.Generic.List<CartViewModel>
+@using Microsoft.AspNetCore.Html
+@using TeaBar.Models
+@{ 
+    ViewData["Title"] = "付款確認";
+    double total = 0;
+    List<CartViewModel> carts = null;
+
+    IHtmlContent htmltotal = Html.Raw("[]");
+    IHtmlContent htmlorderid = Html.Raw("[]");
+    if (ViewBag.carts != null)
+    {
+        carts = ViewBag.carts as List<CartViewModel>;
+
+        foreach (CartViewModel item in carts)
+        {
+            total = total +Convert.ToDouble(item.Subtotal);
+        }
+        total=Math.Round(total*carts[0].Discount);
+
+        htmltotal = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(total));
+        htmlorderid= Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(carts[0].OrderID));
+    }
+      }
+<div id="paybill">
+    <div>
+
+        <div class="card">
+            <div class="card-header">
+                <label>付款確認</label>
+            </div>
+            <div class="card-body">
+
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>訂單編號</td>
+                            <td>@carts[0].OrderID</td>
+                        </tr>
+                        <tr>
+                            <td>訂單金額</td>
+                            <td>@total</td>
+                        </tr>
+                        @foreach (CartViewModel item in carts)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>@item.ProductName</td>
+                                <td>@item.Quantity 杯</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!-- 付款方式 -->
+                <form role="form" action="@Url.Action("Cashflowpaybillasync","CashFlow")" method="POST">
+                    <div class="col-md-12">
+                        <label class="form-check-label"> 請款類型</label>
+                        <div v-on:click="update">
+                            <select v-model="payType" name="payType" class="form-select">
+                                <option value="CREDIT">信用卡</option>
+                                <option value="WEBATM">WEBATM</option>
+                                <option value="VACC">ATM 轉帳</option>
+                                <option value="TAIWANPAY">台灣Pay</option>
+                                <option value="ANDROIDPAY">Google Pay</option>
+                            </select>
+                        </div>
+                        <input type="text" style="display:none" id="total" name="total" required>
+                        <input type="text" style="display:none" id="orderid" name="orderid" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        前往付款
+                    </button>
+                </form>
+                <button class="btn btn-primary"  v-on:click="test">test</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: '#paybill',
+        data: {
+            total: @htmltotal,
+             orderid: @htmlorderid,
+            payType: ""
+        },
+        methods: {
+            update: function () {
+                $('#total').val(app.total);
+                $('#orderid').val(app.orderid);
+            },
+            test: function () {
+                        window.location.href = "@Url.Action("Test", "CashFlow")"                 
+            }
+        }
+    });
+
+</script>
