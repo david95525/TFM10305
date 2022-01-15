@@ -20,8 +20,10 @@ namespace TeaBar.Models
         public string Sweetness { get; set; }
         public string Ice { get; set; }
         public string Ingredient { get; set; }
-        public string Note { get; set; }
         public string Size { get; set; }
+        public string Picture { get; set; }
+        public string Note { get; set; }
+       
         public string Customization { get; set; }
    
 

@@ -11,97 +11,98 @@
         if (customer == true)
         {
             <!--會員導覽列-->
-    <li class="nav-item me-2 me-lg-1">
-        <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="" asp-controller="CartOrder" asp-action="ShoppingCart">
-            <img src="~/images/icon_cart.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">購物車</strong>
-        </a>
-    </li>
- <!-- 會員圖示 -->
-    <li class="nav-item dropdown">
-        <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
-            <img src="~/images/icon_account.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">Hello @User.Identity.Name!</strong>
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li class="dropdown-item">
-                <form class="form-inline" asp-controller="Members" asp-action="MemberProfile">
-                    <button type="submit" class="nav-link btn btn-link text-dark">會員資料</button>
-                </form>
+            <li class="nav-item me-2 me-lg-1">
+                <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="" asp-controller="CartOrder" asp-action="ShoppingCart">
+                    <img src="~/images/icon_cart.png" class="rounded-circle" height="30" alt="" />
+                    <strong class="d-none d-sm-block ms-1 fs-6">購物車</strong>
+                </a>
             </li>
-            <li class="dropdown-item">
-                <form class="form-inline" asp-area="" asp-controller="Members" asp-action="OrdersHistory">
-                    <button type="submit" class="nav-link btn btn-link text-dark">歷史訂單</button>
-                </form>
+            <!-- 會員圖示 -->
+            <li class="nav-item dropdown">
+                <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
+                    <img src="~/images/icon_account.png" class="rounded-circle" height="30" alt="" />
+                    <strong class="d-none d-sm-block ms-1 fs-6">Hello @User.Identity.Name!</strong>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-controller="Members" asp-action="MemberProfile">
+                            <button type="submit" class="nav-link btn btn-link text-dark">會員資料</button>
+                        </form>
+                    </li>
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-area="" asp-controller="Members" asp-action="OrdersHistory">
+                            <button type="submit" class="nav-link btn btn-link text-dark">歷史訂單</button>
+                        </form>
+                    </li>
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-controller="Members" asp-action="MemberPassword">
+                            <button type="submit" class="nav-link btn btn-link text-dark">密碼變更</button>
+                        </form>
+                    </li>
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button type="submit" class="nav-link btn btn-link text-dark">登出</button>
+                        </form>
+                    </li>
+                </ul>
             </li>
-            <li class="dropdown-item">
-                <form class="form-inline" asp-controller="Members" asp-action="MemberPassword">
-                    <button type="submit" class="nav-link btn btn-link text-dark">密碼變更</button>
-                </form>
-            </li>
-            <li class="dropdown-item">
-                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                    <button type="submit" class="nav-link btn btn-link text-dark">登出</button>
-                </form>
-            </li>
-        </ul>
-    </li>
         }
         else
         {
- <!--商家導覽列  TODO 連結頁面設定-->
- <!-- 管理頁面圖示-->
-    <li class="nav-item me-2 me-lg-1">
-        <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="" asp-controller="Home" asp-action="Index">
-            <img src="~/images/icon_management.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">管理頁面</strong>
-        </a>
-    </li>
- <!-- 商家管理圖示 -->
-    <li class="nav-item dropdown">
-        <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
-            <img src="~/images/icon_store.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">Hello @User.Identity.Name!</strong>
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li class="dropdown-item">
-                <form class="form-inline" asp-controller="Members" asp-action="MemberProfile">
-                    <button type="submit" class="nav-link btn btn-link text-dark">門市資料</button>
-                </form>
+            <!--商家導覽列  TODO 連結頁面設定-->
+            <!-- 管理頁面圖示-->
+            <li class="nav-item me-2 me-lg-1">
+                <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/icon_management.png" class="rounded-circle" height="30" alt="" />
+                    <strong class="d-none d-sm-block ms-1 fs-6">管理頁面</strong>
+                </a>
             </li>
-            <li class="dropdown-item">
-                <form class="form-inline" asp-controller="Members" asp-action="MemberPassword">
-                    <button type="submit" class="nav-link btn btn-link text-dark">密碼變更</button>
-                </form>
+            <!-- 商家管理圖示 -->
+            <li class="nav-item dropdown">
+                <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
+                    <img src="~/images/icon_store.png" class="rounded-circle" height="30" alt="" />
+                    <strong class="d-none d-sm-block ms-1 fs-6">Hello @User.Identity.Name!</strong>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-controller="Members" asp-action="MemberProfile">
+                            <button type="submit" class="nav-link btn btn-link text-dark">門市資料</button>
+                        </form>
+                    </li>
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-controller="Members" asp-action="MemberPassword">
+                            <button type="submit" class="nav-link btn btn-link text-dark">密碼變更</button>
+                        </form>
+                    </li>
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button type="submit" class="nav-link btn btn-link text-dark">登出</button>
+                        </form>
+                    </li>
+                </ul>
             </li>
-            <li class="dropdown-item">
-                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                    <button type="submit" class="nav-link btn btn-link text-dark">登出</button>
-                </form>
-            </li>
-        </ul>
-    </li>
         }
     }
     else
     {
-    <li class="nav-item me-2 me-lg-1">
-        <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="Identity" asp-page="/Account/Login">
-            <img src="~/images/icon_cart.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">購物車</strong>
-        </a>
-    </li>
-    <li class="nav-item me-2 me-lg-1">
-        <a class="nav-link d-sm-flex align-items-sm-center" aria-expanded="false" asp-area="Identity" asp-page="/Account/Login">
-            <img src="~/images/icon_login.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">登入</strong>
-        </a>
-    </li>
-    <li class="nav-item me-2 me-lg-1">
-        <a class="nav-link d-sm-flex align-items-sm-center" aria-expanded="false" asp-controller="RegisterMember" asp-action="Index">
-            <img src="~/images/icon_register.png" class="rounded-circle" height="30" alt="" />
-            <strong class="d-none d-sm-block ms-1 fs-6">註冊</strong>
-        </a>
-    </li>
+        <li class="nav-item me-2 me-lg-1">
+            <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="Identity" asp-page="/Account/Login">
+                <img src="~/images/icon_cart.png" class="rounded-circle" height="30" alt="" />
+                <strong class="d-none d-sm-block ms-1 fs-6">購物車</strong>
+            </a>
+        </li>
+        <li class="nav-item me-2 me-lg-1">
+            <a class="nav-link d-sm-flex align-items-sm-center" aria-expanded="false" asp-area="Identity" asp-page="/Account/Login">
+                <img src="~/images/icon_login.png" class="rounded-circle" height="30" alt="" />
+                <strong class="d-none d-sm-block ms-1 fs-6">登入</strong>
+            </a>
+        </li>
+        <li class="nav-item me-2 me-lg-1">
+            <a class="nav-link d-sm-flex align-items-sm-center" aria-expanded="false" asp-controller="RegisterMember" asp-action="Index">
+                <img src="~/images/icon_register.png" class="rounded-circle" height="30" alt="" />
+                <strong class="d-none d-sm-block ms-1 fs-6">註冊</strong>
+            </a>
+        </li>
     }
 </ul>
+

@@ -37,7 +37,7 @@
         <tbody v-if="isShow">
             <tr v-for="pd in cartsData">
                 <td>
-                    <img src="~/images/tea.jpg" id="productpic" />
+                    <img v-bind:src="pd.picture" id="productpic" />
                 </td>
                 <td>{{pd.productName}}</td>
                 <td>{{pd.quantity}}</td>

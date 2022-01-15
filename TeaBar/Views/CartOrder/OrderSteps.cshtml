@@ -201,7 +201,7 @@
                     <div class="row row-cols-1 row-cols-md-4 g-4">
                         <div class="col" v-for="order in orderData">
                             <div class="card" style="width: 18rem;">
-                                <img src="~/images/tea.jpg" class="pointer card-img-top" v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
+                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
 
                                 <div class="card-body">
                                     <div v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">

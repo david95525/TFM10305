@@ -52,6 +52,7 @@ namespace TeaBar.Controllers
                    Sweetness="半糖",
                    Ice="去冰",
                    Ingredient="珍珠",
+                   Picture=product1.Picture,
                    Note="無",
                    Size="大",
                    StoreID="9de59954-8571-4744-93ad-43d11c74491a"
@@ -68,6 +69,7 @@ namespace TeaBar.Controllers
                    Sweetness="全糖",
                    Ice="少冰",
                    Ingredient="布丁",
+                   Picture=product2.Picture,
                    Note="無",
                    Size="中",
                    StoreID="9de59954-8571-4744-93ad-43d11c74491a"
@@ -84,6 +86,7 @@ namespace TeaBar.Controllers
                    Sweetness="微糖",
                    Ice="去冰",
                    Ingredient="無",
+                   Picture=product3.Picture,
                    Note="無",
                    Size="中",
                    StoreID="9de59954-8571-4744-93ad-43d11c74491a"
