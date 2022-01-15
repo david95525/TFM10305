@@ -43,15 +43,15 @@ namespace TeaBar.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage ="Email欄位不能空白")]
+            [EmailAddress(ErrorMessage ="請輸入正確Email格式")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage ="密碼欄位不能空白")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "記住我")]
             public bool RememberMe { get; set; }
         }
 

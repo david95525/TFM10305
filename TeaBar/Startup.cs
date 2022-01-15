@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TeaBar.Data;
+using TeaBar.EmailService;
 using TeaBar.Models;
 
 namespace TeaBar
@@ -44,40 +46,42 @@ namespace TeaBar
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings
-                options.Password.RequireDigit = true;               //ï¿½Kï¿½Xï¿½nï¿½ï¿½ï¿½Æ¦r
-                options.Password.RequireLowercase = true;           //ï¿½nï¿½ï¿½ï¿½pï¿½gï¿½^ï¿½ï¿½rï¿½ï¿½
-                options.Password.RequireNonAlphanumeric = false;    //ï¿½ï¿½ï¿½Ý­nï¿½Å¸ï¿½ï¿½rï¿½ï¿½
-                options.Password.RequireUppercase = true;           //ï¿½nï¿½ï¿½ï¿½jï¿½gï¿½^ï¿½ï¿½rï¿½ï¿½
-                options.Password.RequiredLength = 6;                //ï¿½Kï¿½Xï¿½Ü¤Ö­n6ï¿½Ó¦rï¿½ï¿½ï¿½ï¿½
-                options.Password.RequiredUniqueChars = 1;           //ï¿½Ü¤Ö­nï¿½ï¿½1ï¿½Ó¦rï¿½ï¿½ï¿½ï¿½ï¿½@ï¿½ï¿½
+                options.Password.RequireDigit = true;               //±K½X­n¦³¼Æ¦r
+                options.Password.RequireLowercase = true;           //­n¦³¤p¼g­^¤å¦r¥À
+                options.Password.RequireNonAlphanumeric = false;    //¤£»Ý­n²Å¸¹¦r¤¸
+                options.Password.RequireUppercase = true;           //­n¦³¤j¼g­^¤å¦r¥À
+                options.Password.RequiredLength = 6;                //±K½X¦Ü¤Ö­n6­Ó¦r¤¸ªø
+                options.Password.RequiredUniqueChars = 1;           //¦Ü¤Ö­n¦³1­Ó¦r¤¸¤£¤@¼Ë
 
                 // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); //5ï¿½ï¿½ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½Nï¿½Û°ï¿½ï¿½ï¿½ï¿½wï¿½ï¿½ï¿½ï¿½Aï¿½wï¿½]5ï¿½ï¿½ï¿½ï¿½
-                options.Lockout.MaxFailedAccessAttempts = 5; //ï¿½Tï¿½ï¿½ï¿½Kï¿½Xï¿½~ï¿½Nï¿½ï¿½wï¿½ï¿½ï¿½, ï¿½wï¿½]5ï¿½ï¿½
-                options.Lockout.AllowedForNewUsers = true; //ï¿½sï¿½Wï¿½ï¿½ï¿½Ï¥ÎªÌ¤]ï¿½|ï¿½Qï¿½ï¿½wï¿½Aï¿½Nï¿½Oï¿½Ç³Wï¿½Sï¿½ï¿½ï¿½sï¿½Hï¿½uï¿½ï¿½
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); //5¤ÀÄÁ¨S¦³°ÊÀR´N¦Û°ÊÂê¦í©wºô¯¸¡A¹w³]5¤ÀÄÁ
+                options.Lockout.MaxFailedAccessAttempts = 5; //¤T¦¸±K½X»~´NÂê©wºô¯¸, ¹w³]5¦¸
+                options.Lockout.AllowedForNewUsers = true; //·s¼Wªº¨Ï¥ÎªÌ¤]·|³QÂê©w¡A´N¬O¥Ç³W¨S¦³·s¤HÀu«Ý
 
                 // User settings.
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true; //ï¿½lï¿½cï¿½ï¿½ï¿½à­«ï¿½Ð¨Ï¥ï¿½
+                options.User.RequireUniqueEmail = true; //¶l½c¤£¯à­«ÂÐ¨Ï¥Î
+                
             });
+            services.AddTransient<IEmailSender, EmailSender>();
 
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromHours(5);
-                options.LoginPath = "/Identity/Account/Login"; //ï¿½nï¿½Jï¿½ï¿½
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";//ï¿½nï¿½XAction
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+                options.LoginPath = "/Identity/Account/Login"; //µn¤J­¶
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";//µn¥XAction
                 options.SlidingExpiration = true;
             });
 
             services.AddControllersWithViews();
-            //ï¿½[ï¿½Jsessionï¿½Aï¿½ï¿½
-            services.AddSession(options =>
+            services.AddAuthentication().AddFacebook(opt =>
             {
-                options.IdleTimeout = TimeSpan.FromDays(5);
-            }
-            );
+                opt.AppId = Configuration["Facebook:AppId"];
+                opt.AppSecret = Configuration["Facebook:AppSecret"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,7 +102,7 @@ namespace TeaBar
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseSession();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
