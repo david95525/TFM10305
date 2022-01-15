@@ -29,6 +29,10 @@ namespace TeaBar.Controllers
         //決定orderid
         public IActionResult Paybill()
         {
+            if (User.Identity.Name == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
             string userName = User.Identity.Name;
             //if (HttpContext.Request.Cookies[userName] != null)
             if(HttpContext.Session.Keys.Contains(userName))
@@ -218,6 +222,7 @@ namespace TeaBar.Controllers
         [HttpPost]
         public ActionResult Cashflowreturn()
         {
+
             HttpContext.Request.LogFormData("Cashflowreturn(支付完成)");
 
             // Status 回傳狀態 
@@ -257,6 +262,7 @@ namespace TeaBar.Controllers
         ///Atm轉帳
         [HttpPost]
         public ActionResult Cashflowcustomer()
+
         {
             Request.LogFormData("Cashflowcustomer(資料回傳)");
 

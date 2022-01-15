@@ -102,10 +102,7 @@ namespace TeaBar.Controllers
             //option.Expires = DateTime.Now.AddDays(5);
             //HttpContext.Response.Cookies.Append(Resources.cartcookie,jsonstring, option);
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+ 
 
         public IActionResult OrderSteps()
         {

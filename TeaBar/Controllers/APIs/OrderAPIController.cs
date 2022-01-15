@@ -57,6 +57,7 @@ namespace TeaBar.Controllers
         //購物車資料存入來修改刪除cookie
         //購物車資料存入來修改刪除session
         [HttpPost]
+        [Consumes("application/json")]
         public Message Savecart([FromBody] List<CartViewModel> carts)
         #region 購物車資料儲存更新
         {
