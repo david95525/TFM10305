@@ -57,15 +57,15 @@
         <div class="card-header">
             <label>小總計</label>
         </div>
-        <div class="card-body" >
+        <div class="card-body">
             <div>
-                <div v-if="cartsData[0].discount> 0 ">折扣: {{cartsData[0].discount*10}}折</div>
-                <div v-if="!cartsData[0].discount===0 ">折扣:無</div>
+                <div v-if="discount< 1 ">折扣: {{discount}}折</div>
+                <div v-if="!discount===1 ">折扣:無</div>
                 <div>總額: ${{total}}</div>
             </div>
         </div>
     </div>
-    <!--刪除資料確認對話盒-->
+    <!--#region 刪除資料確認對話盒-->
     <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true" title="刪除客戶資料">
         <div class="modal-dialog modal-fullscreen-lg-down">
             <div class="modal-content">
@@ -82,7 +82,7 @@
             </div>
         </div>
     </div>
-
+    <!--#endregion -->
     <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
 </fieldset>
 <script>
@@ -94,7 +94,8 @@
                     checked: false,
                     store: {},
                     cart: {},
-                    total:0,
+                    total: 0,
+                    discount:0,
                     name:"",
                     isEdit: false,
                     isShow: false,
@@ -124,7 +125,7 @@
                                     app.total = app.total + app.cartsData[i].subtotal;
                                 }
                                 app.total = Math.round( app.total * app.cartsData[0].discount);
-
+                                app.discount = app.cartsData[0].discount * 10;
                             }).fail(function (err) {
                             alert(err.responseText);
                             });
@@ -161,7 +162,7 @@
                                     contentType: 'application/json',
                                     data: JSON.stringify(app.cartsData),
                                 }).done(function (data, status, xhr) {
-                                    if (app.cartsData.length === 0) {
+                                    if (app.cartsData.length <1) {
                                         app.isShow= false;
                                     }
 

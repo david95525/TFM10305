@@ -692,7 +692,10 @@
                     if (app.isPaper === true) {
                         app.shipData.receipt = '紙本發票';
                     }
-
+                    if (app.shipData.phonereceipt != '') {
+                        app.shipData.receipt = '手機載具:' + app.shipData.phonereceipt;
+                        app.isCellphonedetail = true;
+                    } 
                     Save();//存到session
                 }
 
@@ -705,11 +708,6 @@
                     app.isCellphone = true;
                     app.isPaper = false;
                     app.isDonate = false;
-                    if (app.shipData.phonereceipt != '') {
-                       app.shipData.receipt = '手機載具:' + app.shipData.phonereceipt;
-                        app.isCellphonedetail = true;
-                    } else { app.shipData.receipt = '';}
-
                 } else if (status === 'paper') {
                     app.isCellphone = false;
                     app.isPaper = true;
