@@ -9,9 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using TeaBar.Data;
 using TeaBar.EmailService;
 using TeaBar.Models;
@@ -82,6 +80,9 @@ namespace TeaBar
                 opt.AppId = Configuration["Facebook:AppId"];
                 opt.AppSecret = Configuration["Facebook:AppSecret"];
             });
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromDays(5);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -102,7 +103,7 @@ namespace TeaBar
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
 
