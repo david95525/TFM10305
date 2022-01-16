@@ -126,43 +126,43 @@
                 <!--顯示訂購分店名稱-->
                 <div>
                     <!--從cookie帶入選擇的門市名稱-->
-                    <div v-if="orderStore()" class="mb-3">
+                    <div v-if="hasCookie" class="mb-3">
                         <div class="d-flex flex-row align-items-end justify-content-between mb-1">
                             <p class="fs-6">訂購門市:</p>
                             <!--todo更改分店-->
-                            <button @@="changeStore()" class="btn btn-outline-dark btn-sm">修改</button>
+                            <button @@="changeStore" class="btn btn-outline-dark btn-sm">修改</button>
                         </div>
                         <p class="fs-5 fw-bold">{{orderStoreData.StoreName}}</p>
                         <p>{{orderStoreData.StoreAddress}}</p>
                         <hr />
                     </div>
                     <!--todo點擊修改動態加入 下拉選單和確認btn-->
-                    <div v-else>
+                    <div v-if="isEdit">
                         <!--todo下拉選單-->
                         <div id="selectStore" class="input-group">
                             <!--選擇縣市-->
-                            <select v-model="cityVal" class="form-select form-inline">
+                            <select v-model="cityVal" class="form-select" @@change="qryCity(city)">
                                 <option value="default">選擇縣市</option>
-                                <option :value="city">{{}}</option>
+                                <option :value="city" v-for="city in cityList">{{city}}</option>
                             </select>
                             <!--選擇地區-->
-                            <select v-model="distVal" class="form-select form-inline">
+                            <select v-model="distVal" class="form-select" @@change="qryDist(dist)">
                                 <option value="default">選擇地區</option>
-                                <option :value="dist">{{}}</option>
+                                <option :value="dist" v-for="city in distList">{{dist}}</option>
                             </select>
                             <!--選擇分店-->
-                            <select v-model="storeVal" class="form-select form-inline">
+                            <select v-model="storeVal" class="form-select" @@change="">
                                 <option value="default">選擇分店</option>
-                                <option :value="store">{{}}</option>
+                                <option :value="store.storeID" v-for="store in storeList">{{store}}</option>
                             </select>
                         </div>
                         <!--確認分店-->
-                        <button @@="checkStore">確認</button>
+                        <button type="button" @@click="checkStore(storeVal)">確認</button>
                     </div>
                 </div>
                 <!--判斷訂購當下時間-->
                 <div>
-                    <div v-if="isOpen()">
+                    <div v-if="isOpen">
                         <p class="fs-6">預定取餐時間: </p>
                         <p class="fs-5 fw-bold">{{pickUpTime}}</p>
                     </div>
@@ -222,6 +222,9 @@
                 Ice: "",
                 Ingredient: [],
             },
+            isOpen: false,
+            isEdit: false,
+            hasCookie: false,
 
         },
         methods: {
@@ -237,7 +240,7 @@
             },
             //數量減一
             minusOne() {
-                if (this.orderDetail.Quentity > 2 ) {
+                if (this.orderDetail.Quentity > 2) {
                     this.orderDetail.Quentity--;
                 }
             },
@@ -255,60 +258,46 @@
                 }
                 return item;
             },
-            //判斷營業時間並計算取餐時間
-            isOpen() {
-                let now = new Date();
-                //取得現在日期時間
-                let year = now.getFullYear();
-                let month = now.getMonth() + 1; //js從0開始取
-                let date = now.getDate();
-                let hour = now.getHours();
-                let minutes = now.getMinutes();
-                //重組格式字串
-                let nowTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T${this.timeFormat(hour)}:${this.timeFormat(minutes)}`;
-                let closeTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T22:45`; //設定打烊時間(23:00)
-                let openTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T10:00`; //設定開店時間(10:00)
-                //轉成一串數字
-                let nowTime = Date.parse(nowTimeStr);
-                let closeTime = Date.parse(closeTimeStr);
-                let openTime = Date.parse(openTimeStr);
-                //計算取餐時間(訂餐時間+15分)
-                now.setMinutes(minutes + 15);
-                this.pickUpTime = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)} ${this.timeFormat(now.getHours())}:${this.timeFormat(now.getMinutes())}`;
-                //todo讓畫面重新渲染
-                //setTimeout('app.isOpen()', 300000); //5分鐘更新一次
-
-                //判斷現在時間有沒有在營業時間之內
-                if (nowTime < closeTime && nowTime > openTime) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
             //取得cookie值
             getCookieByName(name) {
                 const value = `; ${document.cookie}`;
                 const parts = value.split(`; ${name}=`);
                 if (parts.length === 2) return parts.pop().split(';').shift();
             },
-            //取得訂購分店資訊
-            orderStore() {
-                //判斷是否有cookie
-                if (document.cookie.indexOf("storeid") != -1) {
-                    //取出cookie的值
-                    let id = this.getCookieByName("storeid");
-                    //透過id來篩選分店資訊
-                    let data = this.allIStoreData.filter(i => i.StoreID == id);
-                    this.orderStoreData = data;
-                    return true;
-                } else {
-                    return false;
-                }
-            },
             //todo修改訂購分店
             changeStore() {
+                this.isEdit = true;
 
-
+            },
+            //確認要修改的分店並將id存cookie
+            checkStore(id) {
+                let d = new Date();
+                d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+                let expires = "expires=" + d.toUTCString();
+                let cookie = document.cookie = `storeId=${id}; expires;`;
+            },
+            //變更城市下拉選單
+            qryCity: async function (city) {
+                if (this.cityVal == "default") {
+                    this.distVal = "default"; //區域選單變回預設
+                    this.cityVal = "default"; //門市選單變回預設
+                } else {
+                    const qryServiceUrl = `/api/StoreService/${city}/dist`;
+                    await axios(qryServiceUrl)
+                        .then(response => { this.distList = response.data })
+                        .catch(error => console.log(error));
+                }
+            },
+            //變更區域下拉選單
+            qryDist: async function (dist) {
+                if (this.distVal == "default") {
+                    this.cityVal = "default"; //門市選單變回預設
+                } else {
+                    const qryServiceUrl = `/api/StoreService/${dist}/store`;
+                    await axios(qryServiceUrl)
+                        .then(response => { this.storeList = response.data })
+                        .catch(error => console.log(error));
+                }
             },
             //點擊顯示modal
             showModal(id) {
@@ -334,7 +323,7 @@
                 axios({
                     method: "POST",
                     url: "/api/OrderProductsService/orderDetail",
-                    headers: { "Content-Type":"application/json"},
+                    headers: { "Content-Type": "application/json" },
                     data: data,
                 }).then(response => {
                     if (response.status == 200) {
@@ -342,6 +331,7 @@
                     }
                 }).catch(error => console.log(error));
             },
+
 
 
 
@@ -405,7 +395,58 @@
 
 
         },
+        mounted() {
+            //判斷營業時間並計算取餐時間
+            let now = new Date();
+            //取得現在日期時間
+            let year = now.getFullYear();
+            let month = now.getMonth() + 1; //js從0開始取
+            let date = now.getDate();
+            let hour = now.getHours();
+            let minutes = now.getMinutes();
+            //重組格式字串
+            let nowTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T${this.timeFormat(hour)}:${this.timeFormat(minutes)}`;
+            let closeTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T22:45`; //設定打烊時間(23:00)
+            let openTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T10:00`; //設定開店時間(10:00)
+            //轉成一串數字
+            let nowTime = Date.parse(nowTimeStr);
+            let closeTime = Date.parse(closeTimeStr);
+            let openTime = Date.parse(openTimeStr);
+            //計算取餐時間(訂餐時間+15分)
+            now.setMinutes(minutes + 15);
+            this.pickUpTime = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)} ${this.timeFormat(now.getHours())}:${this.timeFormat(now.getMinutes())}`;
+            //todo讓畫面重新渲染
+            //setTimeout('app.isOpen()', 300000); //5分鐘更新一次
 
+            //判斷現在時間有沒有在營業時間之內
+            if (nowTime < closeTime && nowTime > openTime) {
+                this.isOpen = true;
+            } else {
+                this.isOpen = false;
+            }
+
+
+            //取得訂購分店資訊
+
+            //判斷是否有cookie
+            if (document.cookie.indexOf("storeid") != -1) {
+                //取出cookie的值
+                let id = this.getCookieByName("storeid");
+                //透過id來篩選分店資訊
+                let data = this.allIStoreData.filter(i => i.StoreID == id);
+                this.orderStoreData = data;
+                this.hasCookie = true;
+            } else {
+                this.isEdit = true;
+            }
+
+
+
+
+
+
+
+        },
 
 
     })
