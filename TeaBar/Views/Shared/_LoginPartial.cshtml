@@ -11,12 +11,24 @@
         {
             <!--管理員導覽列  TODO 連結頁面設定-->
             <!-- 管理頁面圖示-->
-            <li class="nav-item me-2 me-lg-1">
-                <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="" asp-controller="Home" asp-action="Index">
+            <li class="nav-item dropdown">
+                <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
                     <img src="~/images/icon_management.png" class="rounded-circle" height="30" alt="" />
                     <strong class="d-none d-sm-block ms-1 fs-6">管理頁面</strong>
                 </a>
-            </li>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-controller="ProductManage" asp-action="Index">
+                            <button type="submit" class="nav-link btn btn-link text-dark">商品管理</button>
+                        </form>
+                    </li>
+                    <li class="dropdown-item">
+                        <form class="form-inline" asp-controller="Order" asp-action="Index">
+                            <button type="submit" class="nav-link btn btn-link text-dark">訂單管理</button>
+                        </form>
+                    </li>
+                </ul>
+            </li>           
             <!-- 管理員管理圖示 -->
             <li class="nav-item dropdown">
                 <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
@@ -129,11 +141,6 @@
             <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-area="Identity" asp-page="/Account/Login">
                 <img src="~/images/icon_cart.png" class="rounded-circle" height="30" alt="" />
                 <strong class="d-none d-sm-block ms-1 fs-6">購物車</strong>
-            </a>
-        </li>
-        <li class="nav-item me-2 me-lg-1">
-            <a asp-action="Index" asp-controller="Order">
-                order
             </a>
         </li>
         <li class="nav-item me-2 me-lg-1">
