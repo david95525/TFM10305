@@ -238,7 +238,9 @@
                         <label>訂單滙總</label>
                     </div>
                     <div class="card-body">
-                        <div class="col-1">{{orderData[0].discount*10}}折</div>
+                        <div class="col-1" v-if="orderData[0].discount*100>10">{{orderData[0].discount*10}}折</div>
+                        <div class="col-1" v-if="orderData[0].discount*100<10">{{orderData[0].discount*100}}折</div>
+                        <div class="col-1" v-if="orderData[0].discount==1">原價</div>
                         <div class="col-1">總金額  ${{total}}</div>
 
                     </div>
