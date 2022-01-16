@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TeaBar.Models;
 
@@ -26,6 +27,12 @@ namespace TeaBar.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+        [HttpGet]
+        public string GetUserName()
+        {
+            string username = User.FindFirstValue(ClaimTypes.NameIdentifier); ;
+            return username;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

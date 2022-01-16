@@ -154,12 +154,13 @@ namespace TeaBar.Controllers
                     Select(s => s.Id).FirstOrDefault();
                 string storeid = HttpContext.Request.Cookies[username];
                 string orderid =carts[0].OrderID;
+                int discountid = carts[0].DiscountId;
                 //建立Order物件
                 Orders order = new Orders
                 {
                     OrderID = orderid,
                     UserID = userid.ToString(),
-                    DiscountID = 1,
+                    DiscountID = discountid,
                     OrderDate = DateTime.Now.ToString("yyyy/MM/dd_HH:mm"),
                 };
                 //嘗試存入資料庫

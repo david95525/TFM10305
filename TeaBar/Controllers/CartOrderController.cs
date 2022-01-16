@@ -30,7 +30,8 @@ namespace TeaBar.Controllers
             int product1id = 1;
             int product2id = 2;
             int product3id = 3;
-            int discountid = 2;
+            Random discountrandom = new Random();
+            int discountid = discountrandom.Next(1, 11);
             string userName = User.Identity.Name;//當前identity中使用者名稱
             Products product1 = _db.Products.FirstOrDefault(p => p.ProductID == product1id);
             Products product2= _db.Products.FirstOrDefault(p => p.ProductID == product2id);
