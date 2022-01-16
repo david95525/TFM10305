@@ -121,20 +121,32 @@
 
 
 <script>
+    var qryServiceUrl = 'https://teabarservice.azurewebsites.net/api/MemberService/memberProfileQry';
+    var userid = '';
     //初始化--載入時進行查詢
-    $(document).ready(
+    $(document).ready(   
         function () {
-            let qryService = '/MemberService/memberProfileQry';
             $.ajax(
                 {
-                    url: qryService,
+                    url:'@Url.Action("GetUserName", "Home")',
                     type: 'GET'
+                }
+            ).done(function (data) {
+                userid = data;
+            }).fail();
+          
+            $.ajax(
+                {
+                    url: qryServiceUrl,
+                    type: 'POST',
+                    data:userid
                 }
             ).done(function (data, status, xhr) {
                 app.memberData = JSON.parse(data);
                 //設定初始縣市值為會員資料內的縣市值
                 app.selectCounty();
             }).fail();
+
         }
     );
 
