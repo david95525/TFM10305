@@ -8,8 +8,8 @@ namespace TeaBar.Models
     {
         [Key]
         public int CategoryID { get; set; }
-
-
+        [ForeignKey("Stores")]
+        public string StoreID { get; set; }
     
         public string CategoryName { get; set; }
 
