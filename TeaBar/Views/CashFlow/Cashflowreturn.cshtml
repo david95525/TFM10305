@@ -1,0 +1,115 @@
+﻿@model OutputDataModel
+@using Microsoft.AspNetCore.Html
+@using TeaBar.Models.CashFlow
+@{
+    ViewData["Title"] = "交易結果";
+
+    OutputDataModel data = null;
+    IHtmlContent htmlcode = Html.Raw("[]");
+    if (ViewBag.result != null)
+    {
+        data = ViewBag.result as OutputDataModel;
+        htmlcode = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(data.CodeNo));
+        <div id="result">
+
+            <div class="card">
+                <div class="card-header">
+                    <label>交易結果</label>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+
+                        <tbody>
+                            <tr>
+                                <td>交易結果</td>
+                                <td>@data.Status</td>
+                            </tr>
+                            <tr>
+                                <td>交易編號</td>
+                                <td>@data.TradeNo</td>
+                            </tr>
+                            <tr>
+                                <td>訂單編號</td>
+                                <td>@data.MerchantOrderNo</td>
+                            </tr>
+                            @if (data.PaymentType == "CREDIT" || data.PaymentType == "WEBATM")
+                            {
+                                <tr>
+                                    <td>交易日期</td>
+                                    <td>@data.PayTime</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td>消費總額</td>
+                                <td>{{total}}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" v-on:click="SaveOrder">確認訂單</button>
+        </div>
+    }
+}
+
+<script>
+    var app = new Vue({
+        el: '#result',
+        data: {
+            code:@htmlcode,
+            ordersData: [],
+            total: 0,
+            isShow:false
+        },
+         mounted() {
+            $.ajax({
+                url:"@Url.Action("Readcart", "OrderAPI")",
+                type:"GET",
+                contentType: "application/json"
+            }).done(
+                function (data) {
+                    app.ordersData = data;
+
+                    for (let i = 0; i < app.ordersData.length; i++) {
+                        app.total = app.total + app.ordersData[i].subtotal;
+                    }
+                    app.total = Math.round(app.total * app.ordersData[0].discount);
+                   app.isShow = true;
+                }).fail(
+                    function (err) {
+                    console.log(err.responseText);
+                });
+        },
+        mounted() {
+            console.log(app.code);
+            
+        },
+        methods: {
+
+            SaveOrder: function () {
+                app.ordersData[0].orderID = app.code;
+                var jsonstring = JSON.stringify(app.ordersData);
+                console.log(jsonstring);
+                $.ajax({
+                    url: "@Url.Action("Saveorder","OrderAPI")",
+                    type: "GET"
+                }).done(function (msg) {
+                console.log(msg);
+                location.href = "@Url.Action("Index", "Home")";
+                }).fail(function (err) {
+                    alert(err.responseText);
+            });
+
+            }
+        }
+
+
+    });
+</script>
+
+
+
+
+

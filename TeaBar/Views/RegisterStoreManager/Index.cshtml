@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewData["Title"] = "門市管理員註冊";
+}
+
+<fieldset id="storeManagerRegister">
+    <legend>@ViewData["Title"]</legend>
+    <fieldset>
+        <form method="post" action="storeManagerRegister">
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--姓名-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpStoreName" class="form-label">門市名稱</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" class="form-control form-control-sm" id="InpStoreName" name="StoreName">
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--Email-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpEmail" class="form-label">Email</label>
+                </div>
+                <div class="col-auto">
+                    <input type="email" class="form-control form-control-sm" id="InpEmail" name="Email" required>
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--密碼-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpPassword" class="form-label">密碼</label>
+                </div>
+                <div class="col-auto">
+                    <input type="password" class="form-control form-control-sm" id="InpPassword" name="Password">
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--電話-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpStorePhone" class="form-label">電話</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" class="form-control form-control-sm" id="InpStorePhone" name="StorePhone">
+                </div>
+            </div>
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <!--地址-->
+            <div class="row g-3 align-items-center">
+                <div class="col-1">
+                    <label for="InpAddress" class="form-label">地址</label>
+                </div>
+                <div class="col-auto">
+                    <select id="county" class="form-select form-select-sm" placeholder="請選擇縣市" name="StoreCity" v-on:change="selectDistrict">
+                        <!--縣市選單-->
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select id="district" class="form-select form-select-sm" placeholder="請選擇鄉鎮區" name="StoreDistrict">
+                        <!--鄉鎮區選單-->
+                    </select>
+                </div>
+                <div class="col-6">
+                    <input type="text" class="form-control form-control-sm" id="InpAddress" name="StoreAddress">
+                </div>
+            </div>
+            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+
+            <button type="submit" class="btn btn-primary">註冊</button>
+
+        </form>
+
+    </fieldset>
+</fieldset>
+
+<script>
+    //初始化
+    $(document).ready(
+        function () {
+            app.selectCounty();
+        }
+    );
+
+
+    //Vue物件
+    var app = new Vue(
+        {
+            el: '#storeManagerRegister',
+            data: {
+                membersData: {}, //會員資料模組
+            },//data
+            methods: {
+                //縣市選單
+                selectCounty: function ()
+                {
+                    $.ajax(
+                        {
+                            url: '/CountyDistrict/readCounty',
+                            type: 'GET',
+                        })
+                        .done(function (data, status, xhr) {
+                            $.map(data, function (i) {
+                                $('#county').append($('<option>').val(i.countyname).text(i.countyname));
+                            });
+                            app.selectDistrict();
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert("Error");
+                        });
+                },
+                //鄉鎮市區選單
+                selectDistrict: function () {
+                    let countyValue = $('#county option:selected').val();
+                    let jsonData = JSON.stringify(countyValue);
+                    $.ajax(
+                        {
+                            url: '/CountyDistrict/readDistrict',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Content-Type", "application/json");
+                            },
+                            type: 'POST',
+                            data: jsonData
+                        })
+                        .done(function (data, status, xhr) {
+                            //清空option內容
+                            $('#district').text("");
+                            $.map(data, function (i) {
+                                $('#district').append($('<option>').val(i.townname).text(i.townname));
+                            });
+                        })
+                        .fail(function (xhr, status, error) {
+                            alert("Error");
+                        });
+                }
+            }//methods
+        }
+    );
+</script>
+

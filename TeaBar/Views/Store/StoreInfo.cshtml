@@ -101,7 +101,7 @@
 
                     }
 
-                    const qryServiceUrl = `https://${this.pathBase}/api/StoreService/qry/${city}/dist`;
+                    const qryServiceUrl = `https://${this.pathBase}/api/StoreInfoService/qry/${city}/dist`;
                     if (this.cityVal != "default") {
                         await axios(qryServiceUrl)
                             .then(response => { this.distList = response.data })
@@ -190,14 +190,14 @@
             },
             created() {
                 //取得分店所有資料
-                axios('/api/StoreService/store')
+                axios('/api/StoreInfoService/store')
                     .then(response => {
                         this.allItem = response.data;
                         this.storeData = response.data
                     })
                     .catch(error => console.log(error));
                 //取得城市清單
-                axios('/api/StoreService/qry/city')
+                axios('/api/StoreInfoService/qry/city')
                     .then(response => { this.cityList = response.data})
                     .catch(error => console.log(error));
                 //取得json latlng資料
