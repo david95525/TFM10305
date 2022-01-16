@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewData["Title"] = "歷史訂單";
+}
+
+<fieldset id="ordersHistory">
+    <legend style="font-family: DFKai-SB;">@ViewData["Title"]</legend>
+    <div class="container">
+        <table class="table table-light table-hover">
+            <thead>
+                <tr style="background-color: antiquewhite; font-size: large; font-family: DFKai-SB;">
+                    <td>訂單編號</td>
+                    <td>訂購門市</td>
+                    <td>訂購日期</td>
+                    <td>明　　細</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in ordersData">
+                    <td>{{item.orderID}}</td>
+                    <td>{{item.storeName}}</td>
+                    <td>{{item.orderDate}}</td>
+                    <td><button class="btn btn-secondary" v-on:click="showOrderDetails($event,item.orderID)">查看明細</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!--顯示訂購明細 對話盒-->
+    <div class="modal fade" id="showOrderDetailsDialog" tabindex="-1" aria-labelledby="showOrderDetailsDialogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showOrderDetailsDialogLabel">訂單編號：</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-light table-hover">
+                            <thead>
+                                <tr style="background-color: antiquewhite; font-size: large; font-family: DFKai-SB;">
+                                    <td>訂購品項</td>
+                                    <td class="col-2">商品單價</td>
+                                    <td class="col-1">訂購數量</td>
+                                    <td class="col-2">小計</td>
+                                    <td class="col-4">備　　註</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5">{{orderNote}}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</fieldset>
+
+
+
+
+<script>
+    //初始化--載入時進行查詢 TODO
+    $(document).ready(
+        function () {            
+            let qryService = '/MemberOrdersService/memberOrdersQry';
+            $.ajax(
+                {
+                    url: qryService,
+                    type: 'GET'
+                }
+            ).done(function (result, status, xhr) {
+                app.ordersData = result;
+            }).fail();
+        }
+    );
+
+    var app = new Vue({
+        el: '#ordersHistory',
+        data: {
+            ordersData: [], //訂購紀錄資料模組            
+            orderDetailsData: [], //訂單明細資料模組
+            priceSum: 0,  //訂單總價
+            orderNote:'' //備註
+        },
+        methods: {
+            //查詢訂單明細
+            showOrderDetails: function (e, id) {
+                //查詢此筆訂單的訂單明細
+                $.ajax({
+                    url: '/MemberOrdersService/OrderDetailsQry/'+id,
+                    type: 'GET'
+                }
+                ).done(function (data, status, xhr) {
+                    app.cleanDialog();
+                    orderDetailsData = data;                    
+                    app.priceSum=0;
+                    $('#showOrderDetailsDialog h5').text('訂單編號：' + id);
+                    for (index = 0; index < orderDetailsData.length; index++)
+                    {
+                        $('#tableBody').append("<tr id='tr"+index+"'></tr>");
+                    }
+                    for (index = 0; index < orderDetailsData.length; index++)
+                    {
+                        $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].productName + "</td>");
+                        $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].unitPrice + "</td>");
+                        $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].quantity + "</td>");
+                        $('#tableBody').find('#tr' + index).append("<td >" + orderDetailsData[index].totalPrice + "</td>");
+                        $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].customization + "</td>");                       
+                        app.orderNote = orderDetailsData[0].note;
+                        app.priceSum = app.priceSum + orderDetailsData[index].totalPrice;
+                    }
+                    $('#tableBody').append('<tr id="totalprice"></tr>');
+                    $('#totalprice').append('<td colspan="3"></td>');
+                    $('#totalprice').append('<td colspan="2" class="ms-auto">總計：' + app.priceSum + "</td>");
+                    $('#showOrderDetailsDialog').modal('show');
+                }).fail();
+            },
+            //清除訂單明細對話盒內容
+            cleanDialog: function ()
+            {
+                $('#tableBody').text("");
+            }
+        }
+    });
+
+</script>
