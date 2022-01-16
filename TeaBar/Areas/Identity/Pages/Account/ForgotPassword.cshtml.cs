@@ -31,7 +31,7 @@ namespace TeaBar.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required(ErrorMessage ="Email欄位不能空白")]
+            //[Required(ErrorMessage ="Email欄位不能空白")]
             [EmailAddress(ErrorMessage = "請輸入正確Email格式")]
             public string Email { get; set; }
         }
@@ -60,7 +60,7 @@ namespace TeaBar.Areas.Identity.Pages.Account
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "重設密碼",
-                    $"請點選連結重設密碼 <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>密碼重設</a>.");
+                    $"請點選連結重設密碼 <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>密碼重設</a>。");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
