@@ -59,8 +59,9 @@
         </div>
         <div class="card-body">
             <div>
-                <div v-if="discount< 1 ">折扣: {{discount}}折</div>
-                <div v-if="!discount===1 ">折扣:無</div>
+                <div>折扣</div>           
+                <div class="col-1" v-if="discount!=1">{{discount}}折</div>
+                <div class="col-1" v-if="discount==1">無</div>
                 <div>總額: ${{total}}</div>
             </div>
         </div>
@@ -125,7 +126,14 @@
                                     app.total = app.total + app.cartsData[i].subtotal;
                                 }
                                 app.total = Math.round( app.total * app.cartsData[0].discount);
-                                app.discount = app.cartsData[0].discount * 10;
+                                app.discount = app.cartsData[0].discount;
+                                if (app.discount < 1) {
+                                    app.discount = app.discount * 100;
+                                    if (app.discount % 10 ===0 ) {
+                                        app.discount = app.discount / 10;
+                                    }
+                                }
+                             
                             }).fail(function (err) {
                             alert(err.responseText);
                             });

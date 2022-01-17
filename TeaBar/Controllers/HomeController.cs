@@ -26,6 +26,7 @@ namespace TeaBar.Controllers
 
         public IActionResult Privacy()
         {
+           
             return View();
         }
         [HttpGet]

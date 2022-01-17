@@ -104,25 +104,28 @@ namespace TeaBar.Controllers
         public List<CartViewModel> Readcart()
         #region 購物車資料讀取
         {
-
-            string username = User.Identity.Name;
-            #region 讀cookie
-            //if (HttpContext.Request.Cookies[username] != null)
-            //{
-            //    string jsonstring = HttpContext.Request.Cookies[username];             
-            //      List <CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
-            //    return data;
-            //}
-            #endregion
-            #region 讀session
-            if (HttpContext.Session.Keys.Contains(username))
-            {
-                string jsonstring = HttpContext.Session.GetString(username);
-                List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
-                return data;
+            if (HttpContext.Session.Keys.Contains("username"))
+            { string username = HttpContext.Session.GetString("username");
+                #region 讀session
+                if (HttpContext.Session.Keys.Contains(username))
+                {
+                    string jsonstring = HttpContext.Session.GetString(username);
+                    List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
+                    return data;
+                }
+                #endregion
             }
-            #endregion
-            return null;
+
+                #region 讀cookie
+                //if (HttpContext.Request.Cookies[username] != null)
+                //{
+                //    string jsonstring = HttpContext.Request.Cookies[username];             
+                //      List <CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
+                //    return data;
+                //}
+                #endregion
+
+                return null;
         }
         #endregion
         //寫入order資料庫
@@ -148,8 +151,10 @@ namespace TeaBar.Controllers
                     DeserializeObject<List<CartViewModel>>(Carts);
                 #endregion
                 #region 存入order表
+                //台北時間
+                DateTimeOffset taipeiTime = DateTimeOffset.Now.ToOffset(new TimeSpan(8, 0, 0));
                 //找出order屬性
-            
+
                 string userid = _db.Users.Where(s => s.UserName == username).
                     Select(s => s.Id).FirstOrDefault();
                 string storeid = HttpContext.Request.Cookies[username];
@@ -161,7 +166,7 @@ namespace TeaBar.Controllers
                     OrderID = orderid,
                     UserID = userid.ToString(),
                     DiscountID = discountid,
-                    OrderDate = DateTime.Now.ToString("yyyy/MM/dd_HH:mm"),
+                    OrderDate = taipeiTime.ToString(),
                 };
                 //嘗試存入資料庫
                 try
@@ -212,6 +217,7 @@ namespace TeaBar.Controllers
             return msg;
         }
         #endregion
+
 
     }
 }

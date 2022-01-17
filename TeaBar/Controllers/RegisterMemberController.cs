@@ -84,7 +84,7 @@ namespace TeaBar.Controllers
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = "https://localhost:44374/Identity/Account/ConfirmEmail?userId=" + userId + "&code=" + code;
+                    var callbackUrl = "https://teabar.azurewebsites.net/Identity/Account/ConfirmEmail?userId=" + userId + "&code=" + code;
                     await _emailSender.SendEmailAsync(
                         Input.Email,
                         "Email驗證",

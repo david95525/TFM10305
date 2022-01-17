@@ -6,6 +6,9 @@
 }
 <!-- #region css-->
 <style>
+    .right{
+        margin-left:10px;
+    }
     .pointer {
         cursor: pointer
     }
@@ -129,7 +132,7 @@
                 </div>
                 <div class="card-body">
                     <div>
-                        <div>
+                        <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" checked v-on:click="How(0)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
                             <label class="form-check-label"> 自取</label>
@@ -140,7 +143,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div>
+                        <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" v-on:click="How(1)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" checked v-on:click="How(1)">
                             <label class="form-check-label"> 外送</label>
@@ -238,9 +241,8 @@
                         <label>訂單滙總</label>
                     </div>
                     <div class="card-body">
-                        <div class="col-1" v-if="orderData[0].discount*100%10==0">{{orderData[0].discount*10}}折</div>
-                        <div class="col-1" v-if="orderData[0].discount*100%10==5">{{orderData[0].discount*100}}折</div>
-                        <div class="col-1" v-if="orderData[0].discount==1">原價</div>
+                        <div class="col-1" v-if="discount!=1">{{discount}}折</div>                     
+                        <div class="col-1" v-if="discount==1">原價</div>
                         <div class="col-1">總金額  ${{total}}</div>
 
                     </div>
@@ -284,12 +286,12 @@
                     <label>開立發票</label>
                 </div>
                 <div class="card-body">
-                    <div>
+                    <div class="right">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('paper')" v-if="isPaper" checked>
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('paper')" v-if="!isPaper">
                         <label class="form-check-label"> 紙本發票</label>
                     </div>
-                    <div>
+                    <div class="right">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="!isCellphone">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="isCellphone" checked>
                         <label class="form-check-label"> 手機載具</label>
@@ -297,7 +299,7 @@
                             <input type="text" class="form-control" placeholder="首位為/ 字母為大寫" v-model:value="shipData.phonereceipt">
                         </div>
                     </div>
-                    <div>
+                    <div class="right"> 
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="!isDonate">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="isDonate" checked>
                         <label class="form-check-label"> 愛心捐贈</label>
@@ -480,7 +482,8 @@
             temp: [],     //暫存
             order: {}, //單一訂單內容
             countyData: [],//縣市資料
-            districtData:[],//區域資料
+            districtData: [],//區域資料
+            discount:0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
             icelist: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
             inglist: ["珍珠", "布丁", "仙草凍", "芋圓","無"],
@@ -534,6 +537,13 @@
                             app.total = app.total + app.orderData[i].subtotal;
                         }
                         app.total = Math.round(app.total * app.orderData[0].discount);
+                        app.discount = app.orderData[0].discount;
+                        if (app.discount < 1) {
+                            app.discount = app.discount * 100;
+                            if (app.discount % 10 === 0) {
+                                app.discount = app.discount / 10;
+                            }
+                        }
                     }
                 })
              .fail(function (err) {

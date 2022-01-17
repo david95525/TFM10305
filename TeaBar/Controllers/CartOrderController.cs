@@ -22,23 +22,23 @@ namespace TeaBar.Controllers
         }
         public IActionResult ShoppingCart()
         {
-            if(User.Identity.Name==null)
+            if (User.Identity.Name == null)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             //模擬購物車加入商品
-            int product1id = 16;
-            int product2id = 17;
-            int product3id = 19;;
+            int product1id = 2;
+            int product2id = 3;
+            int product3id = 4;
             Random discountrandom = new Random();
             int discountid = discountrandom.Next(1, 11);
             string userName = User.Identity.Name;//當前identity中使用者名稱
             Products product1 = _db.Products.FirstOrDefault(p => p.ProductID == product1id);
-            Products product2= _db.Products.FirstOrDefault(p => p.ProductID == product2id);
+            Products product2 = _db.Products.FirstOrDefault(p => p.ProductID == product2id);
             Products product3 = _db.Products.FirstOrDefault(p => p.ProductID == product3id);
             Discount discount = _db.Discount.FirstOrDefault(d => d.DiscountID == discountid);
-            Categories categories = _db.Categories.FirstOrDefault(c => c.CategoryID == product1.CategoryID);
-            Stores store = _db.Stores.FirstOrDefault(s => s.StoreID == categories.StoreID);
+            Categories categorie1 = _db.Categories.FirstOrDefault(c => c.CategoryID == product1.CategoryID);
+            Stores store = _db.Stores.FirstOrDefault(s => s.StoreID == categorie1.StoreID);
             //存入session
             List<CartViewModel> Carts = new List<CartViewModel>
             {
@@ -91,18 +91,16 @@ namespace TeaBar.Controllers
                    Picture=product3.Picture,
                    Note="無",
                    Size="中",
-                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
+                   StoreID=store.StoreID
                }
            };
-           
-            string  jsonstring=  Newtonsoft.Json.JsonConvert.SerializeObject(Carts);
-            //存入session
+
+            string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(Carts);
+            //存入sessions
             HttpContext.Session.SetString(userName, jsonstring);
+            HttpContext.Session.SetString("username", userName);
             return View();
             //模擬前面存入cookie
-            //CookieOptions option = new CookieOptions();
-            //option.Expires = DateTime.Now.AddDays(5);
-            //HttpContext.Response.Cookies.Append(Resources.cartcookie,jsonstring, option);
         }
  
 
