@@ -72,47 +72,46 @@ namespace TeaBar.Controllers.APIs
             //取出分店所有資料
             List<Stores> StoreData = _dbcontext.Stores
                 .Select(s => s).ToList();
-            //傳到google geocoding api取得經緯度位置
 
-            foreach (var items in StoreData)
+
+            foreach (var item in StoreData)
             {
                 //取出分店地址清單
-                var StoreAddress = StoreData
-                        .Select(s => $"{s.StoreCity}{s.StoreDistrict}{s.StoreAddress}").ToList();
+                var StoreAddress = $"{item.StoreCity}{item.StoreDistrict}{item.StoreAddress}";
+                //.Select(s => $"{s.StoreCity}{s.StoreDistrict}{s.StoreAddress}").ToList();
                 //建立viewmodel物件
                 StoreViewModel vm = new StoreViewModel() { };
                 //將資料存進vm
-                vm.StoreID = items.StoreID;
-                vm.StoreName = items.StoreName;
-                vm.StorePhone = items.StorePhone;
-                vm.StoreCity = items.StoreCity;
-                vm.StoreDistrict = items.StoreDistrict;
+                vm.StoreID = item.StoreID;
+                vm.StoreName = item.StoreName;
+                vm.StorePhone = item.StorePhone;
+                vm.StoreCity = item.StoreCity;
+                vm.StoreDistrict = item.StoreDistrict;
                 vm.StorePicture = "/images/map/store";
-                vm.StoreAddress = StoreAddress[0];
+                vm.StoreAddress = StoreAddress;
 
-                foreach (string item in StoreAddress)
+                //傳到google geocoding api取得經緯度位置
+                String url = $"https://maps.googleapis.com/maps/api/geocode/json?address={StoreAddress}&language=zh-TW&key=AIzaSyBayPidrH0yQql4BzYCXr7SIs08AEEcMgU";
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                HttpClient client = _factory.CreateClient();
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
                 {
-                    String url = $"https://maps.googleapis.com/maps/api/geocode/json?address={item}&language=zh-TW&key=AIzaSyBayPidrH0yQql4BzYCXr7SIs08AEEcMgU";
-                    var request = new HttpRequestMessage(HttpMethod.Get, url);
-                    HttpClient client = _factory.CreateClient();
-                    HttpResponseMessage response = await client.SendAsync(request);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        Geomery geoData = new Geomery(); //new Geomery物件
-                        var result = await response.Content.ReadAsStringAsync();
-                        //把回傳的json資料反序列化為物件
-                        geoData = Newtonsoft.Json.JsonConvert.DeserializeObject<Geomery>(result);
-                        //Geomery物件裡的經緯度存進vm
-                        vm.Lat = geoData.results[0].geometry.location.lat;
-                        vm.Lng = geoData.results[0].geometry.location.lng;
-                    }
-                    else
-                    {
-                        return string.Empty;
-                    }
-                    //把vm物件存到list
-                    vmList.Add(vm);
+                    Geomery geoData = new Geomery(); //new Geomery物件
+                    var result = await response.Content.ReadAsStringAsync();
+                    //把回傳的json資料反序列化為物件
+                    geoData = Newtonsoft.Json.JsonConvert.DeserializeObject<Geomery>(result);
+                    //Geomery物件裡的經緯度存進vm
+                    vm.Lat = geoData.results[0].geometry.location.lat;
+                    vm.Lng = geoData.results[0].geometry.location.lng;
                 }
+                else
+                {
+                    return string.Empty;
+                }
+                //把vm物件存到list
+                vmList.Add(vm);
+
             }
             //vmList序列化為json
             String jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(vmList);

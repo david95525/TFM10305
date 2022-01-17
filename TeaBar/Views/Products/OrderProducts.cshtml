@@ -7,8 +7,7 @@
 
 
 <div id="orderProducts">
-    <!-- 購物成功的 icon -->
-    <!--點餐畫面-->
+    <!--點餐畫面modal-->
     <div class="modal" tabindex="-1" id="productModal">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
@@ -93,6 +92,41 @@
             </div>
         </div>
     </div>
+    <!--修改分店modal-->
+    <div class="modal" tabindex="-1" id="selectStoreModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">選擇分店</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!--todo下拉選單-->
+                    <div id="selectStore" class="input-group">
+                        <!--選擇縣市-->
+                        <select v-model="cityVal" class="form-select" @@change="qryCity(city)">
+                            <option value="default">選擇縣市</option>
+                            <option :value="city" v-for="city in cityList">{{city}}</option>
+                        </select>
+                        <!--選擇地區-->
+                        <select v-model="distVal" class="form-select" @@change="qryDist(dist)">
+                            <option value="default">選擇地區</option>
+                            <option :value="dist" v-for="city in distList">{{dist}}</option>
+                        </select>
+                        <!--選擇分店-->
+                        <select v-model="storeVal" class="form-select" @@change="">
+                            <option value="default">選擇分店</option>
+                            <option :value="store.storeID" v-for="store in storeList">{{store}}</option>
+                        </select>
+                    </div>
+                    <!--確認分店-->
+                    <button type="button" @@click="checkStore(storeVal)" class="btn btn-outline-dark">確認</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container d-flex flex-row ">
         <!--產品列表-->
         <div id="productList" class="w-75 text-center">
@@ -124,41 +158,16 @@
         <div class=" w-25 p-3" id="orderInfo">
             <div class="border border-2 rounded border-warning p-3">
                 <!--顯示訂購分店名稱-->
-                <div>
-                    <!--從cookie帶入選擇的門市名稱-->
-                    <div v-if="hasCookie" class="mb-3">
-                        <div class="d-flex flex-row align-items-end justify-content-between mb-1">
-                            <p class="fs-6">訂購門市:</p>
-                            <!--todo更改分店-->
-                            <button @@="changeStore" class="btn btn-outline-dark btn-sm">修改</button>
-                        </div>
-                        <p class="fs-5 fw-bold">{{orderStoreData.StoreName}}</p>
-                        <p>{{orderStoreData.StoreAddress}}</p>
-                        <hr />
+                <!--從cookie帶入選擇的門市名稱-->
+                <div v-if="hasCookie" class="mb-3">
+                    <div class="d-flex flex-row align-items-end justify-content-between mb-1">
+                        <p class="fs-6">訂購門市:</p>
+                        <!--todo更改分店-->
+                        <button data-bs-target="#selectStoreModal" data-bs-toggle="modal" @@="changeStore" class="btn btn-outline-dark btn-sm">修改</button>
                     </div>
-                    <!--todo點擊修改動態加入 下拉選單和確認btn-->
-                    <div v-if="isEdit">
-                        <!--todo下拉選單-->
-                        <div id="selectStore" class="input-group">
-                            <!--選擇縣市-->
-                            <select v-model="cityVal" class="form-select" @@change="qryCity(city)">
-                                <option value="default">選擇縣市</option>
-                                <option :value="city" v-for="city in cityList">{{city}}</option>
-                            </select>
-                            <!--選擇地區-->
-                            <select v-model="distVal" class="form-select" @@change="qryDist(dist)">
-                                <option value="default">選擇地區</option>
-                                <option :value="dist" v-for="city in distList">{{dist}}</option>
-                            </select>
-                            <!--選擇分店-->
-                            <select v-model="storeVal" class="form-select" @@change="">
-                                <option value="default">選擇分店</option>
-                                <option :value="store.storeID" v-for="store in storeList">{{store}}</option>
-                            </select>
-                        </div>
-                        <!--確認分店-->
-                        <button type="button" @@click="checkStore(storeVal)">確認</button>
-                    </div>
+                    <p class="fs-5 fw-bold">{{orderStoreData[0].StoreName}}</p>
+                    <p>{{orderStoreData[0].StoreAddress}}</p>
+                    <hr />
                 </div>
                 <!--判斷訂購當下時間-->
                 <div>
@@ -180,13 +189,13 @@
 
 <script>
 
-
+    
     var app = new Vue({
         el: "#orderProducts",
         data: {
             productsCategory: [], //全部產品分類
             productsData: [], //全部商品資料
-            allIStoreData: [],
+            allStoreData: [],
             categorySelect: "all", //預設選取全部商品
             pickUpTime: "", //取餐時間
             modalData: {
@@ -277,24 +286,24 @@
                 let cookie = document.cookie = `storeId=${id}; expires;`;
             },
             //變更城市下拉選單
-            qryCity: async function (city) {
+            qryCity: function (city) {
                 if (this.cityVal == "default") {
                     this.distVal = "default"; //區域選單變回預設
                     this.cityVal = "default"; //門市選單變回預設
                 } else {
                     const qryServiceUrl = `/api/StoreService/${city}/dist`;
-                    await axios(qryServiceUrl)
+                    axios(qryServiceUrl)
                         .then(response => { this.distList = response.data })
                         .catch(error => console.log(error));
                 }
             },
             //變更區域下拉選單
-            qryDist: async function (dist) {
+            qryDist:  function (dist) {
                 if (this.distVal == "default") {
                     this.cityVal = "default"; //門市選單變回預設
                 } else {
                     const qryServiceUrl = `/api/StoreService/${dist}/store`;
-                    await axios(qryServiceUrl)
+                    axios(qryServiceUrl)
                         .then(response => { this.storeList = response.data })
                         .catch(error => console.log(error));
                 }
@@ -319,7 +328,6 @@
                 //todo驗證資料內容
                 //準備json格式
                 let data = JSON.stringify(this.orderDetail);
-                console.log(data);
                 axios({
                     method: "POST",
                     url: "/api/OrderProductsService/orderDetail",
@@ -331,14 +339,32 @@
                     }
                 }).catch(error => console.log(error));
             },
+            //取得選擇分店資訊
+            getStoreData() {
+                //判斷是否有cookie
+                if (document.cookie.indexOf("storeId") != -1) {
+                    //取出cookie的值
+                    let id = this.getCookieByName("storeId");
+                    if (id != "default" && id != "") {
+                        //透過id來篩選分店資訊
+                        this.orderStoreData=this.allStoreData.filter(i => i.StoreID == id);
+                        this.hasCookie = true;
+                    } else {
+                        this.hasCookie = false;
+                        $("#selectStoreModal").modal('show');
+                    }
 
-
+                } else {
+                    //todo modal show
+                    $("#selectStoreModal").modal('show');
+                }
+            },
 
 
 
 
         },
-        created() {
+        async created() {
             //取得所有商品資料
             axios('/api/ProductsService/Products')
                 .then(response => { this.productsData = response.data })
@@ -347,18 +373,23 @@
             axios('/api/ProductsService/Category')
                 .then(response => { this.productsCategory = response.data })
                 .catch(error => console.log(error));
-            //取得所有分店資料
-            axios('/api/StoreService/store')
-                .then(response => {
-                    this.allIStoreData = JSON.parse(response.data);
-                })
-                .catch(error => console.log(error));
+
             //取得城市清單
             axios('/api/StoreService/city')
                 .then(response => { this.cityList = response.data })
                 .catch(error => console.log(error));
 
 
+            //取得所有分店資料
+            await axios('/api/StoreService/store')
+                .then(response => {
+                    this.allStoreData = JSON.parse(response.data);
+                    this.getStoreData();
+
+                })
+                .catch(error => console.log(error));
+            
+            
 
 
         },
@@ -391,6 +422,8 @@
                 this.orderDetail.Subtotal = IngredientPrice + teaPrice;
                 return this.orderDetail.Subtotal;
             },
+            
+            
 
 
 
@@ -426,28 +459,7 @@
             }
 
 
-            //取得訂購分店資訊
-
-            //判斷是否有cookie
-            if (document.cookie.indexOf("storeid") != -1) {
-                //取出cookie的值
-                let id = this.getCookieByName("storeid");
-                //透過id來篩選分店資訊
-                let data = this.allIStoreData.filter(i => i.StoreID == id);
-                this.orderStoreData = data;
-                this.hasCookie = true;
-            } else {
-                this.isEdit = true;
-            }
-
-
-
-
-
-
-
         },
-
 
     })
 
