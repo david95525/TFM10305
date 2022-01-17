@@ -37,7 +37,7 @@ namespace TeaBar.Controllers.APIs
             }
             catch (InvalidCastException e)
             {
-
+                Console.WriteLine(e);
             }
             return Ok();
         }

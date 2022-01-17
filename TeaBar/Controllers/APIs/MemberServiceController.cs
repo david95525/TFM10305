@@ -85,6 +85,7 @@ namespace TeaBar.Controllers.APIs
                 }
                 catch (DbUpdateException ex)
                 {
+                    Console.WriteLine(ex);
                     msg = "資料更新失敗...";
                 }
             }

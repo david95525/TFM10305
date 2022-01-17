@@ -18,7 +18,7 @@ namespace TeaBar.EmailService
             MySmtp.EnableSsl = true;
             MailMessage mail = new MailMessage();
             mail.IsBodyHtml = true;
-            mail.From = new MailAddress("teabarwu@gmail.com", "TeaBarEmai");
+            mail.From = new MailAddress("teabarwu@gmail.com", "TeaBarEmail");
             mail.To.Add(email);
             mail.Priority = MailPriority.Normal;
             mail.Subject = subject;

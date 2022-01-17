@@ -28,13 +28,13 @@ namespace TeaBar.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required(ErrorMessage ="Email欄位不能空白")]
+            //[Required(ErrorMessage ="Email欄位不能空白")]
             [EmailAddress]
             public string Email { get; set; }
             [Display(Name = "密碼")]
-            [Required(ErrorMessage = "密碼欄位不能空白")]
+            //[Required(ErrorMessage = "密碼欄位不能空白")]
 
-            [StringLength(100, ErrorMessage = " {0}必須介於{2}到{1}個字元", MinimumLength = 6)]
+            [StringLength(30, ErrorMessage = " {0}必須介於{2}到{1}個字元", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 

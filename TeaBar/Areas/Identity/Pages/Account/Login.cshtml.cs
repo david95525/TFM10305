@@ -38,16 +38,16 @@ namespace TeaBar.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
-        [TempData]
-        public string ErrorMessage { get; set; }
+        //[TempData]
+        //public string ErrorMessage { get; set; }
 
         public class InputModel
         {
-            [Required(ErrorMessage ="Email欄位不能空白")]
+            //[Required(ErrorMessage = "Email欄位不能空白")]
             [EmailAddress(ErrorMessage ="請輸入正確Email格式")]
             public string Email { get; set; }
 
-            [Required(ErrorMessage ="密碼欄位不能空白")]
+            //[Required(ErrorMessage = "密碼欄位不能空白")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -57,10 +57,10 @@ namespace TeaBar.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!string.IsNullOrEmpty(ErrorMessage))
-            {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
-            }
+            //if (!string.IsNullOrEmpty(ErrorMessage))
+            //{
+            //    ModelState.AddModelError(string.Empty, ErrorMessage);
+            //}
 
             returnUrl ??= Url.Content("~/");
 
@@ -99,7 +99,7 @@ namespace TeaBar.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "請輸入正確Email及密碼");
                     return Page();
                 }
             }
