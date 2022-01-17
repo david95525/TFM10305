@@ -6,31 +6,23 @@
 @*綁vue*@
 <div id="productsIntro">
     <!--product modal-->
-    <div class="modal" tabindex="-1" id="productModal">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal fade" tabindex="-1" id="productModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">茶飲介紹-{{modalData.name}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <img :src="modalData.imgUrl" :alt="modalData.name" style="width:100vh;" />
-                        </div>
-                        <div class="row">
-                            <h4 class="align-middle">{{modalData.name}}</h4>
-                        </div>
-                        <div class="row">
-                            <p class="">{{modalData.description}}</p>
-                        </div>
-                    </div>
+                <div class="modal-body text-center">
+                    <img :src="modalData.imgUrl" :alt="modalData.name" style="width:50vw;" class="img-fluid mb-3" />
+                    <h4 class="align-middle">{{modalData.name}}</h4>
+                    <p class="">{{modalData.description}}</p>
                 </div>
             </div>
         </div>
     </div>
     <!--menu modal-->
-    <div class="modal" tabindex="-1" id="nemuModal">
+    <div class="modal fade" tabindex="-1" id="menuModal">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -38,7 +30,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <img :src="imgUrl" alt="" style="width: 100vh; height: 100%; margin: auto;" class="img-fluid" />
+                    <img :src="imgUrl" alt="" class="img-fluid" />
                 </div>
             </div>
         </div>
@@ -81,24 +73,26 @@
             <option value="" selected>選擇區域價目表</option>
             <option :value="dist.item" v-for="dist in district">{{dist.item}}</option>
         </select>
-        <button class="btn btn-outline-dark" @@click="showMenu" data-bs-target="#nemuModal"> <i class="fas fa-search"></i> </button>
+        <button class="btn btn-dark" @@click="showMenu" data-bs-target="#menuModal"> <i class="fas fa-search"></i> </button>
     </div>
     <!--分類-->
     <div>
         <div id="category">
             <span>
-                <label class="btn btn-outline-dark btnCategory"><input type="radio" name="category" value="all" v-model="categorySelect" style="display: none;" />全部商品</label>
+                <label class="btn btn-outline-dark btnCategory rounded-pill"><input type="radio" name="category" value="all" v-model="categorySelect" style="display: none;" />全部商品</label>
             </span>
             <span v-for="c in productsCategory">
-                <label class="btn btn-outline-dark btnCategory"><input type="radio" name="category" :value="c.categoryId" v-model="categorySelect" style="display: none;" />{{c.categoryName}}</label>
+                <label class="btn btn-outline-dark btnCategory rounded-pill"><input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" style="display: none;" />{{c.categoryName}}</label>
             </span>
         </div>
         <!--商品清單card-->
-        <div class="row show_product">
+        <div class="row">
             <div class="col-md-3" v-for="item in showProduct">
-                <div class="card">
-                    <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="modalProduct(item.productId)" class="productImg img-fluid shadow p-3 mb-5 bg-body rounded" />
-                    <h5 class="card-title">{{item.productName}}</h5>
+                <div class="card shadow-sm">
+                    <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="modalProduct(item.productID)" class="productImg img-fluid card-img-top rounded" />
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{item.productName}}</h5>
+                    </div>
                 </div>
             </div>
         </div>
@@ -131,16 +125,17 @@
 
             },
             methods: {
+                //點擊顯示菜單
                 showMenu: function () {
                     switch (this.distVal) {
                         case this.district[0].item:
-                            this.imgUrl = "@Url.Content("~/images/menu/menu1.jpg")";
+                            this.imgUrl = "/images/menu/menu1.jpg";
                             break;
                         case this.district[1].item:
-                            this.imgUrl = "@Url.Content("~/images/menu/menu2.jpg")";
+                            this.imgUrl = "/images/menu/menu2.jpg";
                             break;
                         case this.district[2].item:
-                            this.imgUrl = "@Url.Content("~/images/menu/menu3.jpg")";
+                            this.imgUrl = "/images/menu/menu3.jpg";
                             break;
                         default:
                             this.imgUrl = "";
@@ -148,14 +143,14 @@
                     }
                     this.isQuery = true;
                     if (this.distVal != "") {
-                        $("#nemuModal").modal('show');
+                        $("#menuModal").modal('show');
                     }
                 },
                 changeItem: function () {
                     this.isQuery = false;
                 },
                 modalProduct: function (id) {
-                    const modalProduct = this.productsData.filter(x => x.productId == id);//只挑我點的那個商品
+                    const modalProduct = this.productsData.filter(x => x.productID == id);//只挑我點的那個商品
                     this.modalData.description = modalProduct[0].description;//商品描述
                     this.modalData.imgUrl = modalProduct[0].picture;//商品圖片
                     this.modalData.name = modalProduct[0].productName;//商品名稱
@@ -164,22 +159,23 @@
             computed: {
                 showProduct: function () {
                     const arr = { item: [] };
-                    if (this.categorySelect=="all"){
+                    if (this.categorySelect == "all") {
                         //預設選全部商品
                         arr.item = this.productsData;
-                    }else {
+                    } else {
                         //有篩選
-                        arr.item = this.productsData.filter(element => this.categorySelect.indexOf(element.categoryId) != -1)
+                        arr.item = this.productsData.filter(element => element.categoryID == this.categorySelect)
                     }
                     return arr.item;
                 },
 
             },
             created: async function () {
+                //取得所有產品資料
                 await axios.get('/api/ProductsService/Products')
                     .then(response => { this.productsData = response.data })
                     .catch(error => console.log(error));
-
+                //取得所有分類
                 await axios.get('/api/ProductsService/Category')
                     .then(response => { this.productsCategory = response.data })
                     .catch(error => console.log(error));

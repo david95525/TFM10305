@@ -189,7 +189,7 @@
 
 <script>
 
-    
+
     var app = new Vue({
         el: "#orderProducts",
         data: {
@@ -298,7 +298,7 @@
                 }
             },
             //變更區域下拉選單
-            qryDist:  function (dist) {
+            qryDist: function (dist) {
                 if (this.distVal == "default") {
                     this.cityVal = "default"; //門市選單變回預設
                 } else {
@@ -347,7 +347,7 @@
                     let id = this.getCookieByName("storeId");
                     if (id != "default" && id != "") {
                         //透過id來篩選分店資訊
-                        this.orderStoreData=this.allStoreData.filter(i => i.StoreID == id);
+                        this.orderStoreData = this.allStoreData.filter(i => i.StoreID == id);
                         this.hasCookie = true;
                     } else {
                         this.hasCookie = false;
@@ -375,7 +375,7 @@
                 .catch(error => console.log(error));
 
             //取得城市清單
-            axios('/api/StoreService/city')
+            await axios('/api/StoreService/city')
                 .then(response => { this.cityList = response.data })
                 .catch(error => console.log(error));
 
@@ -388,8 +388,8 @@
 
                 })
                 .catch(error => console.log(error));
-            
-            
+
+
 
 
         },
@@ -422,8 +422,8 @@
                 this.orderDetail.Subtotal = IngredientPrice + teaPrice;
                 return this.orderDetail.Subtotal;
             },
-            
-            
+
+
 
 
 
