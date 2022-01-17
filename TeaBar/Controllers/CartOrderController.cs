@@ -27,9 +27,9 @@ namespace TeaBar.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
             //模擬購物車加入商品
-            int product1id = 1;
-            int product2id = 2;
-            int product3id = 3;
+            int product1id = 16;
+            int product2id = 17;
+            int product3id = 19;;
             Random discountrandom = new Random();
             int discountid = discountrandom.Next(1, 11);
             string userName = User.Identity.Name;//當前identity中使用者名稱
@@ -37,7 +37,8 @@ namespace TeaBar.Controllers
             Products product2= _db.Products.FirstOrDefault(p => p.ProductID == product2id);
             Products product3 = _db.Products.FirstOrDefault(p => p.ProductID == product3id);
             Discount discount = _db.Discount.FirstOrDefault(d => d.DiscountID == discountid);
-           
+            Categories categories = _db.Categories.FirstOrDefault(c => c.CategoryID == product1.CategoryID);
+            Stores store = _db.Stores.FirstOrDefault(s => s.StoreID == categories.StoreID);
             //存入session
             List<CartViewModel> Carts = new List<CartViewModel>
             {
@@ -56,7 +57,7 @@ namespace TeaBar.Controllers
                    Picture=product1.Picture,
                    Note="無",
                    Size="大",
-                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
+                   StoreID=store.StoreID
                },
                new CartViewModel()
                {
@@ -73,7 +74,7 @@ namespace TeaBar.Controllers
                    Picture=product2.Picture,
                    Note="無",
                    Size="中",
-                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
+                   StoreID=store.StoreID
                },
                              new CartViewModel()
                {
