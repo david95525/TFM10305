@@ -31,7 +31,7 @@ namespace TeaBar.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Email欄位不能空白")]
+            //[Required(ErrorMessage = "Email欄位不能空白")]
             [EmailAddress(ErrorMessage = "請輸入正確Email格式")]
             public string Email { get; set; }
         }
@@ -50,7 +50,7 @@ namespace TeaBar.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+                ModelState.AddModelError(string.Empty, "確認信已發送，請至您的信箱確認。");
                 return Page();
             }
 
@@ -65,7 +65,7 @@ namespace TeaBar.Areas.Identity.Pages.Account
             await _emailSender.SendEmailAsync(
                 Input.Email,
                 "Email驗證",
-                $"請點選此連結開通帳號 <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>開通連結</a>.");
+                $"請點選此連結開通帳號 <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>開通連結</a>。");
 
             ModelState.AddModelError(string.Empty, "確認信已發送，請至您的信箱確認。");
             return Page();
