@@ -14,77 +14,82 @@
     }
 </style>
 
-<fieldset id="ShoppingCart">
-    <h1>購物車</h1>
-    <div>
-        <h2>{{name}}</h2>
-    </div>
-    <div v-if="isShow">
-        <h4>{{store.storeCity}} {{store.storeName}} </h4>
-    </div>
-    <div class="font-italic text-danger" style="font-size:24px;"></div>
-    <table class="table">
-        <thead>
-            <tr>
-                <td></td>
-                <td>商品名稱</td>
-                <td>數量</td>
-                <td>其他加價</td>
-                <td>細項總額</td>
-                <td>詳細</td>
-            </tr>
-        </thead>
-        <tbody v-if="isShow">
-            <tr v-for="pd in cartsData">
-                <td>
-                    <img v-bind:src="pd.picture" id="productpic" />
-                </td>
-                <td>{{pd.productName}}</td>
-                <td>{{pd.quantity}}</td>
-                <td v-if="pd.isIngredient">{{pd.ingredient}}+10元</td>
-                <td v-if="!pd.isIngredient">無</td>
-                <td>{{pd.subtotal}}</td>
-                <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
-                <td>
-                    <div v-on:click="Todelete(pd.productId)">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+<fieldset id="ShoppingCart" >
+    <div v-if="isExist">
+        <h1>購物車</h1>
+        <div>
+            <h2>{{name}}</h2>
+        </div>
+        <div v-if="isShow">
+            <h4>{{store.storeCity}} {{store.storeName}} </h4>
+        </div>
+        <div class="font-italic text-danger" style="font-size:24px;"></div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td>商品名稱</td>
+                    <td>數量</td>
+                    <td>其他加價</td>
+                    <td>細項總額</td>
+                    <td>詳細</td>
+                </tr>
+            </thead>
+            <tbody v-if="isShow">
+                <tr v-for="pd in cartsData">
+                    <td>
+                        <img v-bind:src="pd.picture" id="productpic" />
+                    </td>
+                    <td>{{pd.productName}}</td>
+                    <td>{{pd.quantity}}</td>
+                    <td v-if="pd.isIngredient">{{pd.ingredient}}+10元</td>
+                    <td v-if="!pd.isIngredient">無</td>
+                    <td>{{pd.subtotal}}</td>
+                    <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
+                    <td>
+                        <div v-on:click="Todelete(pd.productId)">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="card" v-if="isShow">
+            <div class="card-header">
+                <label>小總計</label>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div>折扣</div>
+                    <div class="col-1" v-if="discount!=1">{{discount}}折</div>
+                    <div class="col-1" v-if="discount==1">無</div>
+                    <div>總額: ${{total}}</div>
+                </div>
+            </div>
+        </div>
+        <!--#region 刪除資料確認對話盒-->
+        <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true" title="刪除客戶資料">
+            <div class="modal-dialog modal-fullscreen-lg-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="card" v-if="isShow">
-        <div class="card-header">
-            <label>小總計</label>
-        </div>
-        <div class="card-body">
-            <div>
-                <div>折扣</div>           
-                <div class="col-1" v-if="discount!=1">{{discount}}折</div>
-                <div class="col-1" v-if="discount==1">無</div>
-                <div>總額: ${{total}}</div>
-            </div>
-        </div>
-    </div>
-    <!--#region 刪除資料確認對話盒-->
-    <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true" title="刪除客戶資料">
-        <div class="modal-dialog modal-fullscreen-lg-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    確認刪除{{cart.productName}} ?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" v-on:click="deleteItem" data-bs-dismiss="modal">是</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
+                    <div class="modal-body">
+                        確認刪除{{cart.productName}} ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" v-on:click="deleteItem" data-bs-dismiss="modal">是</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
+                    </div>
                 </div>
             </div>
         </div>
+        <!--#endregion -->
+        <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
     </div>
-    <!--#endregion -->
-    <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
+   <div v-if="!isExist">
+       <h1>購物車沒有東西</h1>
+   </div>
 </fieldset>
 <script>
     var app = new Vue(
@@ -100,7 +105,8 @@
                     name:"",
                     isEdit: false,
                     isShow: false,
-                    isIN: false
+                    isIN: false,
+                    isExist:false
                 },
             //獲取購物車資料
             mounted: function () {
@@ -110,12 +116,14 @@
                             type: 'GET'
                         }).done(
                             function(result, status, xhr) {
-                                app.cartsData = result;
-                                if (app.cartsData.length == 0) {
+                                
+                                if (result == null) {
                                     alert("沒有商家");
                                 }
                                 else {
-                                    app.name = app.cartsData[0].userID;}
+                                    app.cartsData = result;
+                                    app.isExist = true;
+                                    app.name = app.cartsData[0].userID;
                                 for (let i = 0; i < app.cartsData.length; i++) {
                                     app.cartsData[i].subtotal = app.cartsData[i].unitPrice *app.cartsData[i].quantity ;
                                     if (app.cartsData[i].ingredient === "布丁" || app.cartsData[i].ingredient === "仙草凍"
@@ -133,7 +141,8 @@
                                         app.discount = app.discount / 10;
                                     }
                                 }
-                             
+                                    
+                                }
                             }).fail(function (err) {
                             alert(err.responseText);
                             });
@@ -171,7 +180,8 @@
                                     data: JSON.stringify(app.cartsData),
                                 }).done(function (data, status, xhr) {
                                     if (app.cartsData.length <1) {
-                                        app.isShow= false;
+                                        app.isShow = false;
+                                        app.isExist = false;
                                     }
 
                                 }).fail(function (err) {
