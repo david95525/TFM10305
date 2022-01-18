@@ -34,13 +34,11 @@
             </div>
             <!--門市清單-->
             <div id="storeList">
-                <!--下拉選單產生清單-->
                 <ul style="list-style-type:none" class="list-group">
-                    <li class="list-group-item" :value="list.storeID" v-for="list in storeList">
+                    <li class="list-group-item" :value="list.StoreID" v-for="list in storeList" @@click="changeMap(list.StoreID)">
                         <label>{{list.StoreName}}</label>
                         {{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}} |
                         {{list.StorePhone}}
-                        <!--/Products/OrderProducts-->
                         <button type="button" class="btn btn-outline-dark" @@click="selectStore(list.StoreID)">前往訂餐</button>
                     </li>
                 </ul>
@@ -50,13 +48,7 @@
 </div>
 
 <script>
-    let currentInfoWindow = "";
-    //點li改變map latlng
-    //$(function () {
-    //    $("body").on("click", "li", function (e) {
-    //        app.changeMap(e);
-    //    });
-    //})
+
     var app = new Vue(
         {
             el: '#StoreInfo',
@@ -70,11 +62,9 @@
                 keyWord: "", //搜尋內容
                 googleMap: {
                     map: "",
-                    lat: 0,
+                    lat: 0, //中心座標
                     lng: 0,
-                    markerData: [], //google map marker
-                    marker: [],
-                    infoWindow: [],
+                    currentInfoWindow: "",
                 },
 
 
@@ -131,89 +121,47 @@
 
                     [].forEach.call(this.allStoreData, data => {
                         //放置多個marker
-                        this.googleMap.markerData = new google.maps.LatLng(data.Lat, data.Lng);
-                        this.googleMap.marker = new google.maps.Marker({
-                            position: this.googleMap.markerData,
+                        let letLng = new google.maps.LatLng(data.Lat, data.Lng);
+                        let marker = new google.maps.Marker({
+                            position: letLng,
                             icon: "/images/map/mapicon.png",
                             map: this.googleMap.map,
                             title: data.StoreName
                         });
                         //資訊視窗
-                        this.googleMap.infoWindow = new google.maps.InfoWindow({
+                        let infoWindow = new google.maps.InfoWindow({
                             content: `<h5>${data.StoreName}</h5>
-                                        <p>地址:${data.StoreAddress}</p>
-                                        <a href="#" class="btn btn-outline-dark btn-sm" @@click="selectStore(${data.StoreID})">前往訂餐</a>`,
+                                        <img src="/images/map/store.jpg" class="img-fluid img-thumbnail imageSize"/>
+                                        <p class="fs-6">地址:${data.StoreAddress}</p>
+                                        <a href="#" class="btn btn-outline-dark" @@click="selectStore(${data.StoreID})">前往訂餐</a>`,
                             maxWidth: 300,
+                        });
+                        //marker綁定click事件
+                        google.maps.event.addListener(marker, "click", () => {
+                            //關閉前一個infowindow
+                            if (this.googleMap.currentInfoWindow != "") {
+                                this.googleMap.currentInfoWindow.close();
+                                this.googleMap.currentInfoWindow = "";
+                            }
+                            infoWindow.open(this.googleMap.map, marker);
+                            this.googleMap.currentInfoWindow = infoWindow;
                         });
 
 
 
                     });
-                   
-                    
-                },
-                setMarker() {
-
 
 
                 },
-                //initMap() {
-                //    let initLocation = { lat: 25.0405139, lng: 121.4434502};
-                //    //建立地圖
-                //    this.map = new google.maps.Map(document.getElementById('map'), {
-                //        center: initLocation, // 中心點座標
-                //        zoom: 12, // 1-20，數字愈大，地圖愈細：1是世界地圖，20就會到街道
-                //        /*
-                //          roadmap 顯示默認道路地圖視圖。
-                //          satellite 顯示 Google 地球衛星圖像。
-                //          hybrid 顯示正常和衛星視圖的混合。
-                //          terrain 顯示基於地形信息的物理地圖。
-                //        */
-                //        mapTypeId: 'roadmap'
-                //    });
-                //    //放置多個marker
-                //    axios('/js/mapData.json')
-                //        .then(results => results.data)
-                //        .then(result => {
-                //            this.markerData = result.features;
-                //            Array.prototype.forEach.call(this.markerData, data => {
-                //                latLng = new google.maps.LatLng(data.geometry.coordinates[0], data.geometry.coordinates[1]);
-                //                let marker = new google.maps.Marker({
-                //                    position: latLng,
-                //                    icon: "/images/map/mapicon.png",
-                //                    map: this.map,
-                //                    title: data.properties.name
-                //                });
-                //                //資訊視窗
-                //                let infowindow = new google.maps.InfoWindow({
-                //                    content: `<h5>${data.properties.name}</h5>
-                //                        <p>地址:${data.properties.site}</p>
-                //                        <a href="#" class="btn btn-outline-dark btn-sm" onclick="selectStore(${data.properties.id})">前往訂餐</a>`,
-                //                    maxWidth: 300,
-                //                });
-                //                google.maps.event.addListener(marker, "click", () => {
-                //                    //關閉前一個infowindow
-                //                    if (currentInfoWindow != "") {
-                //                        currentInfoWindow.close();
-                //                        currentInfoWindow = "";
-                //                    }
-                //                    infowindow.open(map, marker);
-                //                    currentInfoWindow = infowindow;
-                //                });
-                //        });
-                //        })
-                //},
                 //動態改變map經緯度
-                //changeMap(e) {
-                //    let liVal = $(e.target).attr("value");
-                //    console.log(liVal);
-                //    let data = this.mapfeatures.filter(i => i.properties.id == liVal);
-                //    console.log(data);
-                //    lat = data[0].geometry.coordinates[0];
-                //    lng = data[0].geometry.coordinates[1];
-                //    latLng = new google.maps.LatLng(lat, lng);
-                //    this.map.setCenter(latLng);
-                //},
+                changeMap(storeid) {
+                    console.log(storeid)
+                    let data = this.allStoreData.filter(i => i.StoreID == storeid);
+                    console.log(data);
+                    console.log(data[0].Lat);
+                    let latLng = new google.maps.LatLng(data[0].Lat, data[0].Lng);
+                    this.googleMap.map.panTo(latLng);
+                },
             },
             created() {
                 //取得分店所有資料

@@ -118,6 +118,10 @@ body {
     margin-bottom: 10px;
 }
 /*storeinfo*/
+.imageSize{
+    width:250px;
+    height:auto;
+}
 #storeMap {
     display: flex;
 }
