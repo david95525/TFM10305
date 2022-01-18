@@ -35,7 +35,7 @@
             <!--門市清單-->
             <div id="storeList">
                 <ul style="list-style-type:none" class="list-group">
-                    <li class="list-group-item" :value="list.StoreID" v-for="list in storeList" @@click="changeMap(list.StoreID)">
+                    <li class="list-group-item productImg" :value="list.StoreID" v-for="list in storeList" @@click="changeMap(list.StoreID)">
                         <label>{{list.StoreName}}</label>
                         {{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}} |
                         {{list.StorePhone}}
@@ -46,6 +46,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
 
@@ -119,7 +120,7 @@
                         mapTypeId: 'roadmap',
                     });
 
-                    [].forEach.call(this.allStoreData, data => {
+                    [].forEach.call(this.allStoreData, (data, index) => {
                         //放置多個marker
                         let letLng = new google.maps.LatLng(data.Lat, data.Lng);
                         let marker = new google.maps.Marker({
@@ -130,10 +131,11 @@
                         });
                         //資訊視窗
                         let infoWindow = new google.maps.InfoWindow({
-                            content: `<h5>${data.StoreName}</h5>
-                                        <img src="/images/map/store.jpg" class="img-fluid img-thumbnail imageSize"/>
-                                        <p class="fs-6">地址:${data.StoreAddress}</p>
-                                        <a href="#" class="btn btn-outline-dark" @@click="selectStore(${data.StoreID})">前往訂餐</a>`,
+                            content: `<h5 class="mt-2 mb-2 fw-bold">${data.StoreName}</h5>
+                                        <div class="text-center">
+                                        <img src="/images/map/store.jpg" class="img-fluid img-thumbnail imageSize mb-2"/>
+                                        <p class="fs-6">地址: ${data.StoreAddress}</p>
+                                        </div>`,
                             maxWidth: 300,
                         });
                         //marker綁定click事件
@@ -146,8 +148,12 @@
                             infoWindow.open(this.googleMap.map, marker);
                             this.googleMap.currentInfoWindow = infoWindow;
                         });
-
-
+                        //預設開啟
+                        if (index == 0) {
+                            infoWindow.open(this.googleMap.map, marker);
+                            this.googleMap.currentInfoWindow = infoWindow;
+                        }
+                        
 
                     });
 
