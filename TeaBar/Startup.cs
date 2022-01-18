@@ -55,7 +55,7 @@ namespace TeaBar
                 options.Password.RequiredUniqueChars = 1;           //�ܤ֭n��1�Ӧr�����@��
 
                 // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); //5�����S�����R�N�۰����w����A�w�]5����
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30); //5�����S�����R�N�۰����w����A�w�]5����
                 options.Lockout.MaxFailedAccessAttempts = 5; //�T���K�X�~�N��w���, �w�]5��
                 options.Lockout.AllowedForNewUsers = true; //�s�W���ϥΪ̤]�|�Q��w�A�N�O�ǳW�S���s�H�u��
 
