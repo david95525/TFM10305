@@ -29,6 +29,10 @@ namespace TeaBar.Controllers.APIs
         [Consumes("application/json")]
         public IActionResult AddToCart([FromBody] OrderProductsViewModel data) //取得產品資料
         {
+            if (User.Identity.Name == null)
+            {
+                return null;
+            }
             string userName = User.Identity.Name;//當前identity中使用者名稱
             HttpContext.Session.SetString("username", userName);
          
@@ -48,6 +52,7 @@ namespace TeaBar.Controllers.APIs
                 ProductName = product.ProductName,
                 UnitPrice = data.size.price,
                 Quantity = data.quentity,
+                Subtotal=data.subtotal,
                 DiscountId = discount.DiscountID,
                 Discount = discount.DiscountRule,
                 Sweetness = data.sweetness,

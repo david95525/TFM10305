@@ -241,10 +241,10 @@
                         <label>訂單滙總</label>
                     </div>
                     <div class="card-body">
-                        <div class="col-1" v-if="discount!=1">{{discount}}折</div>                     
-                        <div class="col-1" v-if="discount==1">原價</div>
-                        <div class="col-1">總金額  ${{total}}</div>
-
+                        <div class="row-1">總額:${{origintotal}}</div>
+                        <div class="row-1" v-if="discount!=1">{{discount}}折</div>
+                        <div class="row-1" v-if="discount==1">無</div>
+                        <div class="row-1">折扣後總額:${{total}}</div>
                     </div>
                 </div>
             </div>
@@ -485,10 +485,11 @@
             districtData: [],//區域資料
             discount:0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
-            icelist: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
-            inglist: ["珍珠", "布丁", "仙草凍", "芋圓","無"],
+            icelist: ["正常冰","去冰", "微冰", "少冰", "正常冰", "溫", "熱"],
+            inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜","無"],
             sizelist: ["大", "中"],
             total: 0,
+            origintotal: 0,
             isIN: false,
             isDeliverydetail: true,//外送資訊完整
             isReceiverdetail:true,//取餐人資訊完整
@@ -529,13 +530,9 @@
                         app.orderData = result;
                         app.isIN = true;
                         for (let i = 0; i < app.orderData.length; i++) {                         
-                            Subtotal(i);
-                            if (app.orderData[i].ingredient === "布丁" || app.orderData[i].ingredient === "仙草凍"
-                                || app.orderData[i].ingredient === "芋圓") {
-                                app.orderData[i].subtotal = app.orderData[i].subtotal + 10;
-                            }
                             app.total = app.total + app.orderData[i].subtotal;
                         }
+                        app.origintotal = app.total;
                         app.total = Math.round(app.total * app.orderData[0].discount);
                         app.discount = app.orderData[0].discount;
                         if (app.discount < 1) {
