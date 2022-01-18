@@ -300,6 +300,9 @@
                     let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
                     //重新抓cookie資料
                     this.getStoreData();
+                    //重新取得產品分類資料
+                    this.getCategory();
+                    this.getProducts();
                     //關閉modal
                     $("#selectStoreModal").modal('hide');
                     //選單變回預設
@@ -432,20 +435,31 @@
                 }
 
             },
+            //取得產品分類資料
+            getCategory() {
+                //取得cookie storeid
+                let id = this.getCookieByName('storeid');
+                axios(`/api/ProductsService/Category/${id}`)
+                    .then(response => { this.productsCategory = response.data })
+                    .catch(error => console.log(error));
 
+            },
+            getProducts() {
+                let id = this.getCookieByName('storeid');
+                axios(`/api/ProductsService/Products/${id}`)
+                    .then(response => { this.productsData = response.data })
+                    .catch(error => console.log(error));
+
+            },
 
 
 
         },
         async created() {
             //取得所有商品資料
-            axios('/api/ProductsService/Products')
-                .then(response => { this.productsData = response.data })
-                .catch(error => console.log(error));
+            this.getProducts();
             //取得產品分類資料
-            axios('/api/ProductsService/Category')
-                .then(response => { this.productsCategory = response.data })
-                .catch(error => console.log(error));
+            this.getCategory();
             //取得城市清單
             axios('/api/StoreService/city')
                 .then(response => { this.cityList = response.data })

@@ -21,23 +21,41 @@ namespace TeaBar.Controllers.APIs
             _dbcontext = dbContext;
         }
 
+        //[HttpGet]
+        //[Route("Products")]
+        //[Produces("application/json")]
+        //[ResponseCache(Duration = 600)]
+        //public IEnumerable<Products> GetProducts() //取得產品資料
+        //{
+        //    IEnumerable<Products> result = _dbcontext.Products;
+
+        //    return result;
+        //}
+
         [HttpGet]
-        [Route("Products")]
+        [Route("Products/{id}")]
         [Produces("application/json")]
         //[ResponseCache(Duration = 600)]
-        public IEnumerable<Products> GetProducts() //取得產品資料
+        public List<Products> GetProducts([FromRoute(Name ="id")] string storeid) //取得產品資料
         {
-            IEnumerable<Products> result = _dbcontext.Products;
+            var result = _dbcontext.Products
+            .Where(s => s.Categories.StoreID == storeid)
+            .Select(p=>p);
 
-            return result;
+            List<Products> data = result.ToList();
+            return data;
         }
+
         [HttpGet]
-        [Route("Category")]
+        [Route("Category/{id}")]
         [Produces("application/json")]
-        public IEnumerable<Categories> GetCategory() //取得產品分類
+        public List<Categories> GetCategory([FromRoute(Name ="id")]string storeid) //取得產品分類
         {
-            IEnumerable<Categories> result = _dbcontext.Categories;
-            return result;
+            var result = _dbcontext.Categories
+           .Where(c => c.StoreID == storeid)
+           .Select(c => c);
+            List<Categories> data = result.ToList();
+            return data;
         }
     }
 }
