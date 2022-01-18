@@ -211,7 +211,7 @@
         data: {
             productsCategory: [], //全部產品分類
             productsData: [], //全部商品資料
-            allStoreData: [],
+            allStoreData: [], //全部門市資料
             categorySelect: "all", //預設選取全部商品
             pickUpTime: "", //取餐時間
             modalData: {
@@ -313,7 +313,7 @@
 
             },
             //變更城市下拉選單
-            qryCity: function (city) {
+            qryCity(city) {
                 //選單變回預設
                 this.distVal = "default";
                 this.storeVal = "default";
@@ -328,7 +328,7 @@
                 }
             },
             //變更區域下拉選單
-            qryDist: function (dist) {
+            qryDist(dist) {
                 //選單變回預設
                 this.storeVal = "default";
                 //清空選項
@@ -354,7 +354,6 @@
                 this.size[1].price = modalProduct[0].unitPrice; //中杯
                 //商品id存到data
                 this.orderDetail.ProductID = id;
-                //
             },
             //將選擇商品資料傳到後端
             AddToCart() {
