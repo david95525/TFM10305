@@ -282,7 +282,7 @@
             mounted: function () {
                 Orders = [];
 
-                let apiserver = '/api/OrderService/Showorder1';
+                let apiserver = '/api/OrderService/Showorder/10/'+1;
                 $.ajax(
                     {
                         url: apiserver,
@@ -292,13 +292,37 @@
                                 alert('目前尚無訂單');
                             }
                             else {
-                                app.quantity = result.length;
+                                
                                 app.Orders = result;
                             }
                         }
 
                     }
                 );
+
+
+
+                   let sserver = '/api/OrderService/Showorder1';
+                    $.ajax(
+                        {
+                            url: sserver,
+                            type: 'GET',
+                            success: function (result, status) {
+                                if (result.length == 0) {
+                                    alert('目前尚無訂單');
+                                }
+                                else {
+                                    app.quantity = result.length;
+                                    app.Orders = result;
+
+                                }
+                            }
+
+                        }
+                    );
+  
+
+
             },
 
             methods:
@@ -307,7 +331,7 @@
                 Savetemp: function () {
                     Orders = [];
 
-                    let apiserver = '/api/OrderService/Showorder1';
+                    let apiserver = '/api/OrderService/Showorder';
                     $.ajax(
                         {
                             url: apiserver,
@@ -327,8 +351,11 @@
                     );
                 },
 
+                
+
                 Showorder: function (e, id) {
                     Orders = [];
+                    app.pageIndex.push(id);
                     var pageindex = id;
 
                     $.ajax(
@@ -437,7 +464,9 @@
                         app.TotalPrice.push(app.Orderdetail[i].unitPrice * app.Orderdetail[i].quantity);
                         app.total = app.total+app.TotalPrice[i];
                         Math.round(app.discounttotal = app.total * app.diccocunt);
+
                     }
+                    
                 },// Saveedit
 
                 editTodo: function (todo) {
