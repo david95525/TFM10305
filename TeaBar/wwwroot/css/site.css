@@ -70,6 +70,13 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 /*productsIntro*/
+.search {
+    height:40px;
+}
+#selectStore {
+    text-align: center;
+    width: 450px;
+}
 .productImg {
     cursor: pointer;
 }
@@ -123,4 +130,12 @@ body {
     width: 40vw;
     height: 100%;
     margin: 20px 20px;
+}
+/*orderProducts*/
+#orderInfo p {
+    margin-bottom: 0;
+}
+
+#quantity {
+    width: 50px;
 }

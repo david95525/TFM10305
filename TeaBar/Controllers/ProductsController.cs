@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,16 @@ namespace TeaBar.Controllers
         public IActionResult ProductsIntro() //茶飲介紹
         {
             return View();
+        }
+        public IActionResult OrderProducts() //線上訂餐
+        {
+            return View();
+        }
+
+        public string GetSession() //測試讀取session
+        {
+            var data = HttpContext.Session.GetString("userName");
+            return data;
         }
     }
 }

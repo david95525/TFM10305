@@ -22,7 +22,7 @@
         htmltotal = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(total));
         htmlorderid= Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(carts[0].OrderID));
     }
-    double discount = carts[0].Discount * 10;
+    double discount = carts[0].Discount;
       }
 <div id="paybill">
     <div>
@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                             <td>折扣</td>
-                            <td>@discount 折</td>
+                            <td>@discount </td>
                         </tr>
                     </tbody>
                 </table>
@@ -86,7 +86,6 @@
                         前往付款
                     </button>
                 </form>
-                <button class="btn btn-primary"  v-on:click="test">test</button>
             </div>
         </div>
     </div>

@@ -71,7 +71,7 @@
             }).done(
                 function (data) {
                     app.ordersData = data;
-
+                    console.log(app.ordersData);
                     for (let i = 0; i < app.ordersData.length; i++) {
                         app.total = app.total + app.ordersData[i].subtotal;
                     }
@@ -82,22 +82,17 @@
                     console.log(err.responseText);
                 });
         },
-        mounted() {
-            console.log(app.code);
-            
-        },
         methods: {
 
             SaveOrder: function () {
                 app.ordersData[0].orderID = app.code;
                 var jsonstring = JSON.stringify(app.ordersData);
-                console.log(jsonstring);
                 $.ajax({
                     url: "@Url.Action("Saveorder","OrderAPI")",
                     type: "GET"
                 }).done(function (msg) {
                 console.log(msg);
-                location.href = "@Url.Action("Index", "Home")";
+                location.href = "@Url.Action("OrdersHistory", "Members")";
                 }).fail(function (err) {
                     alert(err.responseText);
             });

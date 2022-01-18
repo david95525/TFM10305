@@ -1,0 +1,536 @@
+﻿
+@{
+    ViewData["Title"] = "線上點餐";
+}
+
+
+
+
+<div id="orderProducts">
+    <!--點餐畫面modal-->
+    <div class="modal" tabindex="-1" id="productModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">選擇餐點-{{modalData.name}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex">
+                        <!--產品內容-->
+                        <div>
+                            <!--產品圖片-->
+                            <img :src="modalData.imgUrl" :alt="modalData.name" style="width:100vw;" class="img-fluid" />
+                            <!--名稱及單價-->
+                            <h4 class="align-middle">{{modalData.name}} ${{modalData.price}}</h4>
+                            <!--描述-->
+                            <p class="">{{modalData.description}}</p>
+                        </div>
+                        <!--form post資料到後端-->
+                        <div class="container">
+                            <!--容量-->
+                            <div class="row">
+                                <div>
+                                    <h6 class="d-inline-block">容量 </h6>
+                                    <span class="text-danger fs-4">*</span>
+                                    <span v-show="errors.has('Size')" class="text-danger">此項必填</span>
+                                </div>
+                                <div class="btn-group form-group" role="group">
+                                        <span v-for="item in size">
+                                            <input type="radio" v-validate="'required'" class="btn-check d-none" name="Size" :value="item" :id="item.name" v-model="orderDetail.Size" />
+                                            <label class="btn btn-outline-dark btnCategory" :for="item.name">{{item.name}} ${{item.price}}</label>
+                                        </span>
+                                </div>
+                            </div>
+                            <!--甜度-->
+                            <div class="row">
+                                <div>
+                                    <h6 class="d-inline-block">甜度 </h6>
+                                    <span class="text-danger fs-4">*</span>
+                                    <span v-show="errors.has('Sweetness')" class="text-danger">此項必填</span>
+                                </div>
+                                <div class="btn-group form-group" role="group">
+                                        <span v-for="item in sweetness">
+                                            <input type="radio" v-validate="'required'" class="btn-check d-none" name="Sweetness" :value="item" :id="item" v-model="orderDetail.Sweetness" />
+                                            <label class="btn btn-outline-dark btnCategory" :for="item">{{item}}</label>
+                                        </span>
+                                </div>
+                            </div>
+                            <!--溫度-->
+                            <div class="row">
+                                <div>
+                                    <h6 class="d-inline-block">溫度 </h6>
+                                    <span class="text-danger fs-4">*</span>
+                                    <span v-show="errors.has('Ice')" class="text-danger">此項必填</span>
+                                </div>
+                                <div class="btn-group form-group" role="group">
+                                    <span v-for="item in Ice">
+                                        <input type="radio" v-validate="'required'" class="btn-check d-none" name="Ice" :value="item" :id="item" v-model="orderDetail.Ice" />
+                                        <label class="btn btn-outline-dark btnCategory" :for="item">{{item}}</label>
+                                    </span>
+                                </div>
+                            </div>
+                            <!--加料-->
+                            <div class="row">
+                                <h6 class="d-inline-block">加料 ( 複選 )</h6>
+                                <div class="btn-group " role="group">
+                                    <span v-for="item in Ingredient">
+                                        <input type="checkbox" class="btn-check d-none" name="Ingredient" :value="item" :id="item.name" v-model="orderDetail.Ingredient" />
+                                        <label class="btn btn-outline-dark btnCategory" :for="item.name">{{item.name}} ${{item.price}}</label>
+                                    </span>
+                                </div>
+                            </div>
+                            <!--小計及加入購物車-->
+                            <div class="row">
+                                <h6>小計: {{calSubtotal}}</h6>
+
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <!--數量-->
+                                        <button type="button" @@click="minusOne()" class="btn btn-outline-dark">-</button>
+                                        <input type="tel" maxlength="2" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
+                                        <button type="button" @@click="addOne()" class="btn btn-outline-dark">+</button>
+                                        <!--表單驗證訊息-->
+                                        
+                                        <!--點擊將資料post到後端api-->
+                                        <button type="button" class="btn btn-outline-dark d-inline-block" @@click="AddToCart()">加入購物車</button>
+                                    </div>
+                                    <div>
+                                        <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-dark d-inline-block">返回</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--修改分店modal-->
+    <div class="modal" tabindex="-1" id="selectStoreModal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">選擇分店</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!--下拉選單-->
+                    <div id="selectStore" class="input-group">
+                        <!--選擇縣市-->
+                        <select v-model="cityVal" class="form-select" @@change="qryCity(cityVal)">
+                            <option value="default">選擇縣市</option>
+                            <option :value="city" v-for="city in cityList">{{city}}</option>
+                        </select>
+                        <!--選擇地區-->
+                        <select v-model="distVal" class="form-select" @@change="qryDist(distVal)">
+                            <option value="default">選擇地區</option>
+                            <option :value="dist" v-for="dist in distList">{{dist}}</option>
+                        </select>
+                        <!--選擇分店-->
+                        <select v-model="storeVal" class="form-select">
+                            <option value="default">選擇分店</option>
+                            <option :value="store.storeID" v-for="store in storeList">{{store.storeName}}</option>
+                        </select>
+                    </div>
+                    <!--確認分店-->
+                    <p v-if="notCompleted" class="text-danger">請選擇分店</p>
+                    <button type="button" @@click="checkStore(storeVal)" class="btn btn-outline-dark">確認</button>
+                    <!--回門市據點-->
+                    <a href="/Store/StoreInfo" class="btn btn-outline-dark">回門市據點</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--主要內容-->
+    <div class="container d-flex flex-row ">
+        <!--產品列表-->
+        <div id="productList" class="w-75 text-center">
+            <!--分類-->
+            <div id="productsCategory" class="btn-group">
+                <span>
+                    <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
+                    <label class="btn btn-outline-dark btnCategory rounded-pill" for="all">全部商品</label>
+                </span>
+                <span v-for="c in productsCategory">
+                    <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
+                    <label class="btn btn-outline-dark btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
+                </span>
+            </div>
+            <!--商品card-->
+            <div class="row">
+                <div class="col-md-3" v-for="item in showProduct">
+                    <div class="card  shadow-sm">
+                        <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="showModal(item.productID)" class="productImg img-fluid card-img-top rounded" />
+                        <div class="card-body">
+                            <h5 class="card-title text-center">{{item.productName}}</h5>
+                            <p class="card-text text-center">${{item.unitPrice}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--訂購相關資訊-->
+        <div class=" w-25 p-3" id="orderInfo">
+            <div class="border border-2 rounded border-warning p-3">
+                <!--顯示訂購分店名稱-->
+                <!--從cookie帶入選擇的門市名稱-->
+                <div v-if="hasCookie" class="mb-3">
+                    <div class="d-flex flex-row align-items-end justify-content-between mb-1">
+                        <p class="fs-6">訂購門市:</p>
+                        <!--更改分店-->
+                        <button type="button" data-bs-target="#selectStoreModal" data-bs-toggle="modal" class="btn btn-outline-dark btn-sm">修改</button>
+                    </div>
+                    <p class="fs-5 fw-bold">{{orderStoreData[0].StoreName}}</p>
+                    <p>{{orderStoreData[0].StoreAddress}}</p>
+                    <hr />
+                </div>
+                <!--判斷訂購當下時間-->
+                <div>
+                    <div v-if="isOpen">
+                        <p class="fs-6">預定取餐時間: </p>
+                        <p class="fs-5 fw-bold">{{pickUpTime}}</p>
+                    </div>
+                    <div v-else>
+                        <p class="text-danger fs-5 fw-bold">目前非營業時間</p>
+                        <p class="fs-6">營業時間: 10:00~23:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    Vue.use(VeeValidate);
+
+    var app = new Vue({
+        el: "#orderProducts",
+        data: {
+            productsCategory: [], //全部產品分類
+            productsData: [], //全部商品資料
+            allStoreData: [], //全部門市資料
+            categorySelect: "all", //預設選取全部商品
+            pickUpTime: "", //取餐時間
+            modalData: {
+                imgUrl: "",
+                name: "",
+                price: "",
+                description: "",
+            },
+            orderStoreData: {}, //cookie取出的分店資訊
+            cityList: [],
+            distList: [],
+            storeList: [],
+            cityVal: "default", //儲存選中的
+            distVal: "default",
+            storeVal: "default",
+            size: [{ name: "大杯", price: 0 }, { name: "中杯", price: 0 }],
+            sweetness: ["全糖", "少糖", "半糖", "微糖", "無糖"],
+            Ice: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
+            Ingredient: [
+                { price: 10, name: "珍珠" },
+                { price: 10, name: "椰果" },
+                { price: 15, name: "小芋圓" },
+                { price: 10, name: "寒天" },
+                { price: 10, name: "雙Q" },
+                { price: 15, name: "蜂蜜" }
+            ],
+            orderDetail: {
+                ProductID: "",
+                Subtotal: 0,
+                Quentity: 1,
+                Size: {},
+                Sweetness: "",
+                Ice: "",
+                Ingredient: [],
+            },
+            isOpen: false,
+            hasCookie: false,
+            notCompleted: false,
+
+
+        },
+        methods: {
+            //表單內容清空
+            resetForm() {
+                this.orderDetail.ProductID = "";
+                this.orderDetail.Subtotal = 0;
+                this.orderDetail.Quentity = 1;
+                this.orderDetail.Size = {};
+                this.orderDetail.Sweetness = "";
+                this.orderDetail.Ice = "";
+                this.orderDetail.Ingredient = [];
+            },
+            //數量減一
+            minusOne() {
+                if (this.orderDetail.Quentity > 2) {
+                    this.orderDetail.Quentity--;
+                }
+            },
+            //數量加一
+            addOne() {
+                if (this.orderDetail.Quentity <= 20) {
+                    this.orderDetail.Quentity++
+                }
+            },
+            //時間一位數補0
+            timeFormat(item) {
+                if (item.toString().length == 1) {
+                    item = "0" + item;
+                    return item
+                }
+                return item;
+            },
+            //取得cookie值
+            getCookieByName(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            },
+            //確認要修改的分店並將id存cookie
+            checkStore(id) {
+                //驗證資料有沒有完整
+                if (this.cityVal != "default" && this.distVal != "default" && this.storeVal != "default") {
+                    let d = new Date();
+                    d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    let expires = "expires=" + d.toUTCString();
+                    let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
+                    //重新抓cookie資料
+                    this.getStoreData();
+                    //重新取得產品分類資料
+                    this.getCategory();
+                    this.getProducts();
+                    //關閉modal
+                    $("#selectStoreModal").modal('hide');
+                    //選單變回預設
+                    this.cityVal = "default";
+                    this.distVal = "default";
+                    this.storeVal = "default";
+                    this.notCompleted = false;
+                } else {
+                    this.notCompleted = true;
+                }
+
+            },
+            //變更城市下拉選單
+            qryCity(city) {
+                //選單變回預設
+                this.distVal = "default";
+                this.storeVal = "default";
+                //清空選項
+                this.distList = [];
+                this.storeList = [];
+                if (this.cityVal !== "default") {
+                    const qryServiceUrl = `/api/StoreService/${city}/dist`;
+                    axios(qryServiceUrl)
+                        .then(response => { this.distList = response.data })
+                        .catch(error => console.log(error));
+                }
+            },
+            //變更區域下拉選單
+            qryDist(dist) {
+                //選單變回預設
+                this.storeVal = "default";
+                //清空選項
+                this.storeList = [];
+                if (this.distVal !== "default") {
+                    const qryServiceUrl = `/api/StoreService/${dist}/store`;
+                    axios(qryServiceUrl)
+                        .then(response => { this.storeList = response.data })
+                        .catch(error => console.log(error));
+                }
+            },
+            //點擊顯示modal
+            showModal(id) {
+                //清空表單內容
+                this.resetForm();
+                //篩選要顯示的modal資料
+                const modalProduct = this.productsData.filter(x => x.productID == id); //只挑我點的那個商品
+                this.modalData.description = modalProduct[0].description; //商品描述
+                this.modalData.imgUrl = modalProduct[0].picture; //商品圖片
+                this.modalData.name = modalProduct[0].productName; //商品名稱
+                this.modalData.price = modalProduct[0].unitPrice; //商品單價
+                this.size[0].price = modalProduct[0].unitPrice + 5; //大杯+5元
+                this.size[1].price = modalProduct[0].unitPrice; //中杯
+                //商品id存到data
+                this.orderDetail.ProductID = id;
+            },
+            //將選擇商品資料傳到後端
+            AddToCart() {
+                if (this.orderDetail.Ingredient.length == 0) {
+                    this.orderDetail.Ingredient[0] = { name: "無", price: 0 };
+                }
+                //todo驗證資料內容
+                this.$validator.validateAll().then(result => {
+                    if (result) {
+                        //準備json格式
+                        let data = JSON.stringify(this.orderDetail);
+                        axios({
+                            method: "POST",
+                            url: "/api/OrderProductsService/orderDetail",
+                            headers: { "Content-Type": "application/json" },
+                            data: data,
+                        }).then(response => {
+                            if (response == null) {
+                                  location.href = "@Url.Action("ShoppingCart","CartOrder")";
+                            }else if (response.status == 200) {
+                                alert("加入購物車成功!");
+                            }
+                        }).catch(error => console.log(error));
+                            
+                    } else {
+                        alert("訂購內容不完整");
+
+                    }
+                });
+                
+            },
+            //取得選擇分店資訊
+            getStoreData() {
+                //判斷是否有cookie
+                if (document.cookie.indexOf("storeid") != -1) {
+                    //取出cookie的值
+                    let id = this.getCookieByName("storeid");
+                    if (id != "default" && id != "") {
+                        //透過id來篩選分店資訊
+                        this.orderStoreData = this.allStoreData.filter(i => i.StoreID == id);
+                        this.hasCookie = true;
+                    } else {
+                        //modal show
+                        this.hasCookie = false;
+                        $("#selectStoreModal").modal('show');
+                    }
+
+                } else {
+                    //modal show
+                    $("#selectStoreModal").modal('show');
+                }
+            },
+            //計算取餐時間
+            getPickUpTime() {
+                let now = new Date();
+                //取得現在日期時間
+                let year = now.getFullYear();
+                let month = now.getMonth() + 1; //js從0開始取
+                let date = now.getDate();
+                let hour = now.getHours();
+                let minutes = now.getMinutes();
+                //重組格式字串
+                let nowTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T${this.timeFormat(hour)}:${this.timeFormat(minutes)}`;
+                let closeTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T22:45`; //設定打烊時間(23:00)
+                let openTimeStr = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)}T10:00`; //設定開店時間(10:00)
+                //轉成一串數字
+                let nowTime = Date.parse(nowTimeStr);
+                let closeTime = Date.parse(closeTimeStr);
+                let openTime = Date.parse(openTimeStr);
+                //計算取餐時間(訂餐時間+15分)
+                now.setMinutes(minutes + 15);
+                this.pickUpTime = `${year}-${this.timeFormat(month)}-${this.timeFormat(date)} ${this.timeFormat(now.getHours())}:${this.timeFormat(now.getMinutes())}`;
+                //5分鐘更新一次
+                setTimeout(() => { this.getPickUpTime(); }, 300000);
+
+                //判斷現在時間有沒有在營業時間之內
+                if (nowTime < closeTime && nowTime > openTime) {
+                    this.isOpen = true;
+                } else {
+                    this.isOpen = false;
+                }
+
+            },
+            //取得產品分類資料
+            getCategory() {
+                //取得cookie storeid
+                let id = this.getCookieByName('storeid');
+                axios(`/api/ProductsService/Category/${id}`)
+                    .then(response => { this.productsCategory = response.data })
+                    .catch(error => console.log(error));
+
+            },
+            getProducts() {
+                let id = this.getCookieByName('storeid');
+                axios(`/api/ProductsService/Products/${id}`)
+                    .then(response => { this.productsData = response.data })
+                    .catch(error => console.log(error));
+
+            },
+
+
+
+        },
+        async created() {
+            //取得所有商品資料
+            this.getProducts();
+            //取得產品分類資料
+            this.getCategory();
+            //取得城市清單
+            axios('/api/StoreService/city')
+                .then(response => { this.cityList = response.data })
+                .catch(error => console.log(error));
+
+
+            //取得所有分店資料
+            await axios('/api/StoreService/store')
+                .then(response => {
+                    this.allStoreData = JSON.parse(response.data);
+                    this.getStoreData();
+                })
+                .catch(error => console.log(error));
+
+
+
+        },
+        computed: {
+            //點擊分類篩選商品
+            showProduct() {
+                const arr = { item: [] };
+                if (this.categorySelect == "all") {
+                    //預設選全部商品
+                    arr.item = this.productsData;
+                } else {
+                    //有篩選
+                    arr.item = this.productsData.filter(element => element.categoryID == this.categorySelect)
+                }
+                return arr.item;
+            },
+            //計算小計金額
+            calSubtotal() {
+                let IngredientPrice = 0;
+                let teaPrice = 0;
+                if (this.orderDetail.Size.price == null) {
+                    this.orderDetail.Size.price = 0;
+                };
+                //數量*單價
+                teaPrice = (this.orderDetail.Quentity * this.orderDetail.Size.price);
+                //取得加料金額
+                for (i = 0; i < this.orderDetail.Ingredient.length; i++) {
+                    IngredientPrice += this.orderDetail.Ingredient[i].price;
+                }
+                this.orderDetail.Subtotal = IngredientPrice + teaPrice;
+                return this.orderDetail.Subtotal;
+            },
+
+
+
+
+
+        },
+        mounted() {
+            this.getPickUpTime();
+
+
+        },
+        watch: {
+            pickUpTime: function () {
+                //讓畫面重新渲染
+                return this.pickUpTime;
+            },
+
+        },
+
+    })
+
+</script>
+
