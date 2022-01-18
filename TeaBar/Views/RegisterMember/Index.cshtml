@@ -7,6 +7,7 @@
     <legend>@ViewData["Title"]</legend>
     <fieldset>
         <form method="post" action="RegisterMember/memberRegister">
+            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--姓名-->
             <div class="row g-3 align-items-center">
                 <div class="col-1">
@@ -68,11 +69,11 @@
                 <div class="col-1">
                     <label class="form-label">性別</label>
                 </div>
-                <div class="form-check form-check-inline">
+                <div class="form-check form-check-inline col-auto">
                     <input class="form-check-input" type="radio" name="Gender" id="inlineRadioM" value="Male" />
                     <label class="form-check-label" for="inlineRadioM">男</label>
                 </div>
-                <div class="form-check form-check-inline">
+                <div class="form-check form-check-inline col-auto">
                     <input class="form-check-input" type="radio" name="Gender" id="inlineRadioF" value="Female" />
                     <label class="form-check-label" for="inlineRadioF">女</label>
                 </div>
@@ -97,12 +98,11 @@
                     <input type="text" class="form-control form-control-sm" id="InpAddress" name="Address">
                 </div>
             </div>
-            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
-
-            <button type="submit" class="btn btn-primary"><i class="far fa-address-card"></i> 提交</button>
-
+            <div style="height:30px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            <div>
+                <button type="submit" class="btn btn-primary"><i class="far fa-address-card"></i> 提交</button>
+            </div>
         </form>
-
     </fieldset>
 </fieldset>
 
