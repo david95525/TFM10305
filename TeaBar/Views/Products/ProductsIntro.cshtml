@@ -26,7 +26,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">{{distVal}}價目表</h4>
+                    <h4 class="modal-title">{{menuDistVal}}價目表</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -69,12 +69,31 @@
     </div>
     <!--價目表查詢-->
     <div id="menu">
-        <select @@change="changeItem" v-model="distVal" class="form-select" id="menuSelect">
+        <select @@change="changeItem" v-model="menuDistVal" class="form-select" id="menuSelect">
             <option value="" selected>選擇區域價目表</option>
             <option :value="dist.item" v-for="dist in district">{{dist.item}}</option>
         </select>
         <button class="btn btn-dark" @@click="showMenu" data-bs-target="#menuModal"> <i class="fas fa-search"></i> </button>
     </div>
+    <!--下拉選單-->
+    <div id="selectStore" class="input-group">
+        <!--選擇縣市-->
+        <select v-model="cityVal" class="form-select" @@change="qryCity(cityVal)">
+            <option value="default">選擇縣市</option>
+            <option :value="city" v-for="city in cityList">{{city}}</option>
+        </select>
+        <!--選擇地區-->
+        <select v-model="distVal" class="form-select" @@change="qryDist(distVal)">
+            <option value="default">選擇地區</option>
+            <option :value="dist" v-for="dist in distList">{{dist}}</option>
+        </select>
+        <!--選擇分店-->
+        <select v-model="storeVal" class="form-select" @@change="getCategory()">
+            <option value="default">選擇分店</option>
+            <option :value="store.storeID" v-for="store in storeList">{{store.storeName}}</option>
+        </select>
+    </div>
+
     <!--分類-->
     <div>
         <div id="category">
@@ -105,7 +124,7 @@
         {
             el: "#productsIntro",
             data: {
-                distVal: "",
+                menuDistVal: "",
                 district: [
                     { item: "北部" },
                     { item: "中部" },
@@ -121,13 +140,46 @@
                     name: "",
                     description: "",
                 },
-
+                cityVal:"default", //預設
+                distVal: "default",
+                storeVal: "default",
+                cityList: [],
+                distList: [],
+                storeList: [],
 
             },
             methods: {
+                //變更城市下拉選單
+                qryCity(city) {
+                    //選單變回預設
+                    this.distVal = "default";
+                    this.storeVal = "default";
+                    //清空選項
+                    this.distList = [];
+                    this.storeList = [];
+                    if (this.cityVal !== "default") {
+                        const qryServiceUrl = `/api/StoreService/${city}/dist`;
+                        axios(qryServiceUrl)
+                            .then(response => { this.distList = response.data })
+                            .catch(error => console.log(error));
+                    }
+                },
+                //變更區域下拉選單
+                qryDist(dist) {
+                    //選單變回預設
+                    this.storeVal = "default";
+                    //清空選項
+                    this.storeList = [];
+                    if (this.distVal !== "default") {
+                        const qryServiceUrl = `/api/StoreService/${dist}/store`;
+                        axios(qryServiceUrl)
+                            .then(response => { this.storeList = response.data })
+                            .catch(error => console.log(error));
+                    }
+                },
                 //點擊顯示菜單
-                showMenu: function () {
-                    switch (this.distVal) {
+                showMenu() {
+                    switch (this.menuDistVal) {
                         case this.district[0].item:
                             this.imgUrl = "/images/menu/menu1.jpg";
                             break;
@@ -146,18 +198,32 @@
                         $("#menuModal").modal('show');
                     }
                 },
-                changeItem: function () {
+                //價目表查詢
+                changeItem() {
                     this.isQuery = false;
                 },
-                modalProduct: function (id) {
+                //點擊商品圖片跳出modal
+                modalProduct(id) {
                     const modalProduct = this.productsData.filter(x => x.productID == id);//只挑我點的那個商品
                     this.modalData.description = modalProduct[0].description;//商品描述
                     this.modalData.imgUrl = modalProduct[0].picture;//商品圖片
                     this.modalData.name = modalProduct[0].productName;//商品名稱
                 },
+                //取得分類和產品
+                getCategory() {
+                    //分類
+                    axios.get(`/api/ProductsService/Category/${this.storeVal}`)
+                        .then(response => { this.productsCategory = response.data })
+                        .catch(error => console.log(error));
+                    //產品
+                    axios.get(`/api/ProductsService/Products/${this.storeVal}`)
+                        .then(response => { this.productsData = response.data })
+                        .catch(error => console.log(error));
+                }
             },
             computed: {
-                showProduct: function () {
+                //點分類篩選商品
+                showProduct() {
                     const arr = { item: [] };
                     if (this.categorySelect == "all") {
                         //預設選全部商品
@@ -171,14 +237,12 @@
 
             },
             created: async function () {
-                //取得所有產品資料
-                await axios.get('/api/ProductsService/Products')
-                    .then(response => { this.productsData = response.data })
+                //取得城市清單
+                await axios('/api/StoreService/city')
+                    .then(response => { this.cityList = response.data })
                     .catch(error => console.log(error));
-                //取得所有分類
-                await axios.get('/api/ProductsService/Category')
-                    .then(response => { this.productsCategory = response.data })
-                    .catch(error => console.log(error));
+
+
             },
         }
     )
