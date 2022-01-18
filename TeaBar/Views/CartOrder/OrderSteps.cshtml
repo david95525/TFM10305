@@ -83,8 +83,8 @@
     }
     /*設定地圖大小*/
     #map {
-        height: 600px;
-        width: 50vw;
+        height:400px;
+        width: 200px;
     }
     /*#endregion */
 </style>
@@ -101,7 +101,7 @@
 </svg>
 <!--載入google map-->
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBayPidrH0yQql4BzYCXr7SIs08AEEcMgU">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6Agwzyd84tG7qsFrzBDNZcsW3IFjCifQ">
 </script>
 <!-- #endregion -->
 <div id="shoppingorders">
@@ -128,7 +128,7 @@
         <div v-if="link=='a'">
             <!--#region 店家 -->
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" v-if="isShow">
                     <div v-for="s in store" id="store">
                         <div><h5>Teabar{{s.storeCity}}{{s.storeName}}</h5></div>
                         <div>{{s.storePhone}}</div>
@@ -148,15 +148,15 @@
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
                             <label class="form-check-label"> 自取</label>
                             <div v-if="isTakeout" class=" pointer">
-                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 點選地圖圖標查看</label>
-                                <div v-on:click="Tomap">
-                                    <span data-bs-toggle="modal" data-bs-target="#map">
+                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 可點擊刷新</label>
+                                <div v-on:click="initMap">
+                                    <span >
                                         <i class="fas fa-map-marker-alt"></i>
                                     </span>
                                 </div>
-                              
                             </div>
                         </div>
+                        <div id="map" class="embed-responsive" v-if="!isDelivery"></div>
                         <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" v-on:click="How(1)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" checked v-on:click="How(1)">
@@ -468,21 +468,7 @@
         </div>
     </div>
     <!-- #endregion -->
-    <!-- #region 取貨門市地址 -->
-    <div class="modal fade" id="map" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="map" class="embed-responsive"></div>
-                </div>
 
-            </div>
-        </div>
-    </div>
-    <!-- #endregion -->
 </div>
 <!--#region Javascript和Vue-->
 <script>
@@ -506,6 +492,7 @@
             sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
+            isShow:false,
             isIN: false,
             isDeliverydetail: true,//外送資訊完整
             isReceiverdetail: true,//取餐人資訊完整
@@ -515,7 +502,12 @@
             isCellphone: false,//手機載具
             isCellphonedetail: true,//手機載具輸入完整
             isDonate: false,//愛心捐贈
-            link: 'a'//分頁判斷
+            link: 'a',//分頁判斷
+            googleMap: {
+                map: "",
+                lat: 0, //中心座標
+                lng: 0
+            },
 
         },
         //#endregion
@@ -530,6 +522,7 @@
                     function (result, status, xhr) {
                         app.store[0] = result;
                         console.log(app.store);
+                        app.isShow = true;
                     })
                 .fail(function (err) {
                     alert("error");
@@ -565,28 +558,28 @@
             axios('/api/StoreService/store')
                 .then(response => {
                     this.mapData = JSON.parse(response.data);
-                }).catch(error => console.log(error));
+                    //取得第一筆經緯度
+                    this.googleMap.lat = this.mapData [0].Lat;
+                    this.googleMap.lng = this.mapData [0].Lng;
+                    this.initMap();
+                })
+                .catch(error => console.log(error));
+   
+           
+            
         },
         //#endregion
         //#region Vue方法
         methods: {
-            Tomap: function () {
-                app.storemap=   app.mapData.find(c => c.storeID == app.store[0].storeID);
-                function initMap() {
-                    var store = { lat: app.storemap.lat, lng: app.storemap.lng };
-                    var map = new google.maps.Map(document.getElementById('map'), {
+            initMap() {
+                this.googleMap.map = new google.maps.Map(document.getElementById('map'),
+                    {
+                        center: { lat: this.googleMap.lat, lng: this.googleMap.lng, },
                         zoom: 12,
-                        center: store,
                         mapTypeId: 'roadmap'
-                    });
-                    var marker = new google.maps.Marker({
-                        position: store,
-                        map: map
-                    });
-                }
-
+                    }
+                )
             },
-
             //#region 編輯數量
             EditQ: function ( pid, PorM) {
                 let temp = app.orderData.find(c => c.productId == pid);

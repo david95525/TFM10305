@@ -52,10 +52,10 @@ namespace TeaBar.Controllers
             //}
             string userName = User.Identity.Name;
             //if (HttpContext.Request.Cookies[userName] != null)
-            if(HttpContext.Session.Keys.Contains("cartItem"))
+            if(HttpContext.Session.Keys.Contains(userName))
             {
                 
-                string cartstring = HttpContext.Session.GetString("cartItem");
+                string cartstring = HttpContext.Session.GetString(userName);
                 List<CartViewModel> carts = JsonConvert.DeserializeObject<List<CartViewModel>>(cartstring);
                 //決定orderid
                 string orderid = DateTime.Now.ToString("MMddHHmmssyyyy");
@@ -67,13 +67,13 @@ namespace TeaBar.Controllers
            
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
           
-                HttpContext.Session.SetString("cartItem", jsonstring);
+                HttpContext.Session.SetString(userName, jsonstring);
           
  
             ViewBag.carts = carts;
                 return View();
             }
-            return null;
+            return RedirectToAction("Index","Home");
         }
         #endregion
         #region 金流基本資料
@@ -236,7 +236,7 @@ namespace TeaBar.Controllers
         /// [智付通]金流介接(結果: 支付完成 返回商店網址)
         /// </summary>
         [HttpPost]
-        public ActionResult CashflowreturnAsync()
+        public IActionResult CashflowreturnAsync()
         {
 
             HttpContext.Request.LogFormData("Cashflowreturn(支付完成)");
@@ -288,7 +288,7 @@ namespace TeaBar.Controllers
         #region ATM返回商店
         ///Atm轉帳
         [HttpPost]
-        public ActionResult CashflowcustomerAsync()
+        public IActionResult CashflowcustomerAsync()
 
         {
             Request.LogFormData("Cashflowcustomer(資料回傳)");
