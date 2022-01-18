@@ -20,6 +20,7 @@ namespace TeaBar.Data
         public DbSet<Discount> Discount { get; set; }
         public DbSet<Orders> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<News> News { get; set; }
         public virtual DbSet<ApplicationUsers> ApplicationUsers { get; set; }
         public virtual DbSet<UserOfCustomer> UserOfCustomer { get; set; }
     }

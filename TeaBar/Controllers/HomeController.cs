@@ -24,16 +24,9 @@ namespace TeaBar.Controllers
             return View();
         }
 
-        public IActionResult News()
+        public IActionResult Privacy()
         {
-           
             return View();
-        }
-        [HttpGet]
-        public string GetUserName()
-        {
-            string username = User.FindFirstValue(ClaimTypes.NameIdentifier); ;
-            return username;
         }
 
 

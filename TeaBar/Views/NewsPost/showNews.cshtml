@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewData["Title"] = "最新消息";
+}
+
+<fieldset id="newslist">
+    <legend>@ViewData["Title"]</legend>
+    <!--即時公告顯示區塊-->
+    <div class="container">
+        <div class="shadow p-3 mb-5 bg-body rounded">
+            <div class="row row-cols-1 g-4" v-for="item in items">
+                <!--News-->
+                <div class="col">
+                    <div class="card mb-3" style="width: 100%;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/image_news.png" class="img-fluid rounded-start" alt="">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="background-color:lightgray;height:40px;padding-top:8px">{{item.topic}}</h5>
+                                    <p class="card-text" v-html="item.contentText"></p>                                    
+                                    <p class="card-text"><small class="text-muted">{{item.time}}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--News-->
+            </div>
+        </div>
+    </div>
+    <!--歷史公告顯示區塊-->
+    <legend>近期公告</legend>
+    <div class="container">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded">
+            <div class="row row-cols-1 g-4" v-for="item in historyItems">
+                <!--歷史公告內容-->
+                <div class="col">
+                    <div class="card mb-3" style="width: 100%;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="/images/image_news.png" class="img-fluid rounded-start" alt="">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="background-color:lightgray;height:40px;padding-top:8px">{{item.topic}}</h5>
+                                    <p class="card-text" v-html="item.contentText"></p>                                    
+                                    <p class="card-text"><small class="text-muted">{{item.time}}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--歷史公告內容-->
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+<script>
+    //網頁初始化
+    $(document).ready(
+        function () {
+            $.ajax({
+                url: '/NewsPublish/GetNews',
+                type: 'GET'
+            }).done(function (data) {
+                for (index = 0; index < data.length; index++)
+                {
+                    data[index].contentText = data[index].contentText.replace(/\n/g, "<br>");
+                    data[index].time = data[index].time.split('T')[0];                    
+                    app.historyItems.push(data[index]);
+                }                
+                //WebSocket公告
+                var client = new WebSocket("wss://iot.cht.com.tw:443/iot/ws/rawdata");
+                client.onopen = function () {                    
+                    let obj = { ck: "PKC4HAUS5RAGHMWZ2B", resources: ["/v1/device/28331841134/sensor/news/rawdata"] };
+                    let jsonString = JSON.stringify(obj);
+                    client.send(jsonString);
+                };
+                client.onmessage = function (msg) {
+                    let wsObj = JSON.parse(msg.data);
+                    let time = wsObj.time.split('T')[0];
+                    let newsItem = JSON.parse(wsObj.value);
+                    let topic = newsItem.topic;
+                    let contentText = newsItem.contentText.replace(/\n/g, "<br>");                    
+                    let curObj = { topic: topic, contentText: contentText, time: time };
+                    app.items.unshift(curObj);
+                };
+            }).fail();           
+        }
+    );
+
+    var app = new Vue({
+        el: '#newslist',
+        data:{
+            items: [],
+            historyItems:[]
+        }
+    });
+
+</script>
