@@ -134,7 +134,7 @@
                         </select>
                     </div>
                     <!--確認分店-->
-                    <p v-if="notCompleted">請選擇分店</p>
+                    <p v-if="notCompleted" class="text-danger">請選擇分店</p>
                     <button type="button" @@click="checkStore(storeVal)" class="btn btn-outline-dark">確認</button>
                     <!--回門市據點-->
                     <a href="/Store/StoreInfo" class="btn btn-outline-dark">回門市據點</a>
@@ -147,13 +147,13 @@
         <!--產品列表-->
         <div id="productList" class="w-75 text-center">
             <!--分類-->
-            <div id="productsCategory">
+            <div id="productsCategory" class="btn-group">
                 <span>
-                    <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none" id="all" />
+                    <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
                     <label class="btn btn-outline-dark btnCategory rounded-pill" for="all">全部商品</label>
                 </span>
                 <span v-for="c in productsCategory">
-                    <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none" :id="c.categoryName" />
+                    <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
                     <label class="btn btn-outline-dark btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
                 </span>
             </div>
@@ -211,7 +211,7 @@
         data: {
             productsCategory: [], //全部產品分類
             productsData: [], //全部商品資料
-            allStoreData: [],
+            allStoreData: [], //全部門市資料
             categorySelect: "all", //預設選取全部商品
             pickUpTime: "", //取餐時間
             modalData: {
@@ -250,7 +250,7 @@
             isOpen: false,
             hasCookie: false,
             notCompleted: false,
-            msgSize: "請選擇容量"
+
 
         },
         methods: {
@@ -297,9 +297,12 @@
                     let d = new Date();
                     d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
                     let expires = "expires=" + d.toUTCString();
-                    let cookie = document.cookie = `storeId=${id}; expires;`;
+                    let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
                     //重新抓cookie資料
                     this.getStoreData();
+                    //重新取得產品分類資料
+                    this.getCategory();
+                    this.getProducts();
                     //關閉modal
                     $("#selectStoreModal").modal('hide');
                     //選單變回預設
@@ -313,7 +316,7 @@
 
             },
             //變更城市下拉選單
-            qryCity: function (city) {
+            qryCity(city) {
                 //選單變回預設
                 this.distVal = "default";
                 this.storeVal = "default";
@@ -328,7 +331,7 @@
                 }
             },
             //變更區域下拉選單
-            qryDist: function (dist) {
+            qryDist(dist) {
                 //選單變回預設
                 this.storeVal = "default";
                 //清空選項
@@ -354,7 +357,6 @@
                 this.size[1].price = modalProduct[0].unitPrice; //中杯
                 //商品id存到data
                 this.orderDetail.ProductID = id;
-                //
             },
             //將選擇商品資料傳到後端
             AddToCart() {
@@ -389,9 +391,9 @@
             //取得選擇分店資訊
             getStoreData() {
                 //判斷是否有cookie
-                if (document.cookie.indexOf("storeId") != -1) {
+                if (document.cookie.indexOf("storeid") != -1) {
                     //取出cookie的值
-                    let id = this.getCookieByName("storeId");
+                    let id = this.getCookieByName("storeid");
                     if (id != "default" && id != "") {
                         //透過id來篩選分店資訊
                         this.orderStoreData = this.allStoreData.filter(i => i.StoreID == id);
@@ -438,20 +440,31 @@
                 }
 
             },
+            //取得產品分類資料
+            getCategory() {
+                //取得cookie storeid
+                let id = this.getCookieByName('storeid');
+                axios(`/api/ProductsService/Category/${id}`)
+                    .then(response => { this.productsCategory = response.data })
+                    .catch(error => console.log(error));
 
+            },
+            getProducts() {
+                let id = this.getCookieByName('storeid');
+                axios(`/api/ProductsService/Products/${id}`)
+                    .then(response => { this.productsData = response.data })
+                    .catch(error => console.log(error));
+
+            },
 
 
 
         },
         async created() {
             //取得所有商品資料
-            axios('/api/ProductsService/Products')
-                .then(response => { this.productsData = response.data })
-                .catch(error => console.log(error));
+            this.getProducts();
             //取得產品分類資料
-            axios('/api/ProductsService/Category')
-                .then(response => { this.productsCategory = response.data })
-                .catch(error => console.log(error));
+            this.getCategory();
             //取得城市清單
             axios('/api/StoreService/city')
                 .then(response => { this.cityList = response.data })

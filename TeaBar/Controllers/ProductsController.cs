@@ -28,7 +28,7 @@ namespace TeaBar.Controllers
 
         public string GetSession() //測試讀取session
         {
-            var data = HttpContext.Session.GetString("cartItem");
+            var data = HttpContext.Session.GetString("userName");
             return data;
         }
     }
