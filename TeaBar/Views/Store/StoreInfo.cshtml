@@ -21,17 +21,16 @@
         <div id="map" class="embed-responsive"></div>
         <!--搜尋門市功能-->
         <div class="search">
-
-            <div id="selectStore" class="input-group">
-                <select v-model="cityVal" @@change="qryCity(cityVal)" class="form-select form-inline mr-1">
+            <div id="selectStore" class="input-group  mb-3 text-center">
+                <select v-model="cityVal" @@change="qryCity(cityVal)" class="form-select form-inline mr-2">
                     <option value="default">選擇縣市</option>
                     <option :value="city" v-for="city in cityList">{{city}}</option>
                 </select>
-                <select v-model="distVal" @@change="qryDist()" class="form-select form-inline mr-1">
+                <select v-model="distVal" @@change="qryDist()" class="form-select form-inline mr-2">
                     <option value="default">選擇地區</option>
                     <option :value="dist" v-for="dist in distList">{{dist}}</option>
                 </select>
-                <input type="text" name="store" value="" placeholder="請輸入門市名稱" v-model="keyWord" class="form-control form-inline"/>
+                <input type="text" name="store" value="" placeholder="請輸入門市名稱" v-model="keyWord" class="form-control form-inline" @@input="storeSearch" />
             </div>
             <!--門市清單-->
             <div id="storeList">
@@ -45,25 +44,13 @@
                         <button type="button" class="btn btn-outline-dark" @@click="selectStore(list.StoreID)">前往訂餐</button>
                     </li>
                 </ul>
-                <!--搜尋列產生清單-->
-                <ul style="list-style-type:none" class="list-group">
-                    <li class="list-group-item" :value="list.storeID" v-for="list in storeSearch">
-                        <label>{{list.storeName}}</label>
-                        {{list.storeCity}}{{list.storeDistrict}}{{list.storeAddress}} |
-                        {{list.storePhone}}
-                        <a href="#" :value="list.storeName" class="btn btn-outline-dark" @@click="selectStore(list.StoreID)">前往訂餐</a>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const host ="@Context.Request.Host";
-    const pathBase = "@Context.Request.PathBase";
     let currentInfoWindow = "";
-    let latLng, lat, lng;
     //點li改變map latlng
     //$(function () {
     //    $("body").on("click", "li", function (e) {
@@ -75,16 +62,22 @@
             el: '#StoreInfo',
             data: {
                 allStoreData: [], //全部門市資料
-                cityList: [], 
+                cityList: [],
                 distList: [],
-                storeList:[],
+                storeList: [],
                 cityVal: "", //儲存選中的
                 distVal: "",
-                pathBase: host + pathBase,
                 keyWord: "", //搜尋內容
-                map: "",
-                markerData: [], //google map marker
-                mapfeatures: [],
+                googleMap: {
+                    map: "",
+                    lat: 0,
+                    lng: 0,
+                    markerData: [], //google map marker
+                    marker: [],
+                    infoWindow: [],
+                },
+
+
 
             },
             methods: {
@@ -94,11 +87,11 @@
                     this.distVal = "default";
                     this.distList = [];
                     //清空搜尋欄
-                    this.keyWord = ""; 
+                    this.keyWord = "";
 
                     if (this.cityVal !== "default") {
                         //篩選門市清單
-                        this.storeList = this.allStoreData.filter(i => i.StoreCity == city); 
+                        this.storeList = this.allStoreData.filter(i => i.StoreCity == city);
                         //取得區域資料
                         axios(`/api/StoreService/${city}/dist`)
                             .then(response => { this.distList = response.data })
@@ -107,7 +100,6 @@
                         //預設顯示全部門市
                         this.storeList = this.allStoreData;
                     }
-
                 },
                 //變更區域下拉選單
                 qryDist() {
@@ -120,7 +112,51 @@
                     }
 
                 },
+                //將門市資料存cookie(點擊前往訂餐)
+                selectStore(id) {
+                    let d = new Date();
+                    d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    let expires = "expires=" + d.toUTCString();
+                    let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
+                    window.location.href = "/Products/OrderProducts";
+                },
                 //初始化 google map
+                initialMap() {
+                    //建立地圖
+                    this.googleMap.map = new google.maps.Map(document.getElementById('map'), {
+                        center: { lat: this.googleMap.lat, lng: this.googleMap.lng, }, // 中心點座標
+                        zoom: 12,
+                        mapTypeId: 'roadmap',
+                    });
+
+                    [].forEach.call(this.allStoreData, data => {
+                        //放置多個marker
+                        this.googleMap.markerData = new google.maps.LatLng(data.Lat, data.Lng);
+                        this.googleMap.marker = new google.maps.Marker({
+                            position: this.googleMap.markerData,
+                            icon: "/images/map/mapicon.png",
+                            map: this.googleMap.map,
+                            title: data.StoreName
+                        });
+                        //資訊視窗
+                        this.googleMap.infoWindow = new google.maps.InfoWindow({
+                            content: `<h5>${data.StoreName}</h5>
+                                        <p>地址:${data.StoreAddress}</p>
+                                        <a href="#" class="btn btn-outline-dark btn-sm" @@click="selectStore(${data.StoreID})">前往訂餐</a>`,
+                            maxWidth: 300,
+                        });
+
+
+
+                    });
+                   
+                    
+                },
+                setMarker() {
+
+
+
+                },
                 //initMap() {
                 //    let initLocation = { lat: 25.0405139, lng: 121.4434502};
                 //    //建立地圖
@@ -167,14 +203,6 @@
                 //        });
                 //        })
                 //},
-                //將門市資料存cookie(點擊前往訂餐)
-                selectStore(id) {
-                    let d = new Date();
-                    d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
-                    let expires = "expires=" + d.toUTCString();
-                    let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
-                    window.location.href = "/Products/OrderProducts";
-                },
                 //動態改變map經緯度
                 //changeMap(e) {
                 //    let liVal = $(e.target).attr("value");
@@ -192,25 +220,28 @@
                 axios('/api/StoreService/store')
                     .then(response => {
                         this.allStoreData = JSON.parse(response.data);
-                        //this.storeList = JSON.parse(response.data);
+                        //取得第一筆經緯度
+                        this.googleMap.lat = this.allStoreData[0].Lat;
+                        this.googleMap.lng = this.allStoreData[0].Lng;
+                        //取得資訊後建立地圖物件
+                        this.initialMap();
+                        //
+                        this.setMarker();
                     })
                     .catch(error => console.log(error));
                 //取得城市清單
                 axios('/api/StoreService/city')
-                    .then(response => { this.cityList = response.data})
+                    .then(response => { this.cityList = response.data })
                     .catch(error => console.log(error));
                 //下拉選單預設
                 this.cityVal = "default";
                 this.distVal = "default";
-                //載入地圖
-                window.addEventListener('load', () => {
-                    //this.initMap();
-                });
 
-                
+
+
 
             },
-            computed:{
+            computed: {
                 //搜尋門市功能
                 storeSearch() {
                     if (this.keyWord != "") {

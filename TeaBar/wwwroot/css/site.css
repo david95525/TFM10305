@@ -73,10 +73,6 @@ body {
 .search {
     height:40px;
 }
-#selectStore {
-    text-align: center;
-    width: 450px;
-}
 .productImg {
     cursor: pointer;
 }
