@@ -26,61 +26,94 @@ namespace TeaBar.Controllers
         }
 
         [HttpGet]
-        [Route("Showorder")]
+        [Route("Showorder1")]
         [Produces("application/json")]
-        public List<Orders> Showorder()
+        public List<TopOrederview> Showorder1()
         {
-            List<Orders> orderresult = _dBContext.Orders.ToList();
 
-            return orderresult;
+            List<TopOrederview> Orderlist = (from p in _dBContext.UserOfCustomer
+                                             join q in _dBContext.Orders on p.UserID equals q.UserID
+                                             join r in _dBContext.Discount on q.DiscountID equals r.DiscountID
+                                             join t in _dBContext.OrderDetails on q.OrderID equals t.OrderID
+                                             join u in _dBContext.Products on t.ProductID equals u.ProductID
+                                             join v in _dBContext.Categories on u.CategoryID equals v.CategoryID
+                                             join w in _dBContext.Stores on v.StoreID equals w.StoreID
+                                             select new TopOrederview
+                                             {
+                                                 OrderID = t.OrderID,
+                                                 FirstName = p.FirstName,
+                                                 LastName = p.LastName,
+                                                 StoreName = w.StoreName,
+                                                 OrderDate = q.OrderDate,
+                                                 DiscountRule = r.DiscountRule,
+
+                                             }).Distinct().ToList();
+            return Orderlist;
         }
 
-        //[HttpPost]
-        //[Route("Save/{id?}")]
-        //[Produces("application/json")]
-        //[ValidateAntiForgeryToken]
-        //public bool Save(int orderDetails)
-        //{
-        //    OrderDetails updateOrderDetails = (from item in _dBContext.OrderDetails
-        //                                       where item.OrderID == orderDetails
-        //                                       select item).FirstOrDefault();
-        //    if (updateOrderDetails != null)
-        //    {
-        //        updateOrderDetails.Quantity = orderDetails;
-                
-        //        _dBContext.SaveChanges();
-        //        return true;
-        //    }
-        //    return false;
+        [HttpGet]
+        [Route("Showorder/{pageSize?}/{pageIndex}")]
+        [Produces("application/json")]
+        public List<TopOrederview> Showorder(int pageIndex, int pageSize)
+        {
 
-        //}
+            List<TopOrederview> Orderlist = (from p in _dBContext.UserOfCustomer
+                                             join q in _dBContext.Orders on p.UserID equals q.UserID
+                                             join r in _dBContext.Discount on q.DiscountID equals r.DiscountID
+                                             join t in _dBContext.OrderDetails on q.OrderID equals t.OrderID
+                                             join u in _dBContext.Products on t.ProductID equals u.ProductID
+                                             join v in _dBContext.Categories on u.CategoryID equals v.CategoryID
+                                             join w in _dBContext.Stores on v.StoreID equals w.StoreID
+                                             select new TopOrederview
+                                             {
+                                                 OrderID = t.OrderID,
+                                                 FirstName = p.FirstName,
+                                                 LastName = p.LastName,
+                                                 StoreName = w.StoreName,
+                                                 OrderDate = q.OrderDate,
+                                                 DiscountRule = r.DiscountRule,
 
+                                             }).Distinct().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
-        [HttpPost("{id}")]
-        [Route("Save/{id?}")]
+            return Orderlist;
+
+        }
+
+        [HttpPost]
+        [Route("Save")]
         [Produces("application/json")]
         //[ValidateAntiForgeryToken]
-        public IActionResult Save(string id)
+        public IActionResult Save(List<Orderview> order)
         {
-            string orderDetails = id;
-            OrderDetails updateOrderDetails = (from item in _dBContext.OrderDetails
-                                               where item.OrderID == orderDetails
-                                               select item).FirstOrDefault();
-            if (updateOrderDetails != null)
+
+            try
             {
-                
+                foreach (Orderview item in order)
+                {
+                    var updateOrderDetails = (from i in _dBContext.OrderDetails
+                                              where i.OrderID == item.OrderID
+                                              && i.OrderDetailID == item.OrderDetailID
+                                              select i);
+                    foreach (var i in updateOrderDetails)
+                    {
+                        i.Quantity = item.Quantity;
+                        i.Note = item.Note;
+                    }
+                    _dBContext.SaveChanges();
 
-                _dBContext.SaveChanges();
-                return RedirectToAction("Index");
+                }
+
             }
+            catch (Exception e)
+            {
+                string b = e.ToString();
+            }
+
+
             return RedirectToAction("Index");
-
         }
 
-        private bool OrderDetailExists(string id)
-        {
-            return _dBContext.OrderDetails.Any(e => e.OrderID == id);
-        }
+
 
         [HttpGet]
         [Route("Detail/{id}")]
@@ -101,7 +134,7 @@ namespace TeaBar.Controllers
                               Quantity = t.Quantity,
                               Note = t.Note,
                               Customization = t.Customization,
-                          }).ToList();
+                          }).Distinct().ToList();
             return result;
         }
 
@@ -117,16 +150,28 @@ namespace TeaBar.Controllers
             return Productresult;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Route("Delete/{id}")]
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
         [Produces("application/json")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(string id)
         {
-            var orders = await _dBContext.Orders.FindAsync(new object[] { id });
-            _dBContext.Orders.Remove(orders);
-            await _dBContext.SaveChangesAsync();
+
+            List<OrderDetails> result = (from d in _dBContext.OrderDetails where d.OrderID == id select d).ToList();
+
+            try
+            {
+                _dBContext.OrderDetails.RemoveRange(result);
+                _dBContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                string b = e.ToString();
+            }
+
+            List<Orders> result2 = (from d in _dBContext.Orders where d.OrderID == id select d).ToList();
+            _dBContext.Orders.RemoveRange(result2);
+            _dBContext.SaveChanges();
+
             return RedirectToAction("Index");
         }
     }

@@ -84,11 +84,11 @@ namespace TeaBar.Controllers
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = "https://localhost:44374/Identity/Account/ConfirmEmail?userId=" + userId + "&code=" + code;
+                    var callbackUrl = "https://teabar.azurewebsites.net/Identity/Account/ConfirmEmail?userId=" + userId + "&code=" + code;
                     await _emailSender.SendEmailAsync(
                         Input.Email,
                         "Email驗證",
-                        $"請點選此連結開通帳號 <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>開通連結</a>.");
+                        $"請點選此連結開通帳號 <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>開通連結</a>。");
 
                     ModelState.AddModelError(string.Empty, "確認信已發送，請至您的信箱確認。");
                     return View();

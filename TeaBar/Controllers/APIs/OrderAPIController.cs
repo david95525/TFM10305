@@ -104,25 +104,28 @@ namespace TeaBar.Controllers
         public List<CartViewModel> Readcart()
         #region 購物車資料讀取
         {
-
-            string username = User.Identity.Name;
-            #region 讀cookie
-            //if (HttpContext.Request.Cookies[username] != null)
-            //{
-            //    string jsonstring = HttpContext.Request.Cookies[username];             
-            //      List <CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
-            //    return data;
-            //}
-            #endregion
-            #region 讀session
-            if (HttpContext.Session.Keys.Contains(username))
-            {
-                string jsonstring = HttpContext.Session.GetString(username);
-                List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
-                return data;
+            if (HttpContext.Session.Keys.Contains("username"))
+            { string username = HttpContext.Session.GetString("username");
+                #region 讀session
+                if (HttpContext.Session.Keys.Contains(username))
+                {
+                    string jsonstring = HttpContext.Session.GetString(username);
+                    List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
+                    return data;
+                }
+                #endregion
             }
-            #endregion
-            return null;
+
+                #region 讀cookie
+                //if (HttpContext.Request.Cookies[username] != null)
+                //{
+                //    string jsonstring = HttpContext.Request.Cookies[username];             
+                //      List <CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
+                //    return data;
+                //}
+                #endregion
+
+                return null;
         }
         #endregion
         //寫入order資料庫
@@ -148,8 +151,10 @@ namespace TeaBar.Controllers
                     DeserializeObject<List<CartViewModel>>(Carts);
                 #endregion
                 #region 存入order表
+                //台北時間
+                DateTimeOffset taipeiTime = DateTimeOffset.Now.ToOffset(new TimeSpan(8, 0, 0));
                 //找出order屬性
-            
+
                 string userid = _db.Users.Where(s => s.UserName == username).
                     Select(s => s.Id).FirstOrDefault();
                 string storeid = HttpContext.Request.Cookies[username];
@@ -161,7 +166,7 @@ namespace TeaBar.Controllers
                     OrderID = orderid,
                     UserID = userid.ToString(),
                     DiscountID = discountid,
-                    OrderDate = DateTime.Now.ToString("yyyy/MM/dd_HH:mm"),
+                    OrderDate = taipeiTime.ToString(),
                 };
                 //嘗試存入資料庫
                 try
@@ -180,14 +185,17 @@ namespace TeaBar.Controllers
                 int index = 1;
                 foreach (var item in carts)
                 {
-                    if(item.Ingredient=="布丁"|| item.Ingredient == "仙草凍" || item.Ingredient == "芋圓")
+                    if(item.Ingredient== "珍珠"  || item.Ingredient == "椰果" || item.Ingredient == "寒天"|| item.Ingredient == "雙Q")
                     {
                         item.Ingredient = item.Ingredient + "+10元";
+                    }else if(item.Ingredient == "小芋圓"|| item.Ingredient == "蜂蜜") 
+                    {
+                        item.Ingredient = item.Ingredient + "+15元";
                     }
                     //建立orderdetails集合
                     OrderDetails orderdetail = new OrderDetails
                     {
-                        TotalPrice=item.Subtotal,
+                        TotalPrice= (int)Math.Round(item.Subtotal*item.Discount),
                         OrderID=orderid,
                         ProductID = item.ProductId,
                         UnitPrice = item.UnitPrice,
@@ -212,6 +220,7 @@ namespace TeaBar.Controllers
             return msg;
         }
         #endregion
+
 
     }
 }

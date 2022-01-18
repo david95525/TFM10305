@@ -22,7 +22,7 @@ namespace TeaBar.Controllers
         }
         public IActionResult ShoppingCart()
         {
-            if(User.Identity.Name==null)
+            if (User.Identity.Name == null)
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
@@ -37,10 +37,8 @@ namespace TeaBar.Controllers
             Products product2= _db.Products.FirstOrDefault(p => p.ProductID == product2id);
             Products product3 = _db.Products.FirstOrDefault(p => p.ProductID == product3id);
             Discount discount = _db.Discount.FirstOrDefault(d => d.DiscountID == discountid);
-            List<Stores> store = _db.Stores.ToList();
-            Random r = new Random();
-            int index= r.Next(0, 4);
-            string storeid = store[index].StoreID;            //存入session
+           
+            //存入session
             List<CartViewModel> Carts = new List<CartViewModel>
             {
                new CartViewModel()
@@ -58,7 +56,7 @@ namespace TeaBar.Controllers
                    Picture=product1.Picture,
                    Note="無",
                    Size="大",
-                   StoreID=storeid
+                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
                },
                new CartViewModel()
                {
@@ -75,7 +73,7 @@ namespace TeaBar.Controllers
                    Picture=product2.Picture,
                    Note="無",
                    Size="中",
-                   StoreID=storeid
+                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
                },
                              new CartViewModel()
                {
@@ -100,10 +98,6 @@ namespace TeaBar.Controllers
             //存入session
             HttpContext.Session.SetString(userName, jsonstring);
             return View();
-            //模擬前面存入cookie
-            //CookieOptions option = new CookieOptions();
-            //option.Expires = DateTime.Now.AddDays(5);
-            //HttpContext.Response.Cookies.Append(Resources.cartcookie,jsonstring, option);
         }
  
 

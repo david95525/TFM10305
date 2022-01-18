@@ -6,10 +6,17 @@
 
     @if (SignInManager.IsSignedIn(User))
     {
-        //TODO 各身分導覽列
+        //各身分導覽列
         if (User.IsInRole("Manager"))
         {
-            <!--管理員導覽列  TODO 連結頁面設定-->
+            <!--管理員導覽列-->
+            <!-- 發佈公告圖示 -->
+            <li class="nav-item me-2 me-lg-1">
+                <a class="nav-link d-sm-flex align-items-sm-center" id="cart" aria-expanded="false" asp-controller="NewsPost" asp-action="pubNews">
+                    <img src="~/images/icon_news.png" class="rounded-circle" height="30" alt="" />
+                    <strong class="d-none d-sm-block ms-1 fs-6">發佈公告</strong>
+                </a>
+            </li>
             <!-- 管理頁面圖示-->
             <li class="nav-item dropdown">
                 <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
@@ -28,7 +35,8 @@
                         </form>
                     </li>
                 </ul>
-            </li>           
+            </li>
+
             <!-- 管理員管理圖示 -->
             <li class="nav-item dropdown">
                 <a class="nav-link text-dark dropdown-toggle d-sm-flex align-items-sm-center hidden-arrow" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" title="Manage">
