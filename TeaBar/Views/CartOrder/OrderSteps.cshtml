@@ -214,7 +214,7 @@
                                                 <div>{{order.productName}}</div>
                                             </div>
                                             <div class="bg-color">
-                                                <div>{{order.size}}杯/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
+                                                <div>{{order.size}}/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
                                             </div>
                                             <div class="bg-color">
                                                 <div>$ {{order.subtotal}}</div>
@@ -485,9 +485,9 @@
             districtData: [],//區域資料
             discount:0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
-            icelist: ["正常冰","去冰", "微冰", "少冰", "正常冰", "溫", "熱"],
+            icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
             inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜","無"],
-            sizelist: ["大", "中"],
+            sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
             isIN: false,
@@ -596,9 +596,11 @@
                     }
                     //更新資料
                     app.order.subtotal = app.order.unitPrice * app.order.quantity;
-                    if (app.order.ingredient === "布丁" || app.order.ingredient === "仙草凍"
-                        || app.order.ingredient === "芋圓") {
+                    if (app.order.ingredient === "珍珠" || app.order.ingredient === "椰果"
+                        || app.order.ingredient === "寒天" || app.order.ingredient === "雙Q") {
                         app.order.subtotal = app.order.subtotal + 10;
+                    } else if (app.order.ingredient === "蜂蜜" || app.order.ingredient === "小芋圓") {
+                        app.order.subtotal = app.order.subtotal + 15;
                     }
                     app.total = Math.round(app.total - (app.temp[5] - app.order.subtotal) * app.order.discount);
                    

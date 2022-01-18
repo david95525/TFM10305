@@ -185,14 +185,17 @@ namespace TeaBar.Controllers
                 int index = 1;
                 foreach (var item in carts)
                 {
-                    if(item.Ingredient=="布丁"|| item.Ingredient == "仙草凍" || item.Ingredient == "芋圓")
+                    if(item.Ingredient== "珍珠"  || item.Ingredient == "椰果" || item.Ingredient == "寒天"|| item.Ingredient == "雙Q")
                     {
                         item.Ingredient = item.Ingredient + "+10元";
+                    }else if(item.Ingredient == "小芋圓"|| item.Ingredient == "蜂蜜") 
+                    {
+                        item.Ingredient = item.Ingredient + "+15元";
                     }
                     //建立orderdetails集合
                     OrderDetails orderdetail = new OrderDetails
                     {
-                        TotalPrice=item.Subtotal,
+                        TotalPrice= (int)Math.Round(item.Subtotal*item.Discount),
                         OrderID=orderid,
                         ProductID = item.ProductId,
                         UnitPrice = item.UnitPrice,
