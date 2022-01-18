@@ -26,6 +26,37 @@ namespace TeaBar.Controllers
         }
 
         [HttpGet]
+        [Route("Search/{text}")]
+        [Produces("application/json")]
+        public  List<TopOrederview> Search(string text)
+        {
+            
+                List<TopOrederview> Orderlist = (from p in _dBContext.UserOfCustomer
+                                                 join q in _dBContext.Orders on p.UserID equals q.UserID
+                                                 join r in _dBContext.Discount on q.DiscountID equals r.DiscountID
+                                                 join t in _dBContext.OrderDetails on q.OrderID equals t.OrderID
+                                                 join u in _dBContext.Products on t.ProductID equals u.ProductID
+                                                 join v in _dBContext.Categories on u.CategoryID equals v.CategoryID
+                                                 join w in _dBContext.Stores on v.StoreID equals w.StoreID
+                                                 where p.FirstName == text || p.LastName == text || q.OrderID == text ||
+                                                 w.StoreName == text
+                                                 select new TopOrederview
+                                                 {
+                                                     OrderID = t.OrderID,
+                                                     FirstName = p.FirstName,
+                                                     LastName = p.LastName,
+                                                     StoreName = w.StoreName,
+                                                     OrderDate = q.OrderDate,
+                                                     DiscountRule = r.DiscountRule,
+
+                                                 }).Distinct().ToList();
+                return Orderlist;
+           
+            
+        }
+
+
+        [HttpGet]
         [Route("Showorder1")]
         [Produces("application/json")]
         public List<TopOrederview> Showorder1()
