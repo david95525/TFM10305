@@ -134,7 +134,7 @@
                         </select>
                     </div>
                     <!--確認分店-->
-                    <p v-if="notCompleted">請選擇分店</p>
+                    <p v-if="notCompleted" class="text-danger">請選擇分店</p>
                     <button type="button" @@click="checkStore(storeVal)" class="btn btn-outline-dark">確認</button>
                     <!--回門市據點-->
                     <a href="/Store/StoreInfo" class="btn btn-outline-dark">回門市據點</a>
@@ -250,7 +250,7 @@
             isOpen: false,
             hasCookie: false,
             notCompleted: false,
-            msgSize: "請選擇容量"
+
 
         },
         methods: {
@@ -297,7 +297,7 @@
                     let d = new Date();
                     d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
                     let expires = "expires=" + d.toUTCString();
-                    let cookie = document.cookie = `storeId=${id}; expires;`;
+                    let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
                     //重新抓cookie資料
                     this.getStoreData();
                     //關閉modal
@@ -383,9 +383,9 @@
             //取得選擇分店資訊
             getStoreData() {
                 //判斷是否有cookie
-                if (document.cookie.indexOf("storeId") != -1) {
+                if (document.cookie.indexOf("storeid") != -1) {
                     //取出cookie的值
-                    let id = this.getCookieByName("storeId");
+                    let id = this.getCookieByName("storeid");
                     if (id != "default" && id != "") {
                         //透過id來篩選分店資訊
                         this.orderStoreData = this.allStoreData.filter(i => i.StoreID == id);

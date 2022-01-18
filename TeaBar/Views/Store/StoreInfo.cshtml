@@ -31,7 +31,7 @@
                     <option value="default">選擇地區</option>
                     <option :value="dist" v-for="dist in distList">{{dist}}</option>
                 </select>
-                <input type="text" name="store" value="" placeholder="請輸入門市名稱" v-model="keyWord" class="form-control form-inline" />
+                <input type="text" name="store" value="" placeholder="請輸入門市名稱" v-model="keyWord" class="form-control form-inline"/>
             </div>
             <!--門市清單-->
             <div id="storeList">
@@ -41,7 +41,8 @@
                         <label>{{list.StoreName}}</label>
                         {{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}} |
                         {{list.StorePhone}}
-                        <a href="#" :value="list.storeName" class="btn btn-outline-dark" @@click="selectStore(list.StoreID)">前往訂餐</a>
+                        <!--/Products/OrderProducts-->
+                        <button type="button" class="btn btn-outline-dark" @@click="selectStore(list.StoreID)">前往訂餐</button>
                     </li>
                 </ul>
                 <!--搜尋列產生清單-->
@@ -64,11 +65,11 @@
     let currentInfoWindow = "";
     let latLng, lat, lng;
     //點li改變map latlng
-    $(function () {
-        $("body").on("click", "li", function (e) {
-            app.changeMap(e);
-        });
-    })
+    //$(function () {
+    //    $("body").on("click", "li", function (e) {
+    //        app.changeMap(e);
+    //    });
+    //})
     var app = new Vue(
         {
             el: '#StoreInfo',
@@ -120,93 +121,93 @@
 
                 },
                 //初始化 google map
-                initMap() {
-                    let initLocation = { lat: 25.0405139, lng: 121.4434502};
-                    //建立地圖
-                    this.map = new google.maps.Map(document.getElementById('map'), {
-                        center: initLocation, // 中心點座標
-                        zoom: 12, // 1-20，數字愈大，地圖愈細：1是世界地圖，20就會到街道
-                        /*
-                          roadmap 顯示默認道路地圖視圖。
-                          satellite 顯示 Google 地球衛星圖像。
-                          hybrid 顯示正常和衛星視圖的混合。
-                          terrain 顯示基於地形信息的物理地圖。
-                        */
-                        mapTypeId: 'roadmap'
-                    });
-                    //放置多個marker
-                    axios('/js/mapData.json')
-                        .then(results => results.data)
-                        .then(result => {
-                            this.markerData = result.features;
-                            Array.prototype.forEach.call(this.markerData, data => {
-                                latLng = new google.maps.LatLng(data.geometry.coordinates[0], data.geometry.coordinates[1]);
-                                let marker = new google.maps.Marker({
-                                    position: latLng,
-                                    icon: "/images/map/mapicon.png",
-                                    map: this.map,
-                                    title: data.properties.name
-                                });
-                                //資訊視窗
-                                let infowindow = new google.maps.InfoWindow({
-                                    content: `<h5>${data.properties.name}</h5>
-                                        <p>地址:${data.properties.site}</p>
-                                        <a href="#" class="btn btn-outline-dark btn-sm" onclick="selectStore(${data.properties.id})">前往訂餐</a>`,
-                                    maxWidth: 300,
-                                });
-                                google.maps.event.addListener(marker, "click", () => {
-                                    //關閉前一個infowindow
-                                    if (currentInfoWindow != "") {
-                                        currentInfoWindow.close();
-                                        currentInfoWindow = "";
-                                    }
-                                    infowindow.open(map, marker);
-                                    currentInfoWindow = infowindow;
-                                });
-                        });
-                        })
-                },
+                //initMap() {
+                //    let initLocation = { lat: 25.0405139, lng: 121.4434502};
+                //    //建立地圖
+                //    this.map = new google.maps.Map(document.getElementById('map'), {
+                //        center: initLocation, // 中心點座標
+                //        zoom: 12, // 1-20，數字愈大，地圖愈細：1是世界地圖，20就會到街道
+                //        /*
+                //          roadmap 顯示默認道路地圖視圖。
+                //          satellite 顯示 Google 地球衛星圖像。
+                //          hybrid 顯示正常和衛星視圖的混合。
+                //          terrain 顯示基於地形信息的物理地圖。
+                //        */
+                //        mapTypeId: 'roadmap'
+                //    });
+                //    //放置多個marker
+                //    axios('/js/mapData.json')
+                //        .then(results => results.data)
+                //        .then(result => {
+                //            this.markerData = result.features;
+                //            Array.prototype.forEach.call(this.markerData, data => {
+                //                latLng = new google.maps.LatLng(data.geometry.coordinates[0], data.geometry.coordinates[1]);
+                //                let marker = new google.maps.Marker({
+                //                    position: latLng,
+                //                    icon: "/images/map/mapicon.png",
+                //                    map: this.map,
+                //                    title: data.properties.name
+                //                });
+                //                //資訊視窗
+                //                let infowindow = new google.maps.InfoWindow({
+                //                    content: `<h5>${data.properties.name}</h5>
+                //                        <p>地址:${data.properties.site}</p>
+                //                        <a href="#" class="btn btn-outline-dark btn-sm" onclick="selectStore(${data.properties.id})">前往訂餐</a>`,
+                //                    maxWidth: 300,
+                //                });
+                //                google.maps.event.addListener(marker, "click", () => {
+                //                    //關閉前一個infowindow
+                //                    if (currentInfoWindow != "") {
+                //                        currentInfoWindow.close();
+                //                        currentInfoWindow = "";
+                //                    }
+                //                    infowindow.open(map, marker);
+                //                    currentInfoWindow = infowindow;
+                //                });
+                //        });
+                //        })
+                //},
                 //將門市資料存cookie(點擊前往訂餐)
                 selectStore(id) {
                     let d = new Date();
                     d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
                     let expires = "expires=" + d.toUTCString();
-                    let cookie = document.cookie = `storeId=${id}; expires;`;
+                    let cookie = document.cookie = `storeid=${id}; ${expires}; path=/;`;
+                    window.location.href = "/Products/OrderProducts";
                 },
                 //動態改變map經緯度
-                changeMap(e) {
-                    let liVal = $(e.target).attr("value");
-                    console.log(liVal);
-                    let data = this.mapfeatures.filter(i => i.properties.id == liVal);
-                    console.log(data);
-                    lat = data[0].geometry.coordinates[0];
-                    lng = data[0].geometry.coordinates[1];
-                    latLng = new google.maps.LatLng(lat, lng);
-                    this.map.setCenter(latLng);
-                },
+                //changeMap(e) {
+                //    let liVal = $(e.target).attr("value");
+                //    console.log(liVal);
+                //    let data = this.mapfeatures.filter(i => i.properties.id == liVal);
+                //    console.log(data);
+                //    lat = data[0].geometry.coordinates[0];
+                //    lng = data[0].geometry.coordinates[1];
+                //    latLng = new google.maps.LatLng(lat, lng);
+                //    this.map.setCenter(latLng);
+                //},
             },
             created() {
                 //取得分店所有資料
                 axios('/api/StoreService/store')
                     .then(response => {
                         this.allStoreData = JSON.parse(response.data);
-                        this.storeList = JSON.parse(response.data);
+                        //this.storeList = JSON.parse(response.data);
                     })
                     .catch(error => console.log(error));
                 //取得城市清單
                 axios('/api/StoreService/city')
                     .then(response => { this.cityList = response.data})
                     .catch(error => console.log(error));
-                //取得json latlng資料
-                //axios('/js/mapData.json')
-                //    .then(results => this.mapfeatures=results.data.features);
                 //下拉選單預設
                 this.cityVal = "default";
                 this.distVal = "default";
                 //載入地圖
                 window.addEventListener('load', () => {
-                    this.initMap();
+                    //this.initMap();
                 });
+
+                
 
             },
             computed:{
@@ -219,15 +220,12 @@
                         this.distList = [];
                         //傳回搜尋結果
                         this.storeList = [];
-                        return this.allStoreData.filter(searchResult => searchResult.StoreName.match(this.keyWord));
+                        this.storeList = this.allStoreData.filter(searchResult => searchResult.StoreName.match(this.keyWord));
                     } else {
-                        //this.storeList = this.allStoreData;
+                        this.storeList = this.allStoreData;
                     }
                 },
-
-
-
-            }
+            },
         }
     )
 
