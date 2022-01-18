@@ -280,7 +280,7 @@
                
             },
             mounted: function () {
-                Orders = [];
+                
 
                 let apiserver = '/api/OrderService/Showorder/10/'+1;
                 $.ajax(
@@ -299,9 +299,6 @@
 
                     }
                 );
-
-
-
                    let sserver = '/api/OrderService/Showorder1';
                     $.ajax(
                         {
@@ -313,7 +310,7 @@
                                 }
                                 else {
                                     app.quantity = result.length;
-                                    app.Orders = result;
+                                    
 
                                 }
                             }
