@@ -73,10 +73,6 @@ body {
 .search {
     height:40px;
 }
-#selectStore {
-    text-align: center;
-    width: 450px;
-}
 .productImg {
     cursor: pointer;
 }
@@ -122,6 +118,10 @@ body {
     margin-bottom: 10px;
 }
 /*storeinfo*/
+.imageSize{
+    width:250px;
+    height:auto;
+}
 #storeMap {
     display: flex;
 }
