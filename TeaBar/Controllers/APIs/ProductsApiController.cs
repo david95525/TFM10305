@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TeaBar.Data;
 using TeaBar.Models;
+using TeaBar.Models.ViewModels;
 
 namespace TeaBar.Controllers.APIs
 {
@@ -19,6 +20,123 @@ namespace TeaBar.Controllers.APIs
         public ProductsApiController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        [HttpGet]
+        [Route("ProductName")]
+        [Produces("application/json")]
+        public List<string> GetCategoryName() //取得商品名(7項)
+        {
+            var result = _context.Products
+                .Select(p => p.ProductName).Take(7).ToList();
+            return result;
+        }
+
+        [HttpGet]
+        [Route("StoreQuantity")]
+        [Produces("application/json")]
+        public List<int> GetStoreOrderQuantity()//取得商家訂單數量
+        {
+            var ProductManageChartView
+               = (from od in _context.OrderDetails
+                  join p in _context.Products on od.ProductID equals p.ProductID
+                  join c in _context.Categories on p.CategoryID equals c.CategoryID
+                  select new ProductManageChartView
+                  {
+                      CategoryID = c.CategoryID,
+                      Note = od.Note,
+
+                  }).ToList();
+
+            List<int> OrderQuantity = new List<int>();
+            var 緯育 = ProductManageChartView.Where(c => c.Note.IndexOf("緯育") >= 0).Count();
+            var 台南 = ProductManageChartView.Where(c => c.Note.IndexOf("台南") >= 0).Count();
+            var 台北 = ProductManageChartView.Where(c => c.Note.IndexOf("台北") >= 0).Count();
+            var 台中 = ProductManageChartView.Where(c => c.Note.IndexOf("台中") >= 0).Count();
+            OrderQuantity.Add(緯育); OrderQuantity.Add(台南); OrderQuantity.Add(台北); OrderQuantity.Add(台中);
+            return OrderQuantity;
+
+        }
+
+        [HttpGet]
+        [Route("ProductsQuantity")]
+        [Produces("application/json")]
+        public List<int> GetProductsOrderQuantity()//取得商品訂單數量
+        {
+            var ProductManageChartView
+               = (from od in _context.OrderDetails
+                  join p in _context.Products on od.ProductID equals p.ProductID
+                  join c in _context.Categories on p.CategoryID equals c.CategoryID
+                  select new ProductManageChartView
+                  {
+                      ProductID = p.ProductID,
+                      ProductName = p.ProductName,
+                      CategoryID = c.CategoryID,
+
+                  }).ToList();
+
+            List<int> OrderQuantity = new List<int>();
+            var 珍珠奶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("珍珠奶茶") >= 0).Count();
+            var 多多綠 = ProductManageChartView.Where(p => p.ProductName.IndexOf("多多綠") >= 0).Count();
+            var 烏龍綠 = ProductManageChartView.Where(p => p.ProductName.IndexOf("烏龍綠") >= 0).Count();
+            var 鐵觀音 = ProductManageChartView.Where(p => p.ProductName.IndexOf("鐵觀音") >= 0).Count();
+            var 普洱茶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("普洱茶") >= 0).Count();
+            var 金萱茶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("金萱茶") >= 0).Count();
+            var 紅茶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("紅茶") >= 0).Count();
+            OrderQuantity.Add(珍珠奶); OrderQuantity.Add(多多綠); OrderQuantity.Add(烏龍綠); OrderQuantity.Add(鐵觀音);
+            OrderQuantity.Add(普洱茶); OrderQuantity.Add(金萱茶); OrderQuantity.Add(紅茶);
+            return OrderQuantity;
+
+        }
+
+        [HttpGet]
+        [Route("PrStQuantity")]
+        [Produces("application/json")]
+        public List<List<int>> GetProductStoreQuantity()//取得分店商品數量
+        {
+            var ProductManageChartView
+                = (from od in _context.OrderDetails
+                   join p in _context.Products on od.ProductID equals p.ProductID
+                   join c in _context.Categories on p.CategoryID equals c.CategoryID
+                   select new ProductManageChartView
+                   {
+                       ProductID = p.ProductID,
+                       ProductName = p.ProductName,
+                       CategoryID = c.CategoryID,
+                       Note = od.Note,
+
+                   }).ToList();
+
+            List<List<int>> CategoryCount = new List<List<int>>();
+            List<int> MilkCount = new List<int>();
+            List<int> DoCount = new List<int>();
+            List<int> WoCount = new List<int>();
+            List<int> TiCount = new List<int>();
+
+            var resultM1 = ProductManageChartView.Where(p => p.ProductName.IndexOf("珍珠奶茶") >= 0 && p.Note.IndexOf("緯育") >= 0).Count();
+            var resultM2 = ProductManageChartView.Where(p => p.ProductName.IndexOf("珍珠奶茶") >= 0 && p.Note.IndexOf("台南") >= 0).Count();
+            var resultM3 = ProductManageChartView.Where(p => p.ProductName.IndexOf("珍珠奶茶") >= 0 && p.Note.IndexOf("台北") >= 0).Count();
+            var resultM4 = ProductManageChartView.Where(p => p.ProductName.IndexOf("珍珠奶茶") >= 0 && p.Note.IndexOf("台中") >= 0).Count();
+            var resultD1 = ProductManageChartView.Where(p => p.ProductName.IndexOf("多多綠") >= 0 && p.Note.IndexOf("緯育") >= 0).Count();
+            var resultD2 = ProductManageChartView.Where(p => p.ProductName.IndexOf("多多綠") >= 0 && p.Note.IndexOf("台南") >= 0).Count();
+            var resultD3 = ProductManageChartView.Where(p => p.ProductName.IndexOf("多多綠") >= 0 && p.Note.IndexOf("台北") >= 0).Count();
+            var resultD4 = ProductManageChartView.Where(p => p.ProductName.IndexOf("多多綠") >= 0 && p.Note.IndexOf("台中") >= 0).Count();
+            var resultW1 = ProductManageChartView.Where(p => p.ProductName.IndexOf("烏龍綠") >= 0 && p.Note.IndexOf("緯育") >= 0).Count();
+            var resultW2 = ProductManageChartView.Where(p => p.ProductName.IndexOf("烏龍綠") >= 0 && p.Note.IndexOf("台南") >= 0).Count();
+            var resultW3 = ProductManageChartView.Where(p => p.ProductName.IndexOf("烏龍綠") >= 0 && p.Note.IndexOf("台北") >= 0).Count();
+            var resultW4 = ProductManageChartView.Where(p => p.ProductName.IndexOf("烏龍綠") >= 0 && p.Note.IndexOf("台中") >= 0).Count();
+            var resultT1 = ProductManageChartView.Where(p => p.ProductName.IndexOf("鐵觀音") >= 0 && p.Note.IndexOf("緯育") >= 0).Count();
+            var resultT2 = ProductManageChartView.Where(p => p.ProductName.IndexOf("鐵觀音") >= 0 && p.Note.IndexOf("台南") >= 0).Count();
+            var resultT3 = ProductManageChartView.Where(p => p.ProductName.IndexOf("鐵觀音") >= 0 && p.Note.IndexOf("台北") >= 0).Count();
+            var resultT4 = ProductManageChartView.Where(p => p.ProductName.IndexOf("鐵觀音") >= 0 && p.Note.IndexOf("台中") >= 0).Count();
+
+            MilkCount.Add(resultM1); MilkCount.Add(resultM2); MilkCount.Add(resultM3); MilkCount.Add(resultM4);
+            DoCount.Add(resultD1); DoCount.Add(resultD2); DoCount.Add(resultD3); DoCount.Add(resultD4);
+            WoCount.Add(resultW1); WoCount.Add(resultW2); WoCount.Add(resultW3); WoCount.Add(resultW4);
+            TiCount.Add(resultT1); TiCount.Add(resultT2); TiCount.Add(resultT3); TiCount.Add(resultT4);
+            CategoryCount.Add(TiCount); CategoryCount.Add(WoCount);CategoryCount.Add(DoCount);  CategoryCount.Add(MilkCount);
+                        
+            return CategoryCount;
         }
 
         // GET: api/ProductsApi

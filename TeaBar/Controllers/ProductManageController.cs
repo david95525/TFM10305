@@ -41,36 +41,34 @@ namespace TeaBar.Controllers
 
             try
             {
-                
-                結果 = $"{data.ProductName}-->新增成功!!";
+                var file = data.Picture.First();
+                var combineFileName = $@"{fileRoot}{DateTime.Now.Ticks}{file.FileName}";
+                using (var fileStream = System.IO.File.Create($@"{env.WebRootPath}{combineFileName}"))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                db.Products.Add(new Products
+                {
+                    ProductID = data.ProductID,
+                    ProductName = data.ProductName,
+                    CategoryID = data.CategoryID,
+                    UnitPrice = data.UnitPrice,
+                    Description = data.Description,
+                    Picture = $"{combineFileName}"
+                });
+                db.SaveChanges();
+                結果 = $"{data.ProductName}--新增成功!!";
             }
             catch
             {
-                結果 = $"{data.ProductName}-->新增失敗!!~~我覺得要爆啦";
+                結果 = $"{data.ProductName}--新增失敗!請注意!";
             }
-
-            var file = data.Picture.First();
-            var combineFileName = $@"{fileRoot}{DateTime.Now.Ticks}{file.FileName}";
-            using (var fileStream = System.IO.File.Create($@"{env.WebRootPath}{combineFileName}"))
-            {
-                file.CopyTo(fileStream);
-            }
-
-            db.Products.Add(new Products
-            {
-                ProductID = data.ProductID,
-                ProductName = data.ProductName,
-                CategoryID = data.CategoryID,
-                UnitPrice = data.UnitPrice,
-                Description = data.Description,
-                Picture = $"{combineFileName}"
-            });
-            db.SaveChanges();
 
             //結果(字串物件)
             this.ViewBag.Message = 結果;
             var Pdata = db.Products.ToList();
-            //Product Pdata = new Product();
+           
             return View("~/Views/ProductManage/Index.cshtml", Pdata);
         }//IActionResult Upload
 

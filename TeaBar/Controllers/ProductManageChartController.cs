@@ -12,5 +12,26 @@ namespace TeaBar.Controllers
         {
             return View();
         }
+
+        public IActionResult StoreCategory()
+        {
+            return View();
+        }
+
+        public IActionResult ProductOrder()
+        {
+            return View();
+        }
+
+        public IActionResult StoreOrder()
+        {
+            return View();
+        }
+
+        public IActionResult StoreProduct()
+        {
+            return View();
+        }
+
     }
 }

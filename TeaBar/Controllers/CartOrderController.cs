@@ -37,8 +37,10 @@ namespace TeaBar.Controllers
             Products product2= _db.Products.FirstOrDefault(p => p.ProductID == product2id);
             Products product3 = _db.Products.FirstOrDefault(p => p.ProductID == product3id);
             Discount discount = _db.Discount.FirstOrDefault(d => d.DiscountID == discountid);
-           
-            //存入session
+            List<Stores> store = _db.Stores.ToList();
+            Random r = new Random();
+            int index= r.Next(0, 4);
+            string storeid = store[index].StoreID;            //存入session
             List<CartViewModel> Carts = new List<CartViewModel>
             {
                new CartViewModel()
@@ -56,7 +58,7 @@ namespace TeaBar.Controllers
                    Picture=product1.Picture,
                    Note="無",
                    Size="大",
-                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
+                   StoreID=storeid
                },
                new CartViewModel()
                {
@@ -73,7 +75,7 @@ namespace TeaBar.Controllers
                    Picture=product2.Picture,
                    Note="無",
                    Size="中",
-                   StoreID="9de59954-8571-4744-93ad-43d11c74491a"
+                   StoreID=storeid
                },
                              new CartViewModel()
                {
