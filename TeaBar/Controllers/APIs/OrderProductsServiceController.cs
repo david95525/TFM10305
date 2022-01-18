@@ -65,9 +65,9 @@ namespace TeaBar.Controllers.APIs
             };
 
             //讀舊的
-            if (HttpContext.Session.Keys.Contains(userName))
+            if (HttpContext.Session.Keys.Contains("cartItem"))
             {
-                string oldcart= HttpContext.Session.GetString(userName);
+                string oldcart= HttpContext.Session.GetString("cartItem");
                 carts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(oldcart);
                 carts.Add(cart);
             }
@@ -80,7 +80,7 @@ namespace TeaBar.Controllers.APIs
             {
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
                 //存入session
-                HttpContext.Session.SetString(userName, jsonstring);
+                HttpContext.Session.SetString("cartItem", jsonstring);
 
             }
             catch (InvalidCastException e)
