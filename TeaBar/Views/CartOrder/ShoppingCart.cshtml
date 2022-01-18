@@ -90,9 +90,12 @@
         <!--#endregion -->
         <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
     </div>
-   <div v-if="!isExist">
-       <h1>購物車沒有東西</h1>
-   </div>
+    <div v-if="!isExist">
+        <div class="alert alert-warning d-flex align-items-center" role="alert" v-if="!isReceiverdetail">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+            <div> 無商品</div>
+        </div>
+    </div>
 </fieldset>
 <script>
     var app = new Vue(
