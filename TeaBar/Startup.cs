@@ -82,6 +82,7 @@ namespace TeaBar
             {
                 opt.AppId = Configuration["Facebook:AppId"];
                 opt.AppSecret = Configuration["Facebook:AppSecret"];
+                opt.AccessDeniedPath = "/Home/Index";
             });
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromDays(5);
