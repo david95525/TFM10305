@@ -27,7 +27,9 @@ namespace TeaBar.Controllers.APIs
         [Produces("application/json")]
         public string memberProfileQry()   //會員資料查詢
         {
+            var data = "";
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var email = User.FindFirstValue(ClaimTypes.Email);
             var resultAU = (from u in _dbContext.ApplicationUsers
                          where u.Id == id
                          select u).FirstOrDefault();
@@ -35,22 +37,42 @@ namespace TeaBar.Controllers.APIs
                             where c.UserID == id
                             select c).FirstOrDefault();
 
-            var member = new RegisterOfMemberViewModel
+            if (resultUC == null)
             {
-                Email = resultAU.Email,
-                PhoneNumber = resultAU.PhoneNumber,
-                Password = resultAU.PasswordHash,
+                var member = new RegisterOfMemberViewModel
+                {
+                    Email = email,
+                    PhoneNumber = resultAU.PhoneNumber,
+                    Password = resultAU.PasswordHash,
 
-                LastName = resultUC.LastName,
-                FirstName = resultUC.FirstName,
-                Birth = resultUC.Birth,
-                City = resultUC.City,
-                District = resultUC.District,
-                Address = resultUC.Address,
-                Gender = resultUC.Gender
-            };            
-            var data = Newtonsoft.Json.JsonConvert.SerializeObject(member);
+                    LastName = "",
+                    FirstName = "",
+                    Birth = DateTime.Now,
+                    City = "",
+                    District = "",
+                    Address = "",
+                    Gender = ""
+                };
+                data = Newtonsoft.Json.JsonConvert.SerializeObject(member);
+            }
+            else
+            {
+                var member = new RegisterOfMemberViewModel
+                {
+                    Email = email,
+                    PhoneNumber = resultAU.PhoneNumber,
+                    Password = resultAU.PasswordHash,
 
+                    LastName = resultUC.LastName,
+                    FirstName = resultUC.FirstName,
+                    Birth = resultUC.Birth,
+                    City = resultUC.City,
+                    District = resultUC.District,
+                    Address = resultUC.Address,
+                    Gender = resultUC.Gender
+                };
+                data = Newtonsoft.Json.JsonConvert.SerializeObject(member);
+            }
             return data;
         }
 
@@ -76,17 +98,46 @@ namespace TeaBar.Controllers.APIs
             }
             else
             {
-                _dbContext.Entry(qryResult).CurrentValues.SetValues(member);
-                _dbContext.Entry(ucResult).CurrentValues.SetValues(member);
-                try
+                if (ucResult==null)
                 {
-                    _dbContext.SaveChanges();
-                    msg = "資料更新成功！";
+                    var data = new UserOfCustomer
+                    {
+                        UserID = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                        LastName = member.LastName,
+                        FirstName = member.FirstName,
+                        Birth = member.Birth,
+                        Gender = member.Gender,
+                        City = member.City,
+                        District = member.District,
+                        Address = member.Address
+                    };
+                    _dbContext.Entry(qryResult).CurrentValues.SetValues(member);
+                    _dbContext.UserOfCustomer.Add(data);
+                    try
+                    {
+                        _dbContext.SaveChanges();
+                        msg = "資料更新成功！";
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        Console.WriteLine(ex);
+                        msg = "資料更新失敗...";
+                    }
                 }
-                catch (DbUpdateException ex)
+                else
                 {
-                    Console.WriteLine(ex);
-                    msg = "資料更新失敗...";
+                    _dbContext.Entry(qryResult).CurrentValues.SetValues(member);
+                    _dbContext.Entry(ucResult).CurrentValues.SetValues(member);
+                    try
+                    {
+                        _dbContext.SaveChanges();
+                        msg = "資料更新成功！";
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        Console.WriteLine(ex);
+                        msg = "資料更新失敗...";
+                    }
                 }
             }
             return msg;
@@ -104,17 +155,23 @@ namespace TeaBar.Controllers.APIs
                              select c).FirstOrDefault();
             if (qryResult == null)
             {
-                msg = $"此帳號:{qryResult.Email}不存在!";
+                msg = $"此帳號：{qryResult.Email}不存在！";
             }
-
-            var result = await _userManager.ChangePasswordAsync(qryResult, pwd.OldPassword, pwd.NewPassword);
-            if (result.Succeeded)
+            if (qryResult.PasswordHash == null)
             {
-                msg = "密碼變更成功！";
+                msg = $"此帳號{qryResult.Email}非由TeaBar網站註冊，無法變更密碼～";
             }
             else
             {
-                msg = "輸入資料有誤...請重新輸入";
+                var result = await _userManager.ChangePasswordAsync(qryResult, pwd.OldPassword, pwd.NewPassword);
+                if (result.Succeeded)
+                {
+                    msg = "密碼變更成功！";
+                }
+                else
+                {
+                    msg = "輸入資料有誤...請重新輸入";
+                }
             }
             return msg;
         }
