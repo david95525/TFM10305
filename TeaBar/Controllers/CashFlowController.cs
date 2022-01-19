@@ -52,10 +52,10 @@ namespace TeaBar.Controllers
             //}
             string userName = User.Identity.Name;
             //if (HttpContext.Request.Cookies[userName] != null)
-            if(HttpContext.Session.Keys.Contains("cartItem"))
+            if(HttpContext.Session.Keys.Contains(userName))
             {
                 
-                string cartstring = HttpContext.Session.GetString("cartItem");
+                string cartstring = HttpContext.Session.GetString(userName);
                 List<CartViewModel> carts = JsonConvert.DeserializeObject<List<CartViewModel>>(cartstring);
                 //決定orderid
                 string orderid = DateTime.Now.ToString("MMddHHmmssyyyy");
@@ -67,7 +67,7 @@ namespace TeaBar.Controllers
            
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
           
-                HttpContext.Session.SetString("cartItem", jsonstring);
+                HttpContext.Session.SetString(userName, jsonstring);
           
  
             ViewBag.carts = carts;
