@@ -157,6 +157,10 @@ li:hover{
 
 }
 /*orderProducts*/
+.modal-height {
+    height:20px;
+}
+
 #orderInfo p {
     margin-bottom: 0;
 }
@@ -229,15 +233,23 @@ li:hover{
 .show > .btn-outline-light.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);
 }
-
+.btn-check:checked + .btn-light {
+    color: #719e2d;
+    background-color: #fff;
+    border-color: #7fad39;
+}
+.border-light {
+    border-color: #7fad39;
+    border-width:2px
+}
 /*News*/
 .bg-img {
     background-image: url("/images/news/pexels-pixabay-511407.jpg");
     background-repeat: no-repeat;
     background-size: auto;
-    width:auto;
-    height:100px;
-    line-height:100px;
+    width: auto;
+    height: 100px;
+    line-height: 100px;
 }
 .bg-img-old {
     background-image: url("/images/news/pexels-pixabay-5.jpg");
