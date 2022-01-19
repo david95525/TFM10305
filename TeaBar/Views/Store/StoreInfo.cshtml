@@ -35,16 +35,13 @@
             <!--門市清單-->
             <div id="storeList" class="container p-0">
                 <ul style="list-style-type:none" class="list-group" v-for="list in storeList">
-                    <li class="list-group-item pointer d-flex align-content-center mb-2 shadow-sm list-color" :value="list.StoreID" @@click="changeMap(list.StoreID)">
+                    <li class="list-group-item pointer d-flex justify-content-center mb-2 shadow-sm list-color" :value="list.StoreID" @@click="changeMap(list.StoreID)">
                         <h5 class="font-weight-bold fs-5 list-header">{{list.StoreName}}</h5>
                         <div class="list-content">
-                            {{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}}
-                            <br />
-                            {{list.StorePhone}}
+                            <p class="mb-1">{{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}}</p>
+                            <p>{{list.StorePhone}}</p>
                         </div>
-                        <div class="">
-                            <button type="button" class="btn btn-light rounded-pill btn-addtocart" @@click="selectStore(list.StoreID)">前往訂餐</button>
-                        </div>
+                        <button type="button" class="btn btn-light rounded-pill btn-addtocart align-self-center" @@click="selectStore(list.StoreID)">前往訂餐</button>
                     </li>
                 </ul>
             </div>

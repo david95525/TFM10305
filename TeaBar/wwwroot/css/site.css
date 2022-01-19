@@ -60,7 +60,7 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
+/*  margin-bottom: 60px;*/
 }
 .footer {
   position: absolute;
@@ -85,10 +85,10 @@ body {
     margin: 10px auto;
 }
 
-    .card h5 {
+.card h5 {
         text-align: center;
         margin-top: 8px;
-    }
+}
 
 .topic {
     text-align: center;
@@ -133,15 +133,14 @@ li:hover{
 }
 .btn-addtocart {
     width: 90px;
-    height: 40px;
 }
 .list-header {
-    width:90px;
+    width:80px;
     height:30px;
 }
 .list-content{
     max-width:300px;
-    margin-right:20px;
+    margin-right:40px;
 }
 .imageSize {
     width: 250px;
@@ -200,16 +199,15 @@ li:hover{
             box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);
         }
 
-        .btn-outline-light {
+.btn-outline-light {
   color: #7fad39;
   border-color: #7fad39;
 }
-
-            .btn-outline-light:hover {
+ .btn-outline-light:hover {
                 color: #fff;
                 background-color: #7fad39;
                 border-color: #7fad39;
-            }
+}
 
 .btn-outline-light:focus, .btn-outline-light.focus {
   box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);
