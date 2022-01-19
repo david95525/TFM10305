@@ -132,14 +132,14 @@ li:hover{
     padding:12px;
 }
 .btn-addtocart {
-    width: 90px;
+    width: 150px;
 }
 .list-header {
-    width:80px;
+    width:120px;
     height:30px;
 }
 .list-content{
-    max-width:300px;
+/*    max-width:200px;*/
     margin-right:40px;
 }
 .imageSize {
@@ -157,8 +157,9 @@ li:hover{
 
 }
 /*orderProducts*/
+
 .modal-height {
-    height:20px;
+    height: 20px;
 }
 
 #orderInfo p {
@@ -258,4 +259,8 @@ li:hover{
     width: auto;
     height: 100px;
     line-height: 100px;
+}
+.card-size {
+
+
 }
