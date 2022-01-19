@@ -153,18 +153,16 @@
                             infoWindow.open(this.googleMap.map, marker);
                             this.googleMap.currentInfoWindow = infoWindow;
                         }
-                        
-
                     });
-
+                    //點擊地圖關閉infowindow
+                    google.maps.event.addListener(this.googleMap.map, "click", () => {
+                        this.googleMap.currentInfoWindow.close();
+                    });
 
                 },
                 //動態改變map經緯度
                 changeMap(storeid) {
-                    console.log(storeid)
                     let data = this.allStoreData.filter(i => i.StoreID == storeid);
-                    console.log(data);
-                    console.log(data[0].Lat);
                     let latLng = new google.maps.LatLng(data[0].Lat, data[0].Lng);
                     this.googleMap.map.panTo(latLng);
                 },
@@ -179,8 +177,6 @@
                         this.googleMap.lng = this.allStoreData[0].Lng;
                         //取得資訊後建立地圖物件
                         this.initialMap();
-                        //
-                        this.setMarker();
                     })
                     .catch(error => console.log(error));
                 //取得城市清單
