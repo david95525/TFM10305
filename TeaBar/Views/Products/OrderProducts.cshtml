@@ -20,7 +20,7 @@
                         <!--產品內容-->
                         <div>
                             <!--產品圖片-->
-                            <img :src="modalData.imgUrl" :alt="modalData.name" style="width:100vw;" class="img-fluid" />
+                            <img :src="modalData.imgUrl" :alt="modalData.name" style="width:100vw;" class="img-fluid mb-3" />
                             <!--名稱及單價-->
                             <h4 class="align-middle">{{modalData.name}} ${{modalData.price}}</h4>
                             <!--描述-->
@@ -36,10 +36,10 @@
                                     <span v-show="errors.has('Size')" class="text-danger">此項必填</span>
                                 </div>
                                 <div class="btn-group form-group" role="group">
-                                        <span v-for="item in size">
-                                            <input type="radio" v-validate="'required'" class="btn-check d-none" name="Size" :value="item" :id="item.name" v-model="orderDetail.Size" />
-                                            <label class="btn btn-outline-dark btnCategory" :for="item.name">{{item.name}} ${{item.price}}</label>
-                                        </span>
+                                    <span v-for="item in size">
+                                        <input type="radio" v-validate="'required'" class="btn-check d-none" name="Size" :value="item" :id="item.name" v-model="orderDetail.Size" />
+                                        <label class="btn btn-outline-dark btnCategory" :for="item.name">{{item.name}} ${{item.price}}</label>
+                                    </span>
                                 </div>
                             </div>
                             <!--甜度-->
@@ -50,10 +50,10 @@
                                     <span v-show="errors.has('Sweetness')" class="text-danger">此項必填</span>
                                 </div>
                                 <div class="btn-group form-group" role="group">
-                                        <span v-for="item in sweetness">
-                                            <input type="radio" v-validate="'required'" class="btn-check d-none" name="Sweetness" :value="item" :id="item" v-model="orderDetail.Sweetness" />
-                                            <label class="btn btn-outline-dark btnCategory" :for="item">{{item}}</label>
-                                        </span>
+                                    <span v-for="item in sweetness">
+                                        <input type="radio" v-validate="'required'" class="btn-check d-none" name="Sweetness" :value="item" :id="item" v-model="orderDetail.Sweetness" />
+                                        <label class="btn btn-outline-dark btnCategory" :for="item">{{item}}</label>
+                                    </span>
                                 </div>
                             </div>
                             <!--溫度-->
@@ -91,7 +91,6 @@
                                         <input type="tel" maxlength="2" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
                                         <button type="button" @@click="addOne()" class="btn btn-outline-dark">+</button>
                                         <!--表單驗證訊息-->
-                                        
                                         <!--點擊將資料post到後端api-->
                                         <button type="button" class="btn btn-outline-dark d-inline-block" @@click="AddToCart()">加入購物車</button>
                                     </div>
@@ -115,30 +114,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <!--下拉選單-->
-                    <div id="selectStore" class="input-group">
-                        <!--選擇縣市-->
-                        <select v-model="cityVal" class="form-select" @@change="qryCity(cityVal)">
-                            <option value="default">選擇縣市</option>
-                            <option :value="city" v-for="city in cityList">{{city}}</option>
-                        </select>
-                        <!--選擇地區-->
-                        <select v-model="distVal" class="form-select" @@change="qryDist(distVal)">
-                            <option value="default">選擇地區</option>
-                            <option :value="dist" v-for="dist in distList">{{dist}}</option>
-                        </select>
-                        <!--選擇分店-->
-                        <select v-model="storeVal" class="form-select">
-                            <option value="default">選擇分店</option>
-                            <option :value="store.storeID" v-for="store in storeList">{{store.storeName}}</option>
-                        </select>
-                    </div>
                     <!--確認分店-->
-                    <p v-if="notCompleted" class="text-danger">請選擇分店</p>
-                    <button type="button" @@click="checkStore(storeVal)" class="btn btn-outline-dark">確認</button>
-                    <!--回門市據點-->
-                    <a href="/Store/StoreInfo" class="btn btn-outline-dark">回門市據點</a>
+                    <p v-if="notCompleted" class="text-danger">* 請選擇分店</p>
+                    <div class="d-flex mr-auto ml-auto">
+                        <!--下拉選單-->
+                        <div id="selectStore" class="input-group mr-2">
+                            <!--選擇縣市-->
+                            <select v-model="cityVal" class="form-select" @@change="qryCity(cityVal)">
+                                <option value="default">選擇縣市</option>
+                                <option :value="city" v-for="city in cityList">{{city}}</option>
+                            </select>
+                            <!--選擇地區-->
+                            <select v-model="distVal" class="form-select" @@change="qryDist(distVal)">
+                                <option value="default">選擇地區</option>
+                                <option :value="dist" v-for="dist in distList">{{dist}}</option>
+                            </select>
+                            <!--選擇分店-->
+                            <select v-model="storeVal" class="form-select">
+                                <option value="default">選擇分店</option>
+                                <option :value="store.storeID" v-for="store in storeList">{{store.storeName}}</option>
+                            </select>
+                        </div>
+                        <button type="button" @@click="checkStore(storeVal)" class="btn btn-light mr-2">確認</button>
+                        <!--回門市據點-->
+                        <a href="/Store/StoreInfo" class="btn btn-dark">回門市據點</a>
+                    </div>
                 </div>
+                
+
+
             </div>
         </div>
     </div>
@@ -150,11 +154,11 @@
             <div id="productsCategory" class="btn-group">
                 <span>
                     <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
-                    <label class="btn btn-outline-dark btnCategory rounded-pill" for="all">全部商品</label>
+                    <label class="btn btn-light btnCategory rounded-pill" for="all">全部商品</label>
                 </span>
                 <span v-for="c in productsCategory">
                     <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
-                    <label class="btn btn-outline-dark btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
+                    <label class="btn btn-light btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
                 </span>
             </div>
             <!--商品card-->
@@ -172,7 +176,7 @@
         </div>
         <!--訂購相關資訊-->
         <div class=" w-25 p-3" id="orderInfo">
-            <div class="border border-2 rounded border-warning p-3">
+            <div class="border border-2 rounded border-dark p-3 mb-4">
                 <!--顯示訂購分店名稱-->
                 <!--從cookie帶入選擇的門市名稱-->
                 <div v-if="hasCookie" class="mb-3">
@@ -196,6 +200,10 @@
                         <p class="fs-6">營業時間: 10:00~23:00</p>
                     </div>
                 </div>
+            </div>
+            <!--商品廣告-->
+            <div>
+                <img src="/images/banner/pexels-amine-9811853.jpg" alt="Tea" class="img-fluid" />
             </div>
         </div>
     </div>
@@ -380,13 +388,13 @@
                                 alert("加入購物車成功!");
                             }
                         }).catch(error => console.log(error));
-                            
+
                     } else {
                         alert("訂購內容不完整");
 
                     }
                 });
-                
+
             },
             //取得選擇分店資訊
             getStoreData() {
