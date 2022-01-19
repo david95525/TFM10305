@@ -6,9 +6,10 @@
 }
 <!-- #region css-->
 <style>
-    .right{
-        margin-left:10px;
+    .right {
+        margin-left: 10px;
     }
+
     .pointer {
         cursor: pointer
     }
@@ -17,9 +18,9 @@
         background-color: papayawhip;
     }
     /*#region 必填欄位*/
-    .redstar::before{
-        content:"*";
-        color:red;
+    .redstar::before {
+        content: "*";
+        color: red;
     }
     /*#endregion */
     /*#region 商品圖*/
@@ -45,19 +46,9 @@
         transform: translateX(100%);
     }
     /*#endregion */
-    /*#region google地圖*/
-    iframe {
-        width: 100%;
-    }
-
-    #map {
-        height: 600px;
-    }
-
     #store {
         color: green;
     }
-    /*#endregion*/
     /*#region 頁首效果*/
     #circleone {
         width: 30px;
@@ -90,7 +81,11 @@
     #number {
         color: white;
     }
-
+    /*設定地圖大小*/
+    #map {
+        height: 600px;
+        width: 50vw;
+    }
     /*#endregion */
 </style>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -104,6 +99,10 @@
         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
     </symbol>
 </svg>
+<!--載入google map-->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBayPidrH0yQql4BzYCXr7SIs08AEEcMgU">
+</script>
 <!-- #endregion -->
 <div id="shoppingorders">
     <!--#region 頁首-->
@@ -150,9 +149,12 @@
                             <label class="form-check-label"> 自取</label>
                             <div v-if="isTakeout" class=" pointer">
                                 <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 點選地圖圖標查看</label>
-                                <span data-bs-toggle="modal" data-bs-target="#map">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </span>
+                                <div v-on:click="Tomap">
+                                    <span data-bs-toggle="modal" data-bs-target="#map">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </span>
+                                </div>
+                              
                             </div>
                         </div>
                         <div class="right">
@@ -274,7 +276,7 @@
                         <label class="redstar">取餐人資料</label>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label redstar" >姓名</label>
+                        <label class="form-label redstar">姓名</label>
                         <input type="text" class="form-control" v-model:value="shipData.receiver">
                     </div>
                     <div class="mb-3">
@@ -307,11 +309,11 @@
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="!isCellphone">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="isCellphone" checked>
                         <label class="form-check-label"> 手機載具</label>
-                        <div v-if="isCellphone"class="redstar">
+                        <div v-if="isCellphone" class="redstar">
                             <input type="text" class="form-control" placeholder="首位為/ 字母為大寫" v-model:value="shipData.phonereceipt">
                         </div>
                     </div>
-                    <div class="right"> 
+                    <div class="right">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="!isDonate">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="isDonate" checked>
                         <label class="form-check-label"> 愛心捐贈</label>
@@ -474,7 +476,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.4678303431388!2d121.54106421494481!3d25.052127983963906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abe6b0446815%3A0xf006dde8c27afcc7!2z57ev6IKyVGliYU1l6ZmE6Kit5Y-w5YyX6IG36KiT5Lit5b-D!5e0!3m2!1szh-TW!2stw!4v1641227477316!5m2!1szh-TW!2stw" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <div id="map" class="embed-responsive"></div>
                 </div>
 
             </div>
@@ -491,26 +493,28 @@
             orderData: [],  //訂單資料內容
             shipData: {},//寄送資料
             store: [],   //店家資料
+            storemap: {},
             temp: [],     //暫存
             order: {}, //單一訂單內容
             countyData: [],//縣市資料
             districtData: [],//區域資料
-            discount:0,//折扣
+            mapData: [], //google map marker
+            discount: 0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
             icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
-            inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜","無"],
+            inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜", "無"],
             sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
             isIN: false,
             isDeliverydetail: true,//外送資訊完整
-            isReceiverdetail:true,//取餐人資訊完整
+            isReceiverdetail: true,//取餐人資訊完整
             isTakeout: true,//自取
             isDelivery: false,//外送
-            isPaper:true,//紙本發票
+            isPaper: true,//紙本發票
             isCellphone: false,//手機載具
-            isCellphonedetail:true,//手機載具輸入完整
-            isDonate:false,//愛心捐贈
+            isCellphonedetail: true,//手機載具輸入完整
+            isDonate: false,//愛心捐贈
             link: 'a'//分頁判斷
 
         },
@@ -522,26 +526,26 @@
                 url: "@Url.Action("GetStore", "OrderAPI")",
                 type: 'GET'
             })
-            .done(
+                .done(
                     function (result, status, xhr) {
-                    app.store[0] = result;
-                    console.log(app.store);
-                })
-            .fail(function (err) {
-                alert("error");
-             });
+                        app.store[0] = result;
+                        console.log(app.store);
+                    })
+                .fail(function (err) {
+                    alert("error");
+                });
             //讀購物車
             $.ajax({
                 url: "@Url.Action("Readcart", "OrderAPI")",
                 type: 'GET'
             })
-             .done(function (result) {
+                .done(function (result) {
                     if (result.length == 0) {
                         alert("失敗");
                     } else {
                         app.orderData = result;
                         app.isIN = true;
-                        for (let i = 0; i < app.orderData.length; i++) {                         
+                        for (let i = 0; i < app.orderData.length; i++) {
                             app.total = app.total + app.orderData[i].subtotal;
                         }
                         app.origintotal = app.total;
@@ -555,13 +559,34 @@
                         }
                     }
                 })
-             .fail(function (err) {
+                .fail(function (err) {
                     alert("error");
-             });
+                });
+            axios('/api/StoreService/store')
+                .then(response => {
+                    this.mapData = JSON.parse(response.data);
+                }).catch(error => console.log(error));
         },
         //#endregion
         //#region Vue方法
         methods: {
+            Tomap: function () {
+                app.storemap=   app.mapData.find(c => c.storeID == app.store[0].storeID);
+                function initMap() {
+                    var store = { lat: app.storemap.lat, lng: app.storemap.lng };
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 12,
+                        center: store,
+                        mapTypeId: 'roadmap'
+                    });
+                    var marker = new google.maps.Marker({
+                        position: store,
+                        map: map
+                    });
+                }
+
+            },
+
             //#region 編輯數量
             EditQ: function ( pid, PorM) {
                 let temp = app.orderData.find(c => c.productId == pid);
@@ -615,7 +640,7 @@
                         app.order.subtotal = app.order.subtotal + 15;
                     }
                     app.total = Math.round(app.total - (app.temp[5] - app.order.subtotal) * app.order.discount);
-                   
+
                     Save();
                 }
             },
@@ -718,7 +743,7 @@
                     if (app.shipData.phonereceipt != '') {
                         app.shipData.receipt = '手機載具:' + app.shipData.phonereceipt;
                         app.isCellphonedetail = true;
-                    } 
+                    }
                     Save();//存到session
                 }
 
@@ -791,11 +816,11 @@
                         + app.shipData.addrsss + app.shipData.desc;
                 }
                 // 寄送資訊記在note
-                
+
                     app.orderData[i].note = app.orderData[i].note
                         + " 取貨人:" + app.shipData.receiver + "電話:" + app.shipData.phone +
                         "發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
-                }             
+                }
                    if (app.orderData.length != 0) {
                     $.ajax({
                         url: "@Url.Action("Savecart", "OrderAPI")",

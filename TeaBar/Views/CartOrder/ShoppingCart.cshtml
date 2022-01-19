@@ -75,7 +75,7 @@
                 <div>
                     <div class="row-1">總額:${{origintotal}}</div>
                     <div class="row-1" v-if="discount!=1">{{discount}}折</div>
-                    <div class="row-1" v-if="discount==1">無</div>
+                    <div class="row-1" v-if="discount===1">無</div>
                     <div class="row-1">折扣後總額:${{total}}</div>
                 </div>
             </div>
@@ -155,7 +155,7 @@
                                 if (app.discount < 1) {
                                     app.discount = app.discount * 100;
                                     if (app.discount % 10 ===0 ) {
-                                        app.discount = app.discount / 10;
+                                        app.discount = Math.round(app.discount / 10);
                                     }
                                 }    
                                 }

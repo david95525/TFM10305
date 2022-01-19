@@ -26,6 +26,26 @@ namespace TeaBar.Controllers
         }
 
         [HttpGet]
+        [Route("Ordercount")]
+        [Produces("application/json")]
+        public int Ordercount()
+        {
+            var countorder = (from i in _dBContext.Orders select i).Count();
+            var countten = countorder / 10;
+            var count = countorder % 10;
+
+            if (count == 0)
+            {
+                return countten;
+            }else
+            {
+                return countten + 1;
+            }
+
+        }
+
+
+        [HttpGet]
         [Route("Search/{text}")]
         [Produces("application/json")]
         public  List<TopOrederview> Search(string text)
