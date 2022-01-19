@@ -54,9 +54,7 @@
                     <td>{{pd.productName}}</td>
                     <td>{{pd.unitPrice}}</td>
                     <td>{{pd.quantity}}</td>
-                    <td v-if="pd.isIngredient===2">{{pd.ingredient}}+15元</td>
-                    <td v-if="pd.isIngredient===1">{{pd.ingredient}}+10元</td>
-                    <td v-if="pd.isIngredient===0">無</td>
+                    <td><span v-for="item in pd.ingredient">{{item}}</span></td>
                     <td>{{pd.subtotal}}</td>
                     <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
                     <td>
@@ -141,18 +139,15 @@
                                     app.name = app.cartsData[0].userID;
                                 for (let i = 0; i < app.cartsData.length; i++) {
                                     app.total = app.total + app.cartsData[i].subtotal;
-                                    if (app.cartsData[i].ingredient != "無") {
-                                        app.cartsData[i].isIngredient = 1;
-                                    } else { app.cartsData[i].isIngredient = 0;}
-                                    if (app.cartsData[i].ingredient == "小芋圓" || app.cartsData[i].ingredient == "蜂蜜") {
-                                        app.cartsData[i].isIngredient = 2;
-                                    }
+                                    if (app.cartsData[i].ingredient ==null) {
+                                        app.cartsData[i].isIngredient = 0;
+                                    } 
                                     }
                                 app.origintotal = app.total;
                                 app.total = Math.round( app.total * app.cartsData[0].discount);
                                 app.discount = app.cartsData[0].discount;
                                 if (app.discount < 1) {
-                                    app.discount = app.discount * 100;
+                                    app.discount = Math.round( app.discount * 100);
                                     if (app.discount % 10 ===0 ) {
                                         app.discount = Math.round(app.discount / 10);
                                     }

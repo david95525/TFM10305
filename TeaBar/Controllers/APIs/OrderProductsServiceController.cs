@@ -29,20 +29,24 @@ namespace TeaBar.Controllers.APIs
         [Consumes("application/json")]
         public IActionResult AddToCart([FromBody] OrderProductsViewModel data) //取得產品資料
         {
+            string userName = "";
             if (User.Identity.Name == null)
             {
-                return null;
+                userName = "temp";
             }
-            string userName = User.Identity.Name;//當前identity中使用者名稱
-            HttpContext.Session.SetString("username", userName);
+            else
+            {
+                userName = User.Identity.Name;//當前identity中使用者名稱
+                HttpContext.Session.SetString("username", userName);
+            }
+         
          
             Products product = _dbcontext.Products.FirstOrDefault(p => p.ProductID == data.productID);
             Categories categories = _dbcontext.Categories.FirstOrDefault(c => c.CategoryID == product.CategoryID);
-              //隨機決定discount
+              //決定discount
             List <Discount> discounts = _dbcontext.Discount.ToList();
-            Random r = new Random();
-            int index= r.Next(0, 10);
-            Discount discount = discounts[index];
+            Discount discount = discounts[0];
+    
             // 轉換成購物車viewmodel
             List<CartViewModel> carts = new List<CartViewModel>();
             CartViewModel cart= new CartViewModel()
@@ -57,19 +61,39 @@ namespace TeaBar.Controllers.APIs
                 Discount = discount.DiscountRule,
                 Sweetness = data.sweetness,
                 Ice = data.ice,
-                Ingredient = data.ingredient[0].name,
                 Picture = product.Picture,
                 Note = "無",
                 Size = data.size.name,
-                StoreID = categories.StoreID
+                StoreID = categories.StoreID,
+                Ingredient=new List<string>()
             };
-
+            
+                for (int i = 0; i < data.ingredient.Length; i++)
+            {
+                string x = data.ingredient[i].name;
+                cart.Ingredient.Add(x);
+            }
+            int index = 0;
             //讀舊的
             if (HttpContext.Session.Keys.Contains(userName))
             {
                 string oldcart= HttpContext.Session.GetString(userName);
                 carts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(oldcart);
-                carts.Add(cart);
+               //找出購物車裡是否加入過同樣商品
+                CartViewModel temp = carts.FirstOrDefault(c => c.ProductId == cart.ProductId);
+               //否的話 直接新增
+                if(temp==null)
+                {
+                    carts.Add(cart);
+                }
+                //是的話 原來數量+選購數量
+                else
+                {
+                    index = carts.IndexOf(temp);
+                    carts[index].Quantity= carts[index].Quantity+cart.Quantity;
+                    carts[index].Subtotal = carts[index].Subtotal+ cart.Subtotal;
+                }
+              
             }
             else
             //在空的購物車填入

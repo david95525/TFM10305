@@ -66,16 +66,6 @@
                 </div>
             </div>
             <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
-            <!--生日-->
-            @*<div class="row g-3 align-items-center">
-                    <div class="col-1">
-                        <label for="InpBirth" class="form-label">生日</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="date" class="form-control form-control-sm" id="InpBirth" v-bind:value="customersData.birth">
-                    </div>
-                </div>
-                <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>*@
         </form>
     </fieldset>
     <!--查詢結果輸出-->
@@ -121,20 +111,10 @@
 
 
 <script>
-    //var qryServiceUrl = 'https://teabarservice.azurewebsites.net/api/MemberService/memberProfileQry';
-    //var userid = '';
     //初始化--載入時進行查詢
     $(document).ready(
         function () {
-            @*$.ajax(
-                {
-                    url:'@Url.Action("GetUserName", "Home")',
-                    type: 'GET'
-                }
-            ).done(function (data) {
-                userid = data;
-            }).fail();*@
-
+            app.selectCounty();
             $.ajax(
                 {
                     url: '@Url.Action("memberProfileQry", "MemberService")',
