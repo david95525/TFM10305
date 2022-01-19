@@ -69,7 +69,7 @@ namespace TeaBar.Controllers
             };
             if (carts!=null)
             {
-                string username = User.Identity.Name;
+  
                 try
                 {
                     string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
@@ -81,7 +81,7 @@ namespace TeaBar.Controllers
 
                     #endregion
                     #region 存session
-                    HttpContext.Session.SetString(username, jsonstring);
+                    HttpContext.Session.SetString("cartItem", jsonstring);
                     msg.Msg = "成功存入session";
                     #endregion
                 }
@@ -104,17 +104,16 @@ namespace TeaBar.Controllers
         public List<CartViewModel> Readcart()
         #region 購物車資料讀取
         {
-            if (HttpContext.Session.Keys.Contains("username"))
-            { string username = HttpContext.Session.GetString("username");
+            
                 #region 讀session
-                if (HttpContext.Session.Keys.Contains(username))
+                if (HttpContext.Session.Keys.Contains("cartItem"))
                 {
-                    string jsonstring = HttpContext.Session.GetString(username);
+                    string jsonstring = HttpContext.Session.GetString("cartItem");
                     List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
                     return data;
                 }
                 #endregion
-            }
+            
 
                 #region 讀cookie
                 //if (HttpContext.Request.Cookies[username] != null)
@@ -142,11 +141,11 @@ namespace TeaBar.Controllers
             };
             string username = User.Identity.Name;
             //if (HttpContext.Request.Cookies[username] != null)
-                if(HttpContext.Session.Keys.Contains(username))
+                if(HttpContext.Session.Keys.Contains("cartItem"))
             {
                 #region 讀cart
                 //string Carts = HttpContext.Request.Cookies[username];
-                string Carts = HttpContext.Session.GetString(username);
+                string Carts = HttpContext.Session.GetString("cartItem");
                 List<CartViewModel> carts = Newtonsoft.Json.JsonConvert.
                     DeserializeObject<List<CartViewModel>>(Carts);
                 #endregion
