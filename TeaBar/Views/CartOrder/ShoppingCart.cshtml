@@ -152,7 +152,7 @@
                                 app.total = Math.round( app.total * app.cartsData[0].discount);
                                 app.discount = app.cartsData[0].discount;
                                 if (app.discount < 1) {
-                                    app.discount = app.discount * 100;
+                                    app.discount = Math.round( app.discount * 100);
                                     if (app.discount % 10 ===0 ) {
                                         app.discount = Math.round(app.discount / 10);
                                     }

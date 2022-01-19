@@ -84,7 +84,7 @@
     /*設定地圖大小*/
     #map {
         height:400px;
-        width: 200px;
+        width: 40vw;
     }
     /*#endregion */
 </style>
@@ -152,6 +152,7 @@
                                 <div v-on:click="initMap">
                                     <span >
                                         <i class="fas fa-map-marker-alt"></i>
+                                        {{store[0].storeAddress}}
                                     </span>
                                 </div>
                             </div>
@@ -545,7 +546,7 @@
                         app.total = Math.round(app.total * app.orderData[0].discount);
                         app.discount = app.orderData[0].discount;
                         if (app.discount < 1) {
-                            app.discount = app.discount * 100;
+                            app.discount = Math.round( app.discount * 100);
                             if (app.discount % 10 === 0) {
                                 app.discount = app.discount / 10;
                             }
@@ -574,11 +575,17 @@
             initMap() {
                 this.googleMap.map = new google.maps.Map(document.getElementById('map'),
                     {
-                        center: { lat: this.googleMap.lat, lng: this.googleMap.lng, },
-                        zoom: 12,
+                        center: { lat: this.googleMap.lat, lng: this.googleMap.lng},
+                        zoom: 16,
                         mapTypeId: 'roadmap'
                     }
-                )
+                );
+                // 放置marker
+                let marker = new google.maps.Marker({
+                    position: { lat: this.googleMap.lat, lng: this.googleMap.lng},
+                    map: this.googleMap.map
+                });
+
             },
             //#region 編輯數量
             EditQ: function ( pid, PorM) {
