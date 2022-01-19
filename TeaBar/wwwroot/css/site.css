@@ -260,7 +260,6 @@ li:hover{
     height: 100px;
     line-height: 100px;
 }
-.card-size {
-
-
+.card-height {
+    height: 700px;
 }
