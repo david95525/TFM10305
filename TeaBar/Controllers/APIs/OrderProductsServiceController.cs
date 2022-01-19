@@ -86,8 +86,12 @@ namespace TeaBar.Controllers.APIs
                 {
                     carts.Add(cart);
                 }
-                //是的話 原來數量+選購數量
-                else
+              
+                else if(temp.Ingredient!=cart.Ingredient)
+                {
+                    carts.Add(cart);
+                }
+                else  //是的話 原來數量+選購數量
                 {
                     index = carts.IndexOf(temp);
                     carts[index].Quantity= carts[index].Quantity+cart.Quantity;

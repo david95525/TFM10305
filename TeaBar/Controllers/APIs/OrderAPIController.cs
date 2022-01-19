@@ -38,7 +38,7 @@ namespace TeaBar.Controllers
                 string Carts = HttpContext.Session.GetString(username);
                 List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(Carts);
                string storeid = data[0].StoreID;
-            
+           
                 try
                 {
                     Stores storenow =
@@ -190,11 +190,11 @@ namespace TeaBar.Controllers
                     {
                         if (i == "珍珠" || i== "椰果" || i== "寒天" || i== "雙Q")
                         {
-                            ing = i+ "+10元";
+                            ing =ing+ i+ "+10元";
                         }
                         else if (i== "小芋圓" || i == "蜂蜜")
                         {
-                            ing = i + "+15元";
+                            ing =ing+ i + "+15元";
                         }
                     }
                     
@@ -226,7 +226,5 @@ namespace TeaBar.Controllers
             return msg;
         }
         #endregion
-
-
     }
 }
