@@ -60,7 +60,7 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
+/*  margin-bottom: 60px;*/
 }
 .footer {
   position: absolute;
@@ -73,7 +73,11 @@ body {
 .search {
     height:40px;
 }
-.productImg {
+#selectStore {
+    text-align: center;
+    max-width:450px;
+}
+.pointer {
     cursor: pointer;
 }
 
@@ -81,10 +85,10 @@ body {
     margin: 10px auto;
 }
 
-    .card h5 {
+.card h5 {
         text-align: center;
         margin-top: 8px;
-    }
+}
 
 .topic {
     text-align: center;
@@ -118,9 +122,29 @@ body {
     margin-bottom: 10px;
 }
 /*storeinfo*/
-.imageSize{
-    width:250px;
-    height:auto;
+li:hover{
+    background-color:#f3f3f3
+
+}
+.select-store {
+    background-color: #7fad39;
+    text-align: center;
+    padding:12px;
+}
+.btn-addtocart {
+    width: 90px;
+}
+.list-header {
+    width:80px;
+    height:30px;
+}
+.list-content{
+    max-width:300px;
+    margin-right:40px;
+}
+.imageSize {
+    width: 250px;
+    height: auto;
 }
 #storeMap {
     display: flex;
@@ -130,6 +154,7 @@ body {
     width: 40vw;
     height: 100%;
     margin: 20px 20px;
+
 }
 /*orderProducts*/
 #orderInfo p {
@@ -138,4 +163,87 @@ body {
 
 #quantity {
     width: 50px;
+}
+/*修改bootstrap樣式*/
+.btn-light {
+    color: #fff;
+    background-color: #7fad39;
+    border-color: #7fad39;
+}
+
+    .btn-light:hover {
+        color: #7fad39;
+        background-color: #;
+        border-color: #74a130;
+    }
+
+    .btn-light:focus, .btn-light.focus {
+        box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);
+    }
+
+    .btn-light.disabled, .btn-light:disabled {
+        color: #fff;
+/*        background-color: #7fad39;*/
+        border-color: #7fad39;
+    }
+
+    .btn-light:not(:disabled):not(.disabled):active, .btn-light:not(:disabled):not(.disabled).active,
+    .show > .btn-light.dropdown-toggle {
+        color: #fff;
+        background-color: #74a130;
+        border-color: #74a130;
+    }
+
+        .btn-light:not(:disabled):not(.disabled):active:focus, .btn-light:not(:disabled):not(.disabled).active:focus,
+        .show > .btn-light.dropdown-toggle:focus {
+            box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);
+        }
+
+.btn-outline-light {
+  color: #7fad39;
+  border-color: #7fad39;
+}
+ .btn-outline-light:hover {
+                color: #fff;
+                background-color: #7fad39;
+                border-color: #7fad39;
+}
+
+.btn-outline-light:focus, .btn-outline-light.focus {
+  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);
+}
+
+.btn-outline-light.disabled, .btn-outline-light:disabled {
+  color: #7fad39;
+  background-color: transparent;
+}
+
+.btn-outline-light:not(:disabled):not(.disabled):active, .btn-outline-light:not(:disabled):not(.disabled).active,
+.show > .btn-outline-light.dropdown-toggle {
+  color: #fff;
+  background-color: #7fad39;
+  border-color: #7fad39;
+}
+
+.btn-outline-light:not(:disabled):not(.disabled):active:focus, .btn-outline-light:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-light.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);
+}
+
+/*News*/
+.bg-img {
+    background-image: url("/images/news/pexels-pixabay-511407.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    width:auto;
+    height:100px;
+    line-height:100px;
+}
+.bg-img-old {
+    background-image: url("/images/news/pexels-pixabay-5.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    width: auto;
+    height: 100px;
+    line-height: 100px;
 }

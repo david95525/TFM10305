@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TeaBar</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    
 
     <script src="~/js/vue.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -26,6 +26,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
 
+    <link rel="stylesheet" href="~/css/site.css" />
     <style>
         .menu:hover {
             background-color: lemonchiffon;
@@ -45,8 +46,9 @@
                 <!-- LOGO -->
                 <div class="justify-content-center">
                     <a class="navbar-brand mb-0 h1" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/images/icon_logo.png" class="me-2 ms-3" height="50" alt="TeaBar Logo" />
-                        <span class="fs-3">TeaBar茶</span>
+                        <img src="~/images/icon_logo.png" class="ms-3" height="50" alt="TeaBar Logo" />
+                        <img src="~/images/logo_teabar.png" height="50"/>
+                        @*<span class="fs-3">TeaBar茶</span>*@
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCentered" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -112,9 +114,9 @@
         </div>
 
         <!-- Copyright -->
-        <div class="text-center text-dark p-3" style="background-color:lightgrey;">
-            © 2021 Copyright：
-            <a class="text-dark" href="#">TeaBar.com</a>
+        <div class="text-center text-dark p-3" style="background-color:#323730; ">
+            <span class="text-white">© 2021 Copyright |</span>
+            <a class="text-white text-decoration-none" href="/">TeaBar.com</a>
         </div>
     </footer>
 </body>

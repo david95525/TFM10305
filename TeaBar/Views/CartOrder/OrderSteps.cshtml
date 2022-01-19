@@ -25,8 +25,8 @@
     /*#endregion */
     /*#region 商品圖*/
     .card-img-top {
-        width: 30%;
-        height: 30%;
+        width: 40%;
+        height: 40%;
     }
     /*#endregion */
     /*#region 換頁動畫*/
@@ -83,8 +83,8 @@
     }
     /*設定地圖大小*/
     #map {
-        height: 600px;
-        width: 50vw;
+        height:400px;
+        width: 40vw;
     }
     /*#endregion */
 </style>
@@ -101,7 +101,7 @@
 </svg>
 <!--載入google map-->
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBayPidrH0yQql4BzYCXr7SIs08AEEcMgU">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6Agwzyd84tG7qsFrzBDNZcsW3IFjCifQ">
 </script>
 <!-- #endregion -->
 <div id="shoppingorders">
@@ -128,7 +128,7 @@
         <div v-if="link=='a'">
             <!--#region 店家 -->
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" v-if="isShow">
                     <div v-for="s in store" id="store">
                         <div><h5>Teabar{{s.storeCity}}{{s.storeName}}</h5></div>
                         <div>{{s.storePhone}}</div>
@@ -148,15 +148,16 @@
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
                             <label class="form-check-label"> 自取</label>
                             <div v-if="isTakeout" class=" pointer">
-                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 點選地圖圖標查看</label>
-                                <div v-on:click="Tomap">
-                                    <span data-bs-toggle="modal" data-bs-target="#map">
+                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 可點擊刷新</label>
+                                <div v-on:click="initMap">
+                                    <span v-if="isShow">
                                         <i class="fas fa-map-marker-alt"></i>
+                                        {{store[0].storeAddress}}
                                     </span>
                                 </div>
-                              
                             </div>
                         </div>
+                        <div id="map" class="embed-responsive" v-if="!isDelivery"></div>
                         <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" v-on:click="How(1)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" checked v-on:click="How(1)">
@@ -216,29 +217,30 @@
                         <div class="col-11">{{orderData[0].customerId}} </div>
                     </div>
                     <div class="row row-cols-1 row-cols-md-4 g-4">
-                        <div class="col" v-for="order in orderData">
+                        <div class="col" v-for="orderitem in orderData">
                             <div class="card" style="width: 18rem;">
-                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
+                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
 
                                 <div class="card-body">
-                                    <div v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
+                                    <div v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
 
                                         <div class="pointer">
                                             <div class="bg-color">
-                                                <div>{{order.productName}}</div>
+                                                <div>{{orderitem.productName}}</div>
                                             </div>
                                             <div class="bg-color">
-                                                <div>{{order.size}}/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
+                                                <div class="bg-color">{{orderitem.size}}/{{orderitem.ice}}/{{orderitem.sweetness}}</div>
+                                                <div class="bg-color"><span v-for="item in orderitem.ingredient">{{item}} </span></div> 
                                             </div>
                                             <div class="bg-color">
-                                                <div>$ {{order.subtotal}}</div>
+                                                <div>$ {{orderitem.subtotal}}</div>
                                             </div>
                                             <div class="bg-color">
-                                                <div>備註: {{order.description}}</div>
+                                                <div>備註: {{orderitem.description}}</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-on:click="Todelete(order.productId)">
+                                    <div v-on:click="Todelete(orderitem.productId)">
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
                                     </div>
                                 </div>
@@ -423,8 +425,9 @@
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text" for="ingredient">加料</label>
-                        <select class="form-select" id="ingredient" v-model="order.ingredient">
-                            <option v-for="ing in inglist">{{ing}}</option>
+                        <select class="form-select" id="ingredient" v-model="Ingredient" multiple>
+                            <option v-for="ing in inglist" >{{ing}}</option>
+                            
                         </select>
                     </div>
                     <div class="input-group mb-3">
@@ -468,21 +471,7 @@
         </div>
     </div>
     <!-- #endregion -->
-    <!-- #region 取貨門市地址 -->
-    <div class="modal fade" id="map" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="map" class="embed-responsive"></div>
-                </div>
 
-            </div>
-        </div>
-    </div>
-    <!-- #endregion -->
 </div>
 <!--#region Javascript和Vue-->
 <script>
@@ -493,6 +482,7 @@
             orderData: [],  //訂單資料內容
             shipData: {},//寄送資料
             store: [],   //店家資料
+            Ingredient:[],//複數加料
             storemap: {},
             temp: [],     //暫存
             order: {}, //單一訂單內容
@@ -502,10 +492,11 @@
             discount: 0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
             icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
-            inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜", "無"],
+            inglist: ["珍珠" , "椰果" ,"小芋圓" ,  "寒天" , "雙Q" ,  "蜂蜜" ,"無"],
             sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
+            isShow:false,
             isIN: false,
             isDeliverydetail: true,//外送資訊完整
             isReceiverdetail: true,//取餐人資訊完整
@@ -515,7 +506,12 @@
             isCellphone: false,//手機載具
             isCellphonedetail: true,//手機載具輸入完整
             isDonate: false,//愛心捐贈
-            link: 'a'//分頁判斷
+            link: 'a',//分頁判斷
+            googleMap: {
+                map: "",
+                lat: 0, //中心座標
+                lng: 0
+            },
 
         },
         //#endregion
@@ -530,6 +526,7 @@
                     function (result, status, xhr) {
                         app.store[0] = result;
                         console.log(app.store);
+                        app.isShow = true;
                     })
                 .fail(function (err) {
                     alert("error");
@@ -552,7 +549,7 @@
                         app.total = Math.round(app.total * app.orderData[0].discount);
                         app.discount = app.orderData[0].discount;
                         if (app.discount < 1) {
-                            app.discount = app.discount * 100;
+                            app.discount = Math.round( app.discount * 100);
                             if (app.discount % 10 === 0) {
                                 app.discount = app.discount / 10;
                             }
@@ -565,28 +562,34 @@
             axios('/api/StoreService/store')
                 .then(response => {
                     this.mapData = JSON.parse(response.data);
-                }).catch(error => console.log(error));
+                    //取得第一筆經緯度
+                    this.googleMap.lat = this.mapData [0].Lat;
+                    this.googleMap.lng = this.mapData [0].Lng;
+                    this.initMap();
+                })
+                .catch(error => console.log(error));
+
+
+
         },
         //#endregion
         //#region Vue方法
         methods: {
-            Tomap: function () {
-                app.storemap=   app.mapData.find(c => c.storeID == app.store[0].storeID);
-                function initMap() {
-                    var store = { lat: app.storemap.lat, lng: app.storemap.lng };
-                    var map = new google.maps.Map(document.getElementById('map'), {
-                        zoom: 12,
-                        center: store,
+            initMap() {
+                this.googleMap.map = new google.maps.Map(document.getElementById('map'),
+                    {
+                        center: { lat: this.googleMap.lat, lng: this.googleMap.lng},
+                        zoom: 16,
                         mapTypeId: 'roadmap'
-                    });
-                    var marker = new google.maps.Marker({
-                        position: store,
-                        map: map
-                    });
-                }
+                    }
+                );
+                // 放置marker
+                let marker = new google.maps.Marker({
+                    position: { lat: this.googleMap.lat, lng: this.googleMap.lng},
+                    map: this.googleMap.map
+                });
 
             },
-
             //#region 編輯數量
             EditQ: function ( pid, PorM) {
                 let temp = app.orderData.find(c => c.productId == pid);
@@ -604,6 +607,7 @@
             //#region 進入編輯
             ToEdit: function (pid) {
                 app.order = app.orderData.find(c => c.productId == pid);
+                app.Ingredient = app.order.ingredient;
                 //紀錄可修改資料原本狀態
                 app.temp[0] = app.order.ice;
                 app.temp[1] = app.order.sweetness;
@@ -632,15 +636,18 @@
                         app.order.subtotal = app.temp[5];
                     }
                     //更新資料
+                 app.order.ingredient=   app.Ingredient ;
                     app.order.subtotal = app.order.unitPrice * app.order.quantity;
-                    if (app.order.ingredient === "珍珠" || app.order.ingredient === "椰果"
-                        || app.order.ingredient === "寒天" || app.order.ingredient === "雙Q") {
-                        app.order.subtotal = app.order.subtotal + 10;
-                    } else if (app.order.ingredient === "蜂蜜" || app.order.ingredient === "小芋圓") {
-                        app.order.subtotal = app.order.subtotal + 15;
+                    for (let i = 0; i < app.order.ingredient.length; i++) {
+                        if (app.order.ingredient[i] === "珍珠" || app.order.ingredient[i] === "椰果"
+                            || app.order.ingredient[i] === "寒天" || app.order.ingredient[i]=== "雙Q") {
+                            app.order.subtotal = app.order.subtotal + 10;
+                        } else if (app.order.ingredient[i] === "蜂蜜" || app.order.ingredient[i]=== "小芋圓") {
+                            app.order.subtotal = app.order.subtotal + 15;
+                        }
                     }
-                    app.total = Math.round(app.total - (app.temp[5] - app.order.subtotal) * app.order.discount);
-
+                    app.origintotal = app.origintotal - app.temp[5] + app.order.subtotal;
+                    app.total = Math.round(app.origintotal * app.order.discount);
                     Save();
                 }
             },
@@ -661,6 +668,10 @@
                 app.orderData.splice(index, 1);
                  //儲存session
                 Save();
+                if (app.orderData.length == 0) {
+                       alert("無商品");
+                    location.href = "@Url.Action("Index", "Home")";
+                }
             },
             //#endregion
             //#region 第一頁和第二頁來往
@@ -832,8 +843,9 @@
                     }).fail(function (err) {
                         console.log(err.responseText);
                     });
-                } else {
-                    alert("沒有商品");
+                   } else {
+                       alert("無商品");
+                    location.href = "@Url.Action("Index", "Home")";
                 }
             }
            //#endregion
@@ -857,7 +869,7 @@
                             console.log(err.responseText);
                         });
                 } else {
-                    alert("沒有商品");
+
                 }
     }
     //讀縣市或區域
