@@ -111,7 +111,7 @@
         <div class="row">
             <div class="col-md-3" v-for="item in showProduct">
                 <div class="card shadow-sm">
-                    <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="modalProduct(item.productID)" class="productImg img-fluid card-img-top rounded" />
+                    <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="modalProduct(item.productID)" class="pointer img-fluid card-img-top rounded" />
                     <div class="card-body">
                         <h5 class="card-title text-center">{{item.productName}}</h5>
                     </div>
