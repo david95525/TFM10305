@@ -182,17 +182,22 @@ namespace TeaBar.Controllers
                 }
                 #endregion
                 #region 存入OrderDetails 表
-               
+                string ing = "";
                 int index = 1;
                 foreach (var item in carts)
                 {
-                    if(item.Ingredient== "珍珠"  || item.Ingredient == "椰果" || item.Ingredient == "寒天"|| item.Ingredient == "雙Q")
+                    foreach(string i in item.Ingredient)
                     {
-                        item.Ingredient = item.Ingredient + "+10元";
-                    }else if(item.Ingredient == "小芋圓"|| item.Ingredient == "蜂蜜") 
-                    {
-                        item.Ingredient = item.Ingredient + "+15元";
+                        if (i == "珍珠" || i== "椰果" || i== "寒天" || i== "雙Q")
+                        {
+                            ing = i+ "+10元";
+                        }
+                        else if (i== "小芋圓" || i == "蜂蜜")
+                        {
+                            ing = i + "+15元";
+                        }
                     }
+                    
                     //建立orderdetails集合
                     OrderDetails orderdetail = new OrderDetails
                     {
@@ -202,7 +207,7 @@ namespace TeaBar.Controllers
                         UnitPrice = item.UnitPrice,
                         Quantity = item.Quantity,
                         Note = item.Note,
-                        Customization = "甜度:" + item.Sweetness + "冰塊:" + item.Ice + "加料:" + item.Ingredient
+                        Customization = "甜度:" + item.Sweetness + "冰塊:" + item.Ice + "加料:" + ing
                     };
                     index++;
                     try

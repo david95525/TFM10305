@@ -43,11 +43,10 @@ namespace TeaBar.Controllers.APIs
          
             Products product = _dbcontext.Products.FirstOrDefault(p => p.ProductID == data.productID);
             Categories categories = _dbcontext.Categories.FirstOrDefault(c => c.CategoryID == product.CategoryID);
-              //隨機決定discount
+              //決定discount
             List <Discount> discounts = _dbcontext.Discount.ToList();
-            //Random r = new Random();
-            //int index= r.Next(0, 10);
             Discount discount = discounts[0];
+    
             // 轉換成購物車viewmodel
             List<CartViewModel> carts = new List<CartViewModel>();
             CartViewModel cart= new CartViewModel()
@@ -62,12 +61,18 @@ namespace TeaBar.Controllers.APIs
                 Discount = discount.DiscountRule,
                 Sweetness = data.sweetness,
                 Ice = data.ice,
-                Ingredient = data.ingredient[0].name,
                 Picture = product.Picture,
                 Note = "無",
                 Size = data.size.name,
-                StoreID = categories.StoreID
+                StoreID = categories.StoreID,
+                Ingredient=new List<string>()
             };
+            
+                for (int i = 0; i < data.ingredient.Length; i++)
+            {
+                string x = data.ingredient[i].name;
+                cart.Ingredient.Add(x);
+            }
             int index = 0;
             //讀舊的
             if (HttpContext.Session.Keys.Contains(userName))

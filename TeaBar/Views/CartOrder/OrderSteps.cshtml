@@ -25,8 +25,8 @@
     /*#endregion */
     /*#region 商品圖*/
     .card-img-top {
-        width: 30%;
-        height: 30%;
+        width: 40%;
+        height: 40%;
     }
     /*#endregion */
     /*#region 換頁動畫*/
@@ -150,7 +150,7 @@
                             <div v-if="isTakeout" class=" pointer">
                                 <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 可點擊刷新</label>
                                 <div v-on:click="initMap">
-                                    <span >
+                                    <span v-if="isShow">
                                         <i class="fas fa-map-marker-alt"></i>
                                         {{store[0].storeAddress}}
                                     </span>
@@ -217,29 +217,30 @@
                         <div class="col-11">{{orderData[0].customerId}} </div>
                     </div>
                     <div class="row row-cols-1 row-cols-md-4 g-4">
-                        <div class="col" v-for="order in orderData">
+                        <div class="col" v-for="orderitem in orderData">
                             <div class="card" style="width: 18rem;">
-                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
+                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
 
                                 <div class="card-body">
-                                    <div v-on:click="ToEdit(order.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
+                                    <div v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
 
                                         <div class="pointer">
                                             <div class="bg-color">
-                                                <div>{{order.productName}}</div>
+                                                <div>{{orderitem.productName}}</div>
                                             </div>
                                             <div class="bg-color">
-                                                <div>{{order.size}}/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
+                                                <div class="bg-color">{{orderitem.size}}/{{orderitem.ice}}/{{orderitem.sweetness}}</div>
+                                                <div class="bg-color"><span v-for="item in orderitem.ingredient">{{item}} </span></div> 
                                             </div>
                                             <div class="bg-color">
-                                                <div>$ {{order.subtotal}}</div>
+                                                <div>$ {{orderitem.subtotal}}</div>
                                             </div>
                                             <div class="bg-color">
-                                                <div>備註: {{order.description}}</div>
+                                                <div>備註: {{orderitem.description}}</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-on:click="Todelete(order.productId)">
+                                    <div v-on:click="Todelete(orderitem.productId)">
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
                                     </div>
                                 </div>
@@ -424,8 +425,9 @@
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text" for="ingredient">加料</label>
-                        <select class="form-select" id="ingredient" v-model="order.ingredient">
-                            <option v-for="ing in inglist">{{ing}}</option>
+                        <select class="form-select" id="ingredient" v-model="Ingredient" multiple>
+                            <option v-for="ing in inglist" >{{ing}}</option>
+                            
                         </select>
                     </div>
                     <div class="input-group mb-3">
@@ -480,6 +482,7 @@
             orderData: [],  //訂單資料內容
             shipData: {},//寄送資料
             store: [],   //店家資料
+            Ingredient:[],//複數加料
             storemap: {},
             temp: [],     //暫存
             order: {}, //單一訂單內容
@@ -489,7 +492,7 @@
             discount: 0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
             icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
-            inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜", "無"],
+            inglist: ["珍珠" , "椰果" ,"小芋圓" ,  "寒天" , "雙Q" ,  "蜂蜜" ,"無"],
             sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
@@ -604,6 +607,7 @@
             //#region 進入編輯
             ToEdit: function (pid) {
                 app.order = app.orderData.find(c => c.productId == pid);
+                app.Ingredient = app.order.ingredient;
                 //紀錄可修改資料原本狀態
                 app.temp[0] = app.order.ice;
                 app.temp[1] = app.order.sweetness;
@@ -632,15 +636,18 @@
                         app.order.subtotal = app.temp[5];
                     }
                     //更新資料
+                 app.order.ingredient=   app.Ingredient ;
                     app.order.subtotal = app.order.unitPrice * app.order.quantity;
-                    if (app.order.ingredient === "珍珠" || app.order.ingredient === "椰果"
-                        || app.order.ingredient === "寒天" || app.order.ingredient === "雙Q") {
-                        app.order.subtotal = app.order.subtotal + 10;
-                    } else if (app.order.ingredient === "蜂蜜" || app.order.ingredient === "小芋圓") {
-                        app.order.subtotal = app.order.subtotal + 15;
+                    for (let i = 0; i < app.order.ingredient.length; i++) {
+                        if (app.order.ingredient[i] === "珍珠" || app.order.ingredient[i] === "椰果"
+                            || app.order.ingredient[i] === "寒天" || app.order.ingredient[i]=== "雙Q") {
+                            app.order.subtotal = app.order.subtotal + 10;
+                        } else if (app.order.ingredient[i] === "蜂蜜" || app.order.ingredient[i]=== "小芋圓") {
+                            app.order.subtotal = app.order.subtotal + 15;
+                        }
                     }
-                    app.total = Math.round(app.total - (app.temp[5] - app.order.subtotal) * app.order.discount);
-
+                    app.origintotal = app.origintotal - app.temp[5] + app.order.subtotal;
+                    app.total = Math.round(app.origintotal * app.order.discount);
                     Save();
                 }
             },
