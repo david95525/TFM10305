@@ -374,7 +374,7 @@
                             headers: { "Content-Type": "application/json" },
                             data: data,
                         }).then(response => {
-                            if (response == null) {
+                            if (response.data == null) {
                                   location.href = "@Url.Action("ShoppingCart","CartOrder")";
                             }else if (response.status == 200) {
                                 alert("加入購物車成功!");
