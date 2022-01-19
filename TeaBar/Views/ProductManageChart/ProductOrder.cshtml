@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewData["Title"] = "ProductOrder";
+}
+
+<h1>產品訂單數量分析</h1>
+
+<input type="button" onclick="javascript:location.href='/ProductManage/Index'" value="後台管理" class="alert-primary" />
+<input type="button" onclick="javascript:location.href='/ProductManageChart/Index'" value="後台分析" class="alert-success" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div id="Vuechart">
+    @*圖表*@
+    <canvas id="myChart"></canvas>
+</div>
+
+<script>
+    var app = new Vue(
+        {
+            el: '#Vuechart',
+
+            mounted: function () {
+                axios('/api/Productsapi/ProductName')
+                    .then(response => {
+                        data.labels = response.data;
+                    })//then(response =>
+                //axios
+                axios('/api/Productsapi/ProductsQuantity')
+                            .then(Quantity => {
+                                var Q = Quantity.data;
+                                
+                                for (var index = 0; index < 7; index++) {
+                                    data.datasets[0].data.push(Q[index]);
+                                };
+                               
+                                for (var index = 4; index < 7; index++) {
+                                    data.datasets[0].data[index] = 1;
+                                };
+
+                                @* 顯示圖表 *@
+                                myChart = new Chart(
+                                    document.getElementById('myChart'),
+                                    config
+                                );//顯示圖表
+
+                            })
+                        //axios
+
+            },
+
+        }
+    )
+
+    var data = {
+        labels:'',
+        datasets: [
+            {
+                 label: '訂單數量',
+                backgroundColor: 'rgb(112, 66, 20)', //褐色
+                 borderColor: 'rgb(255, 99, 132)',
+                 data: [],
+            },
+
+        ],
+
+    };
+
+    var config = {
+        type: 'bar',
+        data: data,
+        options: {}
+    };
+
+</script>

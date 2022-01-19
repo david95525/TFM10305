@@ -5,110 +5,25 @@
 
 
 <div id="Vuechart">
-    <input type="button" onclick="javascript:location.href='/ProductManage/Index'" value="回上一頁" />
-    <button class="btn btn-success" v-on:click="send">分析分店產品數量</button>
-    <canvas id="myChart"></canvas>
+    <h1>後台分析</h1>
 
-    <div class="col-sm-4" v-for="item in Vuelabel">
-        {{item}}
-    </div>
-</div>
+    @*換頁按鈕*@
+    <input type="button" onclick="javascript:location.href='/ProductManage/Index'" value="後台管理" class="alert-primary" />
+    <br />
+    <br />
+    <div style="text-align:right; width: 300px ">
+        <h2 style="color:darkslategrey"><b>各商家類別分析</b></h2>
+        <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreCategory'"
+               value="進入" class="btn btn-outline-success" />
+        <h2 style="color:darkslategrey"><b>產品訂單數量分析</b></h2>
+        <input type="button" onclick="javascript:location.href='/ProductManageChart/ProductOrder'"
+               value="進入" class="btn btn-outline-success" />
+        <h2 style="color:darkslategrey"><b>分店訂單數量分析</b></h2>
+        <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreOrder'"
+               value="進入" class="btn btn-outline-success" />
+        <h2 style="color:darkslategrey"><b>商家商品數量分析</b></h2>
+        <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreProduct'"
+               value="進入" class="btn btn-outline-success" />
+ 
 
-<script>
-    var app = new Vue(
-        {
-            el: '#Vuechart',
-            data: {
-                @*StoreNameLabel: [],
-                CategoryNameLabel: [],*@
-
-            },
-            mounted: function () {
-                axios('/api/StoresApi/storeName')
-                    .then(response => {
-                        data.labels = response.data;
-                        axios('/api/CategoriesApi/CategoryName')
-                            .then(response => {
-                                console.log('1=' + response.data);//測試
-                                console.log('2=' + typeof (response.data));//測試
-                                var resdata = response.data;
-                                console.log('3=' + resdata);//測試
-                                for (var index = 0; index < resdata.length; index++) {
-                                    data.datasets[index].label = resdata[index];
-                                    console.log('4=' + data.datasets[index].label);//測試
-                                }
-                                    @* 顯示圖表 *@
-                                myChart = new Chart(
-                                    document.getElementById('myChart'),
-                                    config
-                                );//顯示圖表
-
-                            })
-
-                    })
-            },
-            methods: {
-                send: function () {
-                    //取得商店Name資料
-                    axios('/api/StoresApi/storeName')
-                        .then(response => {
-                            data.labels = response.data;
-                            axios('/api/CategoriesApi/CategoryName')
-                                .then(response => {
-                                    var resdata = response.data;
-                                    for (var index = 0; index < resdata.length; index ++) {
-                                        data.datasets[index].label = resdata[index];
-                                    }
-
-                                    @* 顯示圖表 *@
-                                    myChart = new Chart(
-                                        document.getElementById('myChart'),
-                                        config
-                                    );//顯示圖表
-
-                                })
-
-                        })
-                    @* 清除chart
-                    var can = document.getElementById('myChart');
-                    var ctx = can.getContext('2d');
-                    ctx.clearRect(0, 0, can.width, can.height);*@
-                }//send
-            }//methods
-        }
-    )
-
-
-    var data = {
-        labels:'店名',
-        datasets: [
-            {
-                 label: '種類1',
-                 backgroundColor: 'rgb(255, 99, 132)',
-                 borderColor: 'rgb(255, 99, 132)',
-                 data: [5, 1, 5, 2, 20, 30],
-            },
-            {
-                 label: '種類2',
-                backgroundColor: 'blue',
-                borderColor: 'rgb(255, 99, 132)',
-                 data: [3, 12, 15, 2, 20, 30],
-            },
-            {
-                label: '種類3',
-                backgroundColor: 'green',
-                borderColor: 'rgb(255, 99, 132)',
-                data: [5, 1, 5, 2, 2, 3],
-            },
-        ],
-
-    };
-
-    var config = {
-        type: 'bar',
-        data: data,
-        options: {}
-    };
-
-
-</script>
+ 
