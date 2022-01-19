@@ -1,46 +1,53 @@
 ﻿
-@{
-    ViewData["Title"] = "最新消息";
-}
-<fieldset id="newslist" >
-        <p class="bg-img fs-2 text-white text-center font-weight-bold rounded mb-4 mt-4">@ViewData["Title"]</p>
-        <!--即時公告顯示區塊-->
-        <div class="container p-0">
-            <div class="shadow p-3 mb-5 bg-body rounded" v-for="item in items">
-                <!--News-->
-                <div class="col">
-                    <div class="card mb-3" style="width: 100%;">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <img src="/images/image_news.png" class="img-fluid rounded pl-5">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title font-weight-bold mb-3" style="background-color:lightgray;height:40px;padding-top:8px">{{item.topic}}</h5>
-                                    <p class="card-text fs-5" v-html="item.contentText"></p>
-                                    <p class="card-text fs-6"><small class="text-muted">{{item.time}}</small></p>
-                                </div>
+@{ ViewData["Title"] = "最新消息"; }
+<fieldset id="newslist">
+    <p class="bg-img fs-2 text-white text-center font-weight-bold rounded mb-4 mt-4">@ViewData["Title"]</p>
+    <!--即時公告顯示區塊-->
+    <div class="container p-0">
+        <div class="shadow p-3 mb-5 bg-body rounded" v-for="item in items">
+            <!--News-->
+            <div class="col">
+                <div class="card mb-3" style="width: 100%;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="/images/image_news.png" class="img-fluid rounded pl-5">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title font-weight-bold mb-3" style="background-color:lightgray;height:40px;padding-top:8px">{{item.topic}}</h5>
+                                <p class="card-text fs-5" v-html="item.contentText"></p>
+                                <p class="card-text fs-6"><small class="text-muted">{{item.time}}</small></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-  
-    
-        <!--歷史公告顯示區塊-->
-        <p class="bg-img-old fs-2 text-white text-center font-weight-bold rounded mb-4 mt-4">近期公告</p>
-        <div class="container p-0 mt-2 row">
-            <div class="shadow p-3 mb-3 rounded col-4 mr-2 ml-2 card-size card-body" v-for="item in historyItems">
-                <!--歷史公告內容-->
-                        <img src="/images/image_news.png" class="img-fluid rounded pl-5">
+    </div>
+
+
+    <!--歷史公告顯示區塊-->
+    <p class="bg-img-old fs-2 text-white text-center font-weight-bold rounded mb-4 mt-4">近期公告</p>
+    <div class="container">
+        <div class="row ">
+            <div class="col-6" v-for="item in historyItems">
+                <div class="card shadow p-5  rounded card-height mb-3">
+                    <img src="/images/image_news.png" class="img-fluid rounded pl-5">
+                    <div class="card-body">
+                        <!--歷史公告內容-->
                         <h5 class="card-title font-weight-bold mb-3" style="background-color:lightgray;height:40px;padding-top:8px">{{item.topic}}</h5>
                         <p class="card-text fs-6" v-html="item.contentText"></p>
                         <p class="card-text"><small class="text-muted">{{item.time}}</small></p>
-                <!--歷史公告內容-->
+                        <!--歷史公告內容-->
+                    </div>
+                </div>
+
+
             </div>
         </div>
-    
+
+    </div>
+
 
 </fieldset>
 
