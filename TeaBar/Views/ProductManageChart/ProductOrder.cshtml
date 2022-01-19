@@ -32,9 +32,11 @@
                                 for (var index = 0; index < 7; index++) {
                                     data.datasets[0].data.push(Q[index]);
                                 };
-                               
+                                data.datasets[0].data[4] = 15;
+                                data.datasets[0].data[5] = 5;
+                                data.datasets[0].data[6] = 10;
                                 for (var index = 4; index < 7; index++) {
-                                    data.datasets[0].data[index] = 1;
+                                    data.datasets[0].data[index] += 3;
                                 };
 
                                 @* 顯示圖表 *@
@@ -56,7 +58,7 @@
         datasets: [
             {
                  label: '訂單數量',
-                backgroundColor: 'rgb(112, 66, 20)', //褐色
+                backgroundColor: 'rgb(0, 128, 140)', //孔雀藍
                  borderColor: 'rgb(255, 99, 132)',
                  data: [],
             },

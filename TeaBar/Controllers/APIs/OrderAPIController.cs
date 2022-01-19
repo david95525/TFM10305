@@ -38,10 +38,12 @@ namespace TeaBar.Controllers
                 string Carts = HttpContext.Session.GetString(username);
                 List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(Carts);
                string storeid = data[0].StoreID;
+            
                 try
                 {
                     Stores storenow =
                         _db.Stores.FirstOrDefault(s => s.StoreID == storeid);
+                  
                     return storenow;
                 }
                 catch (Exception err)
@@ -69,7 +71,7 @@ namespace TeaBar.Controllers
             };
             if (carts!=null)
             {
-                string username = User.Identity.Name;
+                string userName = HttpContext.Session.GetString("username");
                 try
                 {
                     string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
@@ -81,7 +83,7 @@ namespace TeaBar.Controllers
 
                     #endregion
                     #region 存session
-                    HttpContext.Session.SetString(username, jsonstring);
+                    HttpContext.Session.SetString(userName, jsonstring);
                     msg.Msg = "成功存入session";
                     #endregion
                 }
@@ -104,17 +106,16 @@ namespace TeaBar.Controllers
         public List<CartViewModel> Readcart()
         #region 購物車資料讀取
         {
-            if (HttpContext.Session.Keys.Contains("username"))
-            { string username = HttpContext.Session.GetString("username");
-                #region 讀session
-                if (HttpContext.Session.Keys.Contains(username))
+            string userName = HttpContext.Session.GetString("username");
+            #region 讀session
+            if (HttpContext.Session.Keys.Contains(userName))
                 {
-                    string jsonstring = HttpContext.Session.GetString(username);
+                    string jsonstring = HttpContext.Session.GetString(userName);
                     List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
                     return data;
                 }
                 #endregion
-            }
+            
 
                 #region 讀cookie
                 //if (HttpContext.Request.Cookies[username] != null)
@@ -140,9 +141,9 @@ namespace TeaBar.Controllers
                 Msg = "儲存成功",
                 Now = DateTime.Now
             };
-            string username = User.Identity.Name;
+            string username = HttpContext.Session.GetString("username");
             //if (HttpContext.Request.Cookies[username] != null)
-                if(HttpContext.Session.Keys.Contains(username))
+            if (HttpContext.Session.Keys.Contains(username))
             {
                 #region 讀cart
                 //string Carts = HttpContext.Request.Cookies[username];
@@ -157,7 +158,7 @@ namespace TeaBar.Controllers
 
                 string userid = _db.Users.Where(s => s.UserName == username).
                     Select(s => s.Id).FirstOrDefault();
-                string storeid = HttpContext.Request.Cookies[username];
+                string storeid = carts[0].StoreID;
                 string orderid =carts[0].OrderID;
                 int discountid = carts[0].DiscountId;
                 //建立Order物件

@@ -73,7 +73,7 @@ namespace TeaBar.Controllers
             ViewBag.carts = carts;
                 return View();
             }
-            return null;
+            return RedirectToAction("Index","Home");
         }
         #endregion
         #region 金流基本資料
@@ -236,7 +236,7 @@ namespace TeaBar.Controllers
         /// [智付通]金流介接(結果: 支付完成 返回商店網址)
         /// </summary>
         [HttpPost]
-        public ActionResult CashflowreturnAsync()
+        public IActionResult CashflowreturnAsync()
         {
 
             HttpContext.Request.LogFormData("Cashflowreturn(支付完成)");
@@ -288,7 +288,7 @@ namespace TeaBar.Controllers
         #region ATM返回商店
         ///Atm轉帳
         [HttpPost]
-        public ActionResult CashflowcustomerAsync()
+        public IActionResult CashflowcustomerAsync()
 
         {
             Request.LogFormData("Cashflowcustomer(資料回傳)");
