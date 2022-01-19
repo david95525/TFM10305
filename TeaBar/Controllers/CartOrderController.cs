@@ -26,7 +26,23 @@ namespace TeaBar.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-          
+            
+            if (HttpContext.Session.Keys.Contains("temp"))
+            {
+                string jsonstring = HttpContext.Session.GetString("temp");
+                List<CartViewModel> temp
+                    = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
+                HttpContext.Session.Remove("temp");
+                string userName = User.Identity.Name;
+                foreach (CartViewModel item in temp)
+                {
+                    item.UserID = userName;
+                }
+                HttpContext.Session.SetString("username", userName);
+                string jsonstringafter = Newtonsoft.Json.JsonConvert.SerializeObject(temp);
+                HttpContext.Session.SetString(userName, jsonstringafter);
+            } 
+            
             return View();
         }
  

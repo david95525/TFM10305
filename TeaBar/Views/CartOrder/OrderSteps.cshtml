@@ -565,9 +565,9 @@
                     this.initMap();
                 })
                 .catch(error => console.log(error));
-   
-           
-            
+
+
+
         },
         //#endregion
         //#region Vue方法
@@ -661,6 +661,10 @@
                 app.orderData.splice(index, 1);
                  //儲存session
                 Save();
+                if (app.orderData.length == 0) {
+                       alert("無商品");
+                    location.href = "@Url.Action("Index", "Home")";
+                }
             },
             //#endregion
             //#region 第一頁和第二頁來往
@@ -832,8 +836,9 @@
                     }).fail(function (err) {
                         console.log(err.responseText);
                     });
-                } else {
-                    alert("沒有商品");
+                   } else {
+                       alert("無商品");
+                    location.href = "@Url.Action("Index", "Home")";
                 }
             }
            //#endregion
@@ -857,7 +862,7 @@
                             console.log(err.responseText);
                         });
                 } else {
-                    alert("沒有商品");
+
                 }
     }
     //讀縣市或區域
