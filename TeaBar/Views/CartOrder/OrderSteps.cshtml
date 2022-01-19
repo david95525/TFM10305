@@ -87,6 +87,16 @@
         width: 40vw;
     }
     /*#endregion */
+    /* Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
 </style>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
@@ -219,7 +229,7 @@
                     <div class="row row-cols-1 row-cols-md-4 g-4">
                         <div class="col" v-for="orderitem in orderData">
                             <div class="card" style="width: 18rem;">
-                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
+                                <img v-bind:src="orderitem.picture" class="pointer card-img-top" v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
 
                                 <div class="card-body">
                                     <div v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
@@ -283,7 +293,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label redstar">電話</label>
-                        <input type="text" class="form-control" v-model:value="shipData.phone">
+                        <input type="tel" class="form-control" v-model:value="shipData.phone">
                     </div>
                 </div>
             </div>
@@ -437,7 +447,7 @@
                     <div class="col-4">
                         <div class="pointer input-group mb-3">
                             <i class="far fa-minus-square input-group-text" v-on:click="EditQ(order.productId,false)"></i>
-                            <input type="text" v-model:value="order.quantity" class="form-control" id="qty" />
+                            <input type="number" v-model:value="order.quantity" class="form-control" id="qty" />
                             <i class="far fa-plus-square input-group-text" v-on:click="EditQ(order.productId,true)"></i>
                         </div>
                     </div>
@@ -630,8 +640,8 @@
                     app.order.subtotal = app.temp[5];
                     app.order.size = app.temp[6];
                 } else {
-                    if (typeof (app.order.quantity) != "number") {
-                        alert("請輸入大於0的數字");
+                    if (app.order.quantity<1) {
+                        alert("請輸入正確格式");
                         app.order.quantity = app.temp[3];
                         app.order.subtotal = app.temp[5];
                     }
