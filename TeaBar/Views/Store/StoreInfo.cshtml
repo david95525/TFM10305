@@ -18,10 +18,10 @@
 
     <div id="storeMap">
         <!--門市地圖-->
-        <div id="map" class="embed-responsive"></div>
+        <div id="map" class="embed-responsive rounded"></div>
         <!--搜尋門市功能-->
         <div class="search">
-            <div id="selectStore" class="input-group  mb-3 text-center">
+            <div id="select-store" class="input-group  mb-4 text-center select-color">
                 <select v-model="cityVal" @@change="qryCity(cityVal)" class="form-select form-inline mr-2">
                     <option value="default">選擇縣市</option>
                     <option :value="city" v-for="city in cityList">{{city}}</option>
@@ -33,13 +33,18 @@
                 <input type="text" name="store" value="" placeholder="請輸入門市名稱" v-model="keyWord" class="form-control form-inline" @@input="storeSearch" />
             </div>
             <!--門市清單-->
-            <div id="storeList">
-                <ul style="list-style-type:none" class="list-group">
-                    <li class="list-group-item productImg" :value="list.StoreID" v-for="list in storeList" @@click="changeMap(list.StoreID)">
-                        <label>{{list.StoreName}}</label>
-                        {{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}} |
-                        {{list.StorePhone}}
-                        <button type="button" class="btn btn-outline-dark" @@click="selectStore(list.StoreID)">前往訂餐</button>
+            <div id="storeList" class="container p-0">
+                <ul style="list-style-type:none" class="list-group" v-for="list in storeList">
+                    <li class="list-group-item pointer d-flex align-content-center mb-2 shadow-sm list-color" :value="list.StoreID" @@click="changeMap(list.StoreID)">
+                        <h5 class="font-weight-bold fs-5 list-header">{{list.StoreName}}</h5>
+                        <div class="list-content">
+                            {{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}}
+                            <br />
+                            {{list.StorePhone}}
+                        </div>
+                        <div class="">
+                            <button type="button" class="btn btn-light rounded-pill btn-addtocart" @@click="selectStore(list.StoreID)">前往訂餐</button>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -131,10 +136,12 @@
                         });
                         //資訊視窗
                         let infoWindow = new google.maps.InfoWindow({
-                            content: `<h5 class="mt-2 mb-2 fw-bold">${data.StoreName}</h5>
-                                        <div class="text-center">
-                                        <img src="/images/map/store.jpg" class="img-fluid img-thumbnail imageSize mb-2"/>
-                                        <p class="fs-6">地址: ${data.StoreAddress}</p>
+                            content: `<div class="align-items-center p-2">
+                                        <h5 class="mt-2 mb-3 fw-bold">${data.StoreName}</h5>
+                                        <img src="/images/map/store.jpg" class="img-fluid img-thumbnail imageSize mb-3"/>
+                                        <p class="fs-6"><i class="fas fa-clock"></i> 10:00 ~ 23:00</p>
+                                        <p class="fs-6"><i class="fas fa-phone-alt"></i> ${data.StorePhone}</p>
+                                        <p class="fs-6"><i class="fas fa-map-marker-alt"></i> ${data.StoreAddress}</p>
                                         </div>`,
                             maxWidth: 300,
                         });
