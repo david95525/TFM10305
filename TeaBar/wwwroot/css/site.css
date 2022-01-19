@@ -230,3 +230,20 @@ li:hover{
   box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);
 }
 
+/*News*/
+.bg-img {
+    background-image: url("/images/news/pexels-pixabay-511407.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    width:auto;
+    height:100px;
+    line-height:100px;
+}
+.bg-img-old {
+    background-image: url("/images/news/pexels-pixabay-5.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    width: auto;
+    height: 100px;
+    line-height: 100px;
+}
