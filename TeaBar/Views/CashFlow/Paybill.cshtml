@@ -22,7 +22,7 @@
         htmltotal = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(total));
         htmlorderid= Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(carts[0].OrderID));
     }
-    double discount = carts[0].Discount * 10;
+    double discount = carts[0].Discount;
       }
 <div id="paybill">
     <div>
@@ -62,7 +62,7 @@
                         </tr>
                         <tr>
                             <td>折扣</td>
-                            <td>@discount 折</td>
+                            <td>@discount </td>
                         </tr>
                     </tbody>
                 </table>
@@ -75,8 +75,6 @@
                                 <option value="CREDIT">信用卡</option>
                                 <option value="WEBATM">WEBATM</option>
                                 <option value="VACC">ATM 轉帳</option>
-                                <option value="TAIWANPAY">台灣Pay</option>
-                                <option value="ANDROIDPAY">Google Pay</option>
                             </select>
                         </div>
                         <input type="text" style="display:none" id="total" name="total" required>
@@ -86,7 +84,6 @@
                         前往付款
                     </button>
                 </form>
-                <button class="btn btn-primary"  v-on:click="test">test</button>
             </div>
         </div>
     </div>
@@ -103,9 +100,6 @@
             update: function () {
                 $('#total').val(app.total);
                 $('#orderid').val(app.orderid);
-            },
-            test: function () {
-                        window.location.href = "@Url.Action("Test", "CashFlow")"                 
             }
         }
     });

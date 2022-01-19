@@ -6,6 +6,10 @@
 }
 <!-- #region css-->
 <style>
+    .right {
+        margin-left: 10px;
+    }
+
     .pointer {
         cursor: pointer
     }
@@ -14,9 +18,9 @@
         background-color: papayawhip;
     }
     /*#region 必填欄位*/
-    .redstar::before{
-        content:"*";
-        color:red;
+    .redstar::before {
+        content: "*";
+        color: red;
     }
     /*#endregion */
     /*#region 商品圖*/
@@ -42,19 +46,9 @@
         transform: translateX(100%);
     }
     /*#endregion */
-    /*#region google地圖*/
-    iframe {
-        width: 100%;
-    }
-
-    #map {
-        height: 600px;
-    }
-
     #store {
         color: green;
     }
-    /*#endregion*/
     /*#region 頁首效果*/
     #circleone {
         width: 30px;
@@ -87,8 +81,28 @@
     #number {
         color: white;
     }
+    /*設定地圖大小*/
+    #map {
+        height:400px;
+        width: 200px;
+    }
     /*#endregion */
 </style>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+    </symbol>
+    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+    </symbol>
+    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+    </symbol>
+</svg>
+<!--載入google map-->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6Agwzyd84tG7qsFrzBDNZcsW3IFjCifQ">
+</script>
 <!-- #endregion -->
 <div id="shoppingorders">
     <!--#region 頁首-->
@@ -114,7 +128,7 @@
         <div v-if="link=='a'">
             <!--#region 店家 -->
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" v-if="isShow">
                     <div v-for="s in store" id="store">
                         <div><h5>Teabar{{s.storeCity}}{{s.storeName}}</h5></div>
                         <div>{{s.storePhone}}</div>
@@ -129,18 +143,21 @@
                 </div>
                 <div class="card-body">
                     <div>
-                        <div>
+                        <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" checked v-on:click="How(0)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
                             <label class="form-check-label"> 自取</label>
                             <div v-if="isTakeout" class=" pointer">
-                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 點選地圖圖標查看</label>
-                                <span data-bs-toggle="modal" data-bs-target="#map">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </span>
+                                <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 可點擊刷新</label>
+                                <div v-on:click="initMap">
+                                    <span >
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div>
+                        <div id="map" class="embed-responsive" v-if="!isDelivery"></div>
+                        <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" v-on:click="How(1)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" checked v-on:click="How(1)">
                             <label class="form-check-label"> 外送</label>
@@ -211,7 +228,7 @@
                                                 <div>{{order.productName}}</div>
                                             </div>
                                             <div class="bg-color">
-                                                <div>{{order.size}}杯/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
+                                                <div>{{order.size}}/{{order.ice}}/{{order.sweetness}}/{{order.ingredient}}</div>
                                             </div>
                                             <div class="bg-color">
                                                 <div>$ {{order.subtotal}}</div>
@@ -238,11 +255,10 @@
                         <label>訂單滙總</label>
                     </div>
                     <div class="card-body">
-                        <div class="col-1" v-if="orderData[0].discount*100%10==0">{{orderData[0].discount*10}}折</div>
-                        <div class="col-1" v-if="orderData[0].discount*100%10==5">{{orderData[0].discount*100}}折</div>
-                        <div class="col-1" v-if="orderData[0].discount==1">原價</div>
-                        <div class="col-1">總金額  ${{total}}</div>
-
+                        <div class="row-1">總額:${{origintotal}}</div>
+                        <div class="row-1" v-if="discount!=1">{{discount}}折</div>
+                        <div class="row-1" v-if="discount==1">無</div>
+                        <div class="row-1">折扣後總額:${{total}}</div>
                     </div>
                 </div>
             </div>
@@ -260,7 +276,7 @@
                         <label class="redstar">取餐人資料</label>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label redstar" >姓名</label>
+                        <label class="form-label redstar">姓名</label>
                         <input type="text" class="form-control" v-model:value="shipData.receiver">
                     </div>
                     <div class="mb-3">
@@ -284,20 +300,20 @@
                     <label>開立發票</label>
                 </div>
                 <div class="card-body">
-                    <div>
+                    <div class="right">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('paper')" v-if="isPaper" checked>
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('paper')" v-if="!isPaper">
                         <label class="form-check-label"> 紙本發票</label>
                     </div>
-                    <div>
+                    <div class="right">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="!isCellphone">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('cellphone')" v-if="isCellphone" checked>
                         <label class="form-check-label"> 手機載具</label>
-                        <div v-if="isCellphone"class="redstar">
+                        <div v-if="isCellphone" class="redstar">
                             <input type="text" class="form-control" placeholder="首位為/ 字母為大寫" v-model:value="shipData.phonereceipt">
                         </div>
                     </div>
-                    <div>
+                    <div class="right">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="!isDonate">
                         <input type="radio" class="form-check-input" name="receipt" v-on:click="Receipt('dt')" v-if="isDonate" checked>
                         <label class="form-check-label"> 愛心捐贈</label>
@@ -452,21 +468,7 @@
         </div>
     </div>
     <!-- #endregion -->
-    <!-- #region 取貨門市地址 -->
-    <div class="modal fade" id="map" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.4678303431388!2d121.54106421494481!3d25.052127983963906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abe6b0446815%3A0xf006dde8c27afcc7!2z57ev6IKyVGliYU1l6ZmE6Kit5Y-w5YyX6IG36KiT5Lit5b-D!5e0!3m2!1szh-TW!2stw!4v1641227477316!5m2!1szh-TW!2stw" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
 
-            </div>
-        </div>
-    </div>
-    <!-- #endregion -->
 </div>
 <!--#region Javascript和Vue-->
 <script>
@@ -477,25 +479,35 @@
             orderData: [],  //訂單資料內容
             shipData: {},//寄送資料
             store: [],   //店家資料
+            storemap: {},
             temp: [],     //暫存
             order: {}, //單一訂單內容
             countyData: [],//縣市資料
-            districtData:[],//區域資料
+            districtData: [],//區域資料
+            mapData: [], //google map marker
+            discount: 0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
-            icelist: ["去冰", "微冰", "少冰", "正常冰", "常溫", "溫", "熱"],
-            inglist: ["珍珠", "布丁", "仙草凍", "芋圓","無"],
-            sizelist: ["大", "中"],
+            icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
+            inglist: ["珍珠", "椰果", "小芋圓", "寒天", "雙Q", "蜂蜜", "無"],
+            sizelist: ["大杯", "中杯"],
             total: 0,
+            origintotal: 0,
+            isShow:false,
             isIN: false,
             isDeliverydetail: true,//外送資訊完整
-            isReceiverdetail:true,//取餐人資訊完整
+            isReceiverdetail: true,//取餐人資訊完整
             isTakeout: true,//自取
             isDelivery: false,//外送
-            isPaper:true,//紙本發票
+            isPaper: true,//紙本發票
             isCellphone: false,//手機載具
-            isCellphonedetail:true,//手機載具輸入完整
-            isDonate:false,//愛心捐贈
-            link: 'a'//分頁判斷
+            isCellphonedetail: true,//手機載具輸入完整
+            isDonate: false,//愛心捐贈
+            link: 'a',//分頁判斷
+            googleMap: {
+                map: "",
+                lat: 0, //中心座標
+                lng: 0
+            },
 
         },
         //#endregion
@@ -506,43 +518,68 @@
                 url: "@Url.Action("GetStore", "OrderAPI")",
                 type: 'GET'
             })
-            .done(
+                .done(
                     function (result, status, xhr) {
-                    app.store[0] = result;
-                    console.log(app.store);
-                })
-            .fail(function (err) {
-                alert("error");
-             });
+                        app.store[0] = result;
+                        console.log(app.store);
+                        app.isShow = true;
+                    })
+                .fail(function (err) {
+                    alert("error");
+                });
             //讀購物車
             $.ajax({
                 url: "@Url.Action("Readcart", "OrderAPI")",
                 type: 'GET'
             })
-             .done(function (result) {
+                .done(function (result) {
                     if (result.length == 0) {
                         alert("失敗");
                     } else {
                         app.orderData = result;
                         app.isIN = true;
-                        for (let i = 0; i < app.orderData.length; i++) {                         
-                            Subtotal(i);
-                            if (app.orderData[i].ingredient === "布丁" || app.orderData[i].ingredient === "仙草凍"
-                                || app.orderData[i].ingredient === "芋圓") {
-                                app.orderData[i].subtotal = app.orderData[i].subtotal + 10;
-                            }
+                        for (let i = 0; i < app.orderData.length; i++) {
                             app.total = app.total + app.orderData[i].subtotal;
                         }
+                        app.origintotal = app.total;
                         app.total = Math.round(app.total * app.orderData[0].discount);
+                        app.discount = app.orderData[0].discount;
+                        if (app.discount < 1) {
+                            app.discount = app.discount * 100;
+                            if (app.discount % 10 === 0) {
+                                app.discount = app.discount / 10;
+                            }
+                        }
                     }
                 })
-             .fail(function (err) {
+                .fail(function (err) {
                     alert("error");
-             });
+                });
+            axios('/api/StoreService/store')
+                .then(response => {
+                    this.mapData = JSON.parse(response.data);
+                    //取得第一筆經緯度
+                    this.googleMap.lat = this.mapData [0].Lat;
+                    this.googleMap.lng = this.mapData [0].Lng;
+                    this.initMap();
+                })
+                .catch(error => console.log(error));
+   
+           
+            
         },
         //#endregion
         //#region Vue方法
         methods: {
+            initMap() {
+                this.googleMap.map = new google.maps.Map(document.getElementById('map'),
+                    {
+                        center: { lat: this.googleMap.lat, lng: this.googleMap.lng, },
+                        zoom: 12,
+                        mapTypeId: 'roadmap'
+                    }
+                )
+            },
             //#region 編輯數量
             EditQ: function ( pid, PorM) {
                 let temp = app.orderData.find(c => c.productId == pid);
@@ -589,12 +626,14 @@
                     }
                     //更新資料
                     app.order.subtotal = app.order.unitPrice * app.order.quantity;
-                    if (app.order.ingredient === "布丁" || app.order.ingredient === "仙草凍"
-                        || app.order.ingredient === "芋圓") {
+                    if (app.order.ingredient === "珍珠" || app.order.ingredient === "椰果"
+                        || app.order.ingredient === "寒天" || app.order.ingredient === "雙Q") {
                         app.order.subtotal = app.order.subtotal + 10;
+                    } else if (app.order.ingredient === "蜂蜜" || app.order.ingredient === "小芋圓") {
+                        app.order.subtotal = app.order.subtotal + 15;
                     }
                     app.total = Math.round(app.total - (app.temp[5] - app.order.subtotal) * app.order.discount);
-                   
+
                     Save();
                 }
             },
@@ -697,7 +736,7 @@
                     if (app.shipData.phonereceipt != '') {
                         app.shipData.receipt = '手機載具:' + app.shipData.phonereceipt;
                         app.isCellphonedetail = true;
-                    } 
+                    }
                     Save();//存到session
                 }
 
@@ -770,11 +809,11 @@
                         + app.shipData.addrsss + app.shipData.desc;
                 }
                 // 寄送資訊記在note
-                
+
                     app.orderData[i].note = app.orderData[i].note
                         + " 取貨人:" + app.shipData.receiver + "電話:" + app.shipData.phone +
                         "發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
-                }             
+                }
                    if (app.orderData.length != 0) {
                     $.ajax({
                         url: "@Url.Action("Savecart", "OrderAPI")",

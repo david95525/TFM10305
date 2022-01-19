@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewData["Title"] = "發佈最新消息";
+}
+
+<fieldset id="news">
+    <legend>@ViewData["Title"]</legend>
+    <form>
+        <div style="height:20px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+        <h5 for="InpTopic" class="form-label">標題</h5>
+        <input type="text" class="form-control form-control-lg" id="InpTopic" v-model:text="news.topic">
+        <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+        <h5 for="textAreaNews" class="form-label">公告內容</h5>
+        <div class="form-outline">
+            <textarea class="form-control" id="textAreaNews" rows="7" v-model:text="news.contentText"></textarea>
+        </div>
+        <div style="height:20px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+    </form>
+
+    <div>
+        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsDialog">發布公告</button>
+    </div>
+
+    <!--確認發佈 對話盒-->
+    <div class="modal fade" id="addNewsDialog" tabindex="-1" aria-labelledby="addNewsDialogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addNewsDialogLabel">發佈公告</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <i class="fas fa-question-circle fa-2x" style="color:red"></i>
+                    <p style="display:inline;font-size:large;">確定發佈？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" v-on:click="newsPost">發佈</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--成功發佈 對話盒-->
+    <div class="modal fade" id="postSuccessDialog" tabindex="-1" aria-labelledby="postSuccessDialogLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="postSuccessDialogLabel">發佈</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <i class="fas fa-info-circle fa-2x" style="color:lightskyblue"></i>
+                    <p style="display:inline;font-size:large;"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+<script>
+    var newsObj = { topic: '', contentText: '' };
+    var dataObj = { id: 'news', save: true, value: [] };
+
+    var app = new Vue({
+        el: "#news",
+        data: {
+            news: newsObj
+        },
+        methods: {
+            newsPost: function () {
+                dataObj.value = [];
+                let urlString = 'https://iot.cht.com.tw/iot/v1/device/28331841134/rawdata';
+                let jsonString = JSON.stringify(app.news);
+                dataObj.value.push(jsonString);
+                let finalData = [];
+                finalData.push(dataObj);
+                let newsDataString = JSON.stringify(finalData);
+                console.log(jsonString);
+                $.ajax({
+                    url: urlString,
+                    type: 'POST',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.setRequestHeader("CK", "PKC4HAUS5RAGHMWZ2B");
+                    },
+                    data: newsDataString
+                }).done(function () {
+                    $.ajax({
+                        url: "/NewsPublish/SaveNews",
+                        type: 'POST',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Content-Type", "application/json");
+                        },
+                        data: jsonString
+                    }).done(function (data) {
+                        $('#postSuccessDialog p').text("公告發佈成功！");
+                        app.news = '';
+                        $('#addNewsDialog').modal('hide');
+                        $('#postSuccessDialog').modal('show');
+                    }).fail();
+                }).fail();
+            }
+        }
+    });
+</script>

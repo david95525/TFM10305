@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -54,7 +55,7 @@ namespace TeaBar
                 options.Password.RequiredUniqueChars = 1;           //�ܤ֭n��1�Ӧr�����@��
 
                 // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); //5�����S�����R�N�۰����w����A�w�]5����
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30); //5�����S�����R�N�۰����w����A�w�]5����
                 options.Lockout.MaxFailedAccessAttempts = 5; //�T���K�X�~�N��w���, �w�]5��
                 options.Lockout.AllowedForNewUsers = true; //�s�W���ϥΪ̤]�|�Q��w�A�N�O�ǳW�S���s�H�u��
 
@@ -70,7 +71,7 @@ namespace TeaBar
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
+                //options.Cookie.SameSite = SameSiteMode.None;
                 options.LoginPath = "/Identity/Account/Login"; //�n�J��
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";//�n�XAction
                 options.SlidingExpiration = true;
@@ -81,9 +82,11 @@ namespace TeaBar
             {
                 opt.AppId = Configuration["Facebook:AppId"];
                 opt.AppSecret = Configuration["Facebook:AppSecret"];
+                opt.AccessDeniedPath = "/Home/Index";
             });
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromDays(5);
+              
             });
         }
 
@@ -97,7 +100,8 @@ namespace TeaBar
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseDeveloperExceptionPage();
+                //app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

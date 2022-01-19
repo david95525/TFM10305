@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewData["Title"] = "StoreProduct";
+}
+
+<h1>商家商品數量分析</h1>
+
+<input type="button" onclick="javascript:location.href='/ProductManage/Index'" value="後台管理" class="alert-primary" />
+<input type="button" onclick="javascript:location.href='/ProductManageChart/Index'" value="後台分析" class="alert-success" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div id="Vuechart">
+    @*圖表*@
+    <canvas id="myChart"></canvas>
+</div>
+
+<script>
+    var app = new Vue(
+        {
+            el: '#Vuechart',
+
+            mounted: function () {
+                axios('/api/StoresApi/storeName')
+                    .then(response => {
+                        data.labels = response.data;
+                    })//then(response =>
+                //axios
+                axios('/api/Productsapi/ProductName')
+                    .then(response => {
+                        var resdata = response.data;
+                        for (var index = 0; index < 7; index++) {
+                            data.datasets[index].label = resdata[index];
+                        }//for
+                        axios('/api/Productsapi/PrStQuantity')
+                            .then(Quantity => {
+                                var Q = Quantity.data;
+                                for (var index1 = 0; index1 < 4; index1++) {
+                                    for (var index2 = 0; index2 < 4; index2++) {
+                                        data.datasets[index1].data.push(Q[index1][index2]);
+                                    };
+                                };
+
+                                @* 顯示圖表 *@
+                                myChart = new Chart(
+                                    document.getElementById('myChart'),
+                                    config
+                                );//顯示圖表
+
+                            })
+                        //axios
+
+                    })//then(response =>
+                //axios
+
+            },
+
+        }
+    )
+
+    var data = {
+        labels:'',
+        datasets: [
+            {
+                 label: '種類1',
+                 backgroundColor: 'rgb(255, 99, 132)',
+                 borderColor: 'rgb(255, 99, 132)',
+                 data: [8,3,2],
+            },
+            {
+                 label: '種類2',
+                backgroundColor: 'orange',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [18,5,4],
+            },
+            {
+                label: '種類3',
+                backgroundColor: 'yellow',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [15,5,8],
+            },
+            {
+                label: '種類4',
+                backgroundColor: 'green',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [6,4,1],
+            },
+            {
+                label: '種類5',
+                backgroundColor: 'blue',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [4, 6, 3, 2, 5, 1, 2],
+            },
+            {
+                label: '種類6',
+                backgroundColor: 'brown',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [2, 1, 3, 1, 3, 2,1],
+            },
+            {
+                label: '種類7',
+                backgroundColor: 'purple',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [5,1,3,2,3,1,1],
+            },
+        ],
+
+    };
+
+    var config = {
+        type: 'bar',
+        data: data,
+        options: {}
+    };
+
+</script>

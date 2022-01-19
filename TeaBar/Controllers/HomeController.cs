@@ -28,12 +28,7 @@ namespace TeaBar.Controllers
         {
             return View();
         }
-        [HttpGet]
-        public string GetUserName()
-        {
-            string username = User.FindFirstValue(ClaimTypes.NameIdentifier); ;
-            return username;
-        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -13,77 +13,99 @@
         height: 10%;
     }
 </style>
-
-<fieldset id="ShoppingCart">
-    <h1>購物車</h1>
-    <div>
-        <h2>{{name}}</h2>
-    </div>
-    <div v-if="isShow">
-        <h4>{{store.storeCity}} {{store.storeName}} </h4>
-    </div>
-    <div class="font-italic text-danger" style="font-size:24px;"></div>
-    <table class="table">
-        <thead>
-            <tr>
-                <td></td>
-                <td>商品名稱</td>
-                <td>數量</td>
-                <td>其他加價</td>
-                <td>細項總額</td>
-                <td>詳細</td>
-            </tr>
-        </thead>
-        <tbody v-if="isShow">
-            <tr v-for="pd in cartsData">
-                <td>
-                    <img v-bind:src="pd.picture" id="productpic" />
-                </td>
-                <td>{{pd.productName}}</td>
-                <td>{{pd.quantity}}</td>
-                <td v-if="pd.isIngredient">{{pd.ingredient}}+10元</td>
-                <td v-if="!pd.isIngredient">無</td>
-                <td>{{pd.subtotal}}</td>
-                <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
-                <td>
-                    <div v-on:click="Todelete(pd.productId)">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+    </symbol>
+    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+    </symbol>
+    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+    </symbol>
+</svg>
+<fieldset id="ShoppingCart" >
+    <div v-if="isExist">
+        <h1>購物車</h1>
+        <div>
+            <h2>{{name}}</h2>
+        </div>
+        <div v-if="isShow">
+            <h4>{{store.storeCity}} {{store.storeName}} </h4>
+        </div>
+        <div class="font-italic text-danger" style="font-size:24px;"></div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td>商品名稱</td>
+                    <td>單價</td>
+                    <td>數量</td>                 
+                    <td>其他加價</td>
+                    <td>細項總額</td>
+                    <td>詳細</td>
+                </tr>
+            </thead>
+            <tbody v-if="isShow">
+                <tr v-for="pd in cartsData">
+                    <td>
+                        <img v-bind:src="pd.picture" id="productpic" />
+                    </td>
+                    <td>{{pd.productName}}</td>
+                    <td>{{pd.unitPrice}}</td>
+                    <td>{{pd.quantity}}</td>
+                    <td v-if="pd.isIngredient===2">{{pd.ingredient}}+15元</td>
+                    <td v-if="pd.isIngredient===1">{{pd.ingredient}}+10元</td>
+                    <td v-if="pd.isIngredient===0">無</td>
+                    <td>{{pd.subtotal}}</td>
+                    <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
+                    <td>
+                        <div v-on:click="Todelete(pd.productId)">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="card" v-if="isShow">
+            <div class="card-header">
+                <label>小總計</label>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="row-1">總額:${{origintotal}}</div>
+                    <div class="row-1" v-if="discount!=1">{{discount}}折</div>
+                    <div class="row-1" v-if="discount===1">無</div>
+                    <div class="row-1">折扣後總額:${{total}}</div>
+                </div>
+            </div>
+        </div>
+        <!--#region 刪除資料確認對話盒-->
+        <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true" title="刪除客戶資料">
+            <div class="modal-dialog modal-fullscreen-lg-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="card" v-if="isShow">
-        <div class="card-header">
-            <label>小總計</label>
-        </div>
-        <div class="card-body">
-            <div>
-                <div v-if="discount< 1 ">折扣: {{discount}}折</div>
-                <div v-if="!discount===1 ">折扣:無</div>
-                <div>總額: ${{total}}</div>
-            </div>
-        </div>
-    </div>
-    <!--#region 刪除資料確認對話盒-->
-    <div class="modal fade" id="deldialog" tabindex="-1" aria-hidden="true" title="刪除客戶資料">
-        <div class="modal-dialog modal-fullscreen-lg-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    確認刪除{{cart.productName}} ?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" v-on:click="deleteItem" data-bs-dismiss="modal">是</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
+                    <div class="modal-body">
+                        確認刪除{{cart.productName}} ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" v-on:click="deleteItem" data-bs-dismiss="modal">是</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
+                    </div>
                 </div>
             </div>
         </div>
+        <!--#endregion -->
+        <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
     </div>
-    <!--#endregion -->
-    <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
+    <div v-if="!isExist">
+        <div class="alert alert-warning d-flex align-items-center" role="alert" >
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+            <div> 無商品</div>
+        </div>
+    </div>
 </fieldset>
 <script>
     var app = new Vue(
@@ -94,12 +116,14 @@
                     checked: false,
                     store: {},
                     cart: {},
+                    origintotal:0,
                     total: 0,
                     discount:0,
                     name:"",
                     isEdit: false,
                     isShow: false,
-                    isIN: false
+                    isIN: false,
+                    isExist:false
                 },
             //獲取購物車資料
             mounted: function () {
@@ -108,24 +132,32 @@
                             url: "@Url.Action("Readcart", "OrderAPI")",
                             type: 'GET'
                         }).done(
-                            function(result, status, xhr) {
-                                app.cartsData = result;
-                                if (app.cartsData.length == 0) {
-                                    alert("沒有商家");
+                            function(result, status, xhr) {                               
+                                if (result == null) {
                                 }
                                 else {
-                                    app.name = app.cartsData[0].userID;}
+                                    app.cartsData = result;
+                                    app.isExist = true;
+                                    app.name = app.cartsData[0].userID;
                                 for (let i = 0; i < app.cartsData.length; i++) {
-                                    app.cartsData[i].subtotal = app.cartsData[i].unitPrice *app.cartsData[i].quantity ;
-                                    if (app.cartsData[i].ingredient === "布丁" || app.cartsData[i].ingredient === "仙草凍"
-                                        || app.cartsData[i].ingredient === "芋圓") {
-                                        app.cartsData[i].subtotal = app.cartsData[i].subtotal + 10;
-                                        app.cartsData[i].isIngredient = true;
-                                    } else { app.cartsData[i].isIngredient = false; }
                                     app.total = app.total + app.cartsData[i].subtotal;
-                                }
+                                    if (app.cartsData[i].ingredient != "無") {
+                                        app.cartsData[i].isIngredient = 1;
+                                    } else { app.cartsData[i].isIngredient = 0;}
+                                    if (app.cartsData[i].ingredient == "小芋圓" || app.cartsData[i].ingredient == "蜂蜜") {
+                                        app.cartsData[i].isIngredient = 2;
+                                    }
+                                    }
+                                app.origintotal = app.total;
                                 app.total = Math.round( app.total * app.cartsData[0].discount);
-                                app.discount = app.cartsData[0].discount * 10;
+                                app.discount = app.cartsData[0].discount;
+                                if (app.discount < 1) {
+                                    app.discount = app.discount * 100;
+                                    if (app.discount % 10 ===0 ) {
+                                        app.discount = Math.round(app.discount / 10);
+                                    }
+                                }    
+                                }
                             }).fail(function (err) {
                             alert(err.responseText);
                             });
@@ -141,7 +173,6 @@
                             }).fail(function (err) {
                             alert(err.responseText);
                             });
-
                 },
                 methods:
                 {
@@ -163,7 +194,8 @@
                                     data: JSON.stringify(app.cartsData),
                                 }).done(function (data, status, xhr) {
                                     if (app.cartsData.length <1) {
-                                        app.isShow= false;
+                                        app.isShow = false;
+                                        app.isExist = false;
                                     }
 
                                 }).fail(function (err) {

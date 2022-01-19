@@ -360,6 +360,9 @@
             },
             //將選擇商品資料傳到後端
             AddToCart() {
+                if (this.orderDetail.Ingredient.length == 0) {
+                    this.orderDetail.Ingredient[0] = { name: "無", price: 0 };
+                }
                 //todo驗證資料內容
                 this.$validator.validateAll().then(result => {
                     if (result) {
@@ -371,7 +374,9 @@
                             headers: { "Content-Type": "application/json" },
                             data: data,
                         }).then(response => {
-                            if (response.status == 200) {
+                            if (response == null) {
+                                  location.href = "@Url.Action("ShoppingCart","CartOrder")";
+                            }else if (response.status == 200) {
                                 alert("加入購物車成功!");
                             }
                         }).catch(error => console.log(error));

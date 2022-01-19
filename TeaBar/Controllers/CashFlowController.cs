@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -21,6 +22,13 @@ namespace TeaBar.Controllers
 {
     public class CashFlowController : Controller
     {
+        private readonly SignInManager<ApplicationUsers> _signInManager;
+        public CashFlowController(SignInManager<ApplicationUsers> signInManager)
+        {
+  
+            _signInManager = signInManager;
+      
+        }
         public IActionResult Test()
         {
             return View();
@@ -33,13 +41,20 @@ namespace TeaBar.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
+            //記錄登陸狀態cookie
+
+            //if (HttpContext.Request.Cookies[".AspNetCore.Identity.Application"] != null)
+            //{
+            //    string cookievalue = HttpContext.Request.Cookies[".AspNetCore.Identity.Application"];
+            //    string cookiename = ".AspNetCore.Identity.Application";
+            //    HttpContext.Session.SetString("identitycookvalue", cookievalue);
+            //    HttpContext.Session.SetString("identitycookiename", cookiename);
+            //}
             string userName = User.Identity.Name;
             //if (HttpContext.Request.Cookies[userName] != null)
             if(HttpContext.Session.Keys.Contains(userName))
             {
-                //從cookie讀出
-                //string cartstring = HttpContext.Request.Cookies[userName];
-                //從session讀出
+                
                 string cartstring = HttpContext.Session.GetString(userName);
                 List<CartViewModel> carts = JsonConvert.DeserializeObject<List<CartViewModel>>(cartstring);
                 //決定orderid
@@ -49,16 +64,16 @@ namespace TeaBar.Controllers
                     orderid = orderid + item.ProductId.ToString() + item.Quantity.ToString();
                 }
                 carts[0].OrderID = orderid;
-                //cookie寫入
+           
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
-                //CookieOptions option = new CookieOptions();
-                //option.Expires = DateTime.Now.AddDays(5);
-                //HttpContext.Response.Cookies.Append(userName,jsonstring, option);
+          
                 HttpContext.Session.SetString(userName, jsonstring);
-
-                ViewBag.carts = carts;
+          
+ 
+            ViewBag.carts = carts;
+                return View();
             }
-            return View();
+            return RedirectToAction("Index","Home");
         }
         #endregion
         #region 金流基本資料
@@ -191,6 +206,7 @@ namespace TeaBar.Controllers
             // 將model 轉換為List<KeyValuePair<string, string>>, ewnull值不轉
             List<KeyValuePair<string, string>> postData = LambdaUtility.ModelToKeyValuePairList<InputModel>(inputModel);
 
+        
             HttpContext.Response.Clear();
 
             StringBuilder s = new StringBuilder();
@@ -220,7 +236,7 @@ namespace TeaBar.Controllers
         /// [智付通]金流介接(結果: 支付完成 返回商店網址)
         /// </summary>
         [HttpPost]
-        public ActionResult Cashflowreturn()
+        public IActionResult CashflowreturnAsync()
         {
 
             HttpContext.Request.LogFormData("Cashflowreturn(支付完成)");
@@ -246,7 +262,18 @@ namespace TeaBar.Controllers
                 NameValueCollection decryptTradeCollection = HttpUtility.ParseQueryString(decryptTradeInfo);
                 OutputDataModel convertModel = LambdaUtility.DictionaryToObject<OutputDataModel>
                     (decryptTradeCollection.AllKeys.ToDictionary(k => k, k => decryptTradeCollection[k]));
-       
+                //if (HttpContext.Session.Keys.Contains("identitycookiename"))
+                //{
+                //    if(HttpContext.Session.Keys.Contains("identitycookvalue"))
+                //    { 
+                //        string cookiename = HttpContext.Session.GetString("identitycookiename");
+                //        string cookievalue = HttpContext.Session.GetString("identitycookvalue");
+                //        CookieOptions option = new CookieOptions();
+                //        option.Expires = DateTime.Now.AddDays(5);
+                //        HttpContext.Response.Cookies.Append(cookiename, cookievalue, option);
+                //    }
+                //}
+                
                 ViewBag.result = convertModel;
                 return View();
             }
@@ -261,7 +288,7 @@ namespace TeaBar.Controllers
         #region ATM返回商店
         ///Atm轉帳
         [HttpPost]
-        public ActionResult Cashflowcustomer()
+        public IActionResult CashflowcustomerAsync()
 
         {
             Request.LogFormData("Cashflowcustomer(資料回傳)");
@@ -287,6 +314,19 @@ namespace TeaBar.Controllers
                 NameValueCollection decryptTradeCollection = HttpUtility.ParseQueryString(decryptTradeInfo);
                 OutputDataModel convertModel = LambdaUtility.DictionaryToObject<OutputDataModel>
                     (decryptTradeCollection.AllKeys.ToDictionary(k => k, k => decryptTradeCollection[k]));
+
+                //if (HttpContext.Session.Keys.Contains("identitycookiename"))
+                //{
+                //    if (HttpContext.Session.Keys.Contains("identitycookvalue"))
+                //    {
+                //        string cookiename = HttpContext.Session.GetString("identitycookiename");
+                //        string cookievalue = HttpContext.Session.GetString("identitycookvalue");
+                //        CookieOptions option = new CookieOptions();
+                //        option.Expires = DateTime.Now.AddDays(5);
+                //        HttpContext.Response.Cookies.Append(cookiename, cookievalue, option);
+                //    }
+                //}
+               
                 ViewBag.result = convertModel;
                 return View("Cashflowreturn");
             }
@@ -298,46 +338,8 @@ namespace TeaBar.Controllers
             return Content(string.Empty);
         }
         #endregion
-        /// <summary>
-        /// 執行HttpClient Post
-        /// </summary>
-        /// <param name="url">Post網址</param>
-        /// <param name="formContent">form參數</param>
-        /// <returns></returns>
-        private async Task<string> ExePostForm(string url, FormUrlEncodedContent formContent)
-        {
-            string responseBody = string.Empty;
 
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Clear();
-
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    HttpResponseMessage response = await client.PostAsync(url, formContent);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        responseBody = await response.Content.ReadAsStringAsync();
-                        // 紀錄回傳資訊
-                        LogUtility.WriteLog(responseBody);
-                    }
-                }
-            }
-            catch
-            {
-                
-            }
-
-            return responseBody;
-        } // ExePostForm()
-
-
+        
     
 
     }
