@@ -85,8 +85,8 @@
                 contentType: "application/json"
             }).done(
                 function (data) {
+
                     app.ordersData = data;
-                    console.log(app.ordersData);
                     for (let i = 0; i < app.ordersData.length; i++) {
                         app.total = app.total + app.ordersData[i].subtotal;
                     }
@@ -96,11 +96,25 @@
                     function (err) {
                     console.log(err.responseText);
                     });
+
         },
         methods: {
 
             ToOrderhistory: function () {
-                location.href = "@Url.Action("OrdersHistory", "Members")";
+
+                $.ajax({
+                url:"@Url.Action("DeleteCart", "OrderAPI")",
+                type:"GET",
+                contentType: "application/json"
+            }).done(
+                function (Message) {
+                    console.log(Message.Msg);
+                    location.href = "@Url.Action("OrdersHistory", "Members")";
+                }).fail(
+                    function (err) {
+                    console.log(err.responseText);
+                    });
+
             }
         }
     });

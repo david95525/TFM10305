@@ -150,7 +150,7 @@ namespace TeaBar.Controllers
                 string Carts = HttpContext.Session.GetString(username);
                 List<CartViewModel> carts = Newtonsoft.Json.JsonConvert.
                     DeserializeObject<List<CartViewModel>>(Carts);
-                HttpContext.Session.Remove(username);
+              
                 #endregion
                 #region 存入order表
                 //台北時間
@@ -231,5 +231,17 @@ namespace TeaBar.Controllers
             return msg;
         }
         #endregion
+        public Message DeleteCart()
+        {
+            string username = HttpContext.Session.GetString("username");
+            HttpContext.Session.Remove(username);
+            Message msg = new Message()
+            {
+                Code = 200,
+                Msg = "購物車清除成功",
+                Now = DateTime.Now
+            };
+            return msg;
+        }
     }
 }
