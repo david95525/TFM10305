@@ -138,9 +138,6 @@
                         <a href="/Store/StoreInfo" class="btn btn-dark">回門市據點</a>
                     </div>
                 </div>
-
-
-
             </div>
         </div>
     </div>
@@ -176,13 +173,14 @@
         <div class=" w-25 p-3" id="orderInfo">
             <div class="border border-1 rounded border-color p-3 mb-4">
                 <!--顯示訂購分店名稱-->
+                <div class="d-flex flex-row align-items-end justify-content-between mb-1">
+                    <p class="fs-6">訂購門市:</p>
+                    <!--更改分店-->
+                    <button type="button" data-bs-target="#selectStoreModal" data-bs-toggle="modal" class="btn btn-outline-dark btn-sm">修改</button>
+                </div>
                 <!--從cookie帶入選擇的門市名稱-->
                 <div v-if="hasCookie" class="mb-3">
-                    <div class="d-flex flex-row align-items-end justify-content-between mb-1">
-                        <p class="fs-6">訂購門市:</p>
-                        <!--更改分店-->
-                        <button type="button" data-bs-target="#selectStoreModal" data-bs-toggle="modal" class="btn btn-outline-dark btn-sm">修改</button>
-                    </div>
+
                     <p class="fs-5 fw-bold">{{orderStoreData[0].StoreName}}</p>
                     <p>{{orderStoreData[0].StoreAddress}}</p>
                     <hr />
