@@ -167,7 +167,7 @@ li:hover{
 }
 
 #quantity {
-    width: 50px;
+    width: 80px;
 }
 /*修改bootstrap樣式*/
 .btn-light {
@@ -262,4 +262,13 @@ li:hover{
 }
 .card-height {
     height: 700px;
+}
+/*memberpassword*/
+.password {
+    max-width: 400px;
+    margin: 0 auto;
+}
+.profile {
+    max-width: 500px;
+    margin: 0 auto;
 }
