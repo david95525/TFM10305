@@ -581,6 +581,19 @@
                     this.initMap();
                 })
                 .catch(error => console.log(error));
+             $.ajax(
+                {
+                    url: '@Url.Action("memberProfileQry", "MemberService")',
+                    type: 'GET'
+                }
+             ).done(function (data) {
+                 let user = JSON.parse(data);
+                 app.shipData.phone = user.PhoneNumber;
+                 app.shipData.receiver = user.LastName + user.FirstName;
+                 app.shipData.receipt = '';
+                 app.shipData.companyreceipt = '';
+                 app.shipData.phonereceipt = '';
+            }).fail();
         },
         //#endregion
         //#region Vue方法
@@ -722,14 +735,8 @@
                         one.style.backgroundColor = 'forestgreen';
                         two.style.backgroundColor = 'black';
                     }
-                    Save();
-                    if (JSON.stringify(app.shipData) === "{}") {
-                        app.shipData.phone = '';
-                        app.shipData.receiver = '';
-                        app.shipData.receipt = '';
-                        app.shipData.companyreceipt = '';
-                        app.shipData.phonereceipt = '';
-                    }
+                    Save();                            
+                 
                 }
             },
             //#endregion

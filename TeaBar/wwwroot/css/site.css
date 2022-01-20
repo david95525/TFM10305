@@ -244,31 +244,30 @@ li:hover{
     border-width:2px
 }
 /*News*/
-.bg-img {
-    background-image: url("/images/news/pexels-pixabay-511407.jpg");
-    background-repeat: no-repeat;
-    background-size: auto;
-    width: auto;
-    height: 100px;
-    line-height: 100px;
-}
-.bg-img-old {
-    background-image: url("/images/news/pexels-pixabay-5.jpg");
-    background-repeat: no-repeat;
-    background-size: auto;
-    width: auto;
-    height: 100px;
-    line-height: 100px;
-}
 .card-height {
-    height: 700px;
+    height: 500px;
+}
+.img-size {
+    width:50%;
+
 }
 /*memberpassword*/
 .password {
     max-width: 400px;
-    margin: 0 auto;
+    margin: 25px auto;
+    height: 300px;
+    background-color: #f3f3f3;
+}
+.history {
+    max-width: 1200px;
+    margin: 25px auto;
 }
 .profile {
-    max-width: 500px;
-    margin: 0 auto;
+    max-width: 600px;
+    margin: 25px auto;
+    height: 400px;
+    background-color: #f3f3f3;
+}
+#memberPWD {
+    min-height:350px;
 }
