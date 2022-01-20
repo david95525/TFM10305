@@ -88,7 +88,7 @@
                                     <div>
                                         <!--數量-->
                                         <button type="button" @@click="minusOne()" class="btn btn-outline-dark">-</button>
-                                        <input type="tel" maxlength="2" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
+                                        <input type="number" min="1" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
                                         <button type="button" @@click="addOne()" class="btn btn-outline-dark">+</button>
                                         <!--表單驗證訊息-->
                                         <!--點擊將資料post到後端api-->
@@ -176,7 +176,7 @@
         </div>
         <!--訂購相關資訊-->
         <div class=" w-25 p-3" id="orderInfo">
-            <div class="border border-2 rounded border-dark p-3 mb-4">
+            <div class="border border-1 rounded border-color p-3 mb-4">
                 <!--顯示訂購分店名稱-->
                 <!--從cookie帶入選擇的門市名稱-->
                 <div v-if="hasCookie" class="mb-3">
@@ -274,15 +274,13 @@
             },
             //數量減一
             minusOne() {
-                if (this.orderDetail.Quentity > 2) {
+                if (this.orderDetail.Quentity > 1) {
                     this.orderDetail.Quentity--;
                 }
             },
             //數量加一
             addOne() {
-                if (this.orderDetail.Quentity <= 20) {
                     this.orderDetail.Quentity++
-                }
             },
             //時間一位數補0
             timeFormat(item) {
@@ -355,6 +353,8 @@
             showModal(id) {
                 //清空表單內容
                 this.resetForm();
+                //清除驗證
+                this.$validator.reset()
                 //篩選要顯示的modal資料
                 const modalProduct = this.productsData.filter(x => x.productID == id); //只挑我點的那個商品
                 this.modalData.description = modalProduct[0].description; //商品描述

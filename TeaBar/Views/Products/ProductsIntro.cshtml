@@ -64,13 +64,11 @@
     </div>
     <!--Title-->
     <div class="topic">
-        <h3 class="h3">Products</h3>
-        <h3 class="h3">茶飲介紹</h3>
-    </div>
-
+            <h3 class="h3">Products</h3>
+        </div>
     <!--價目表查詢-->
-    <div id="menu">
-        <select @@change="changeItem" v-model="menuDistVal" class="form-select" id="menuSelect">
+    <div id="menu" class="mb-0 ">
+        <select v-model="menuDistVal" class="form-select mb-2" id="menuSelect">
             <option value="" selected>選擇區域價目表</option>
             <option :value="dist.item" v-for="dist in district">{{dist.item}}</option>
         </select>
@@ -96,7 +94,7 @@
     </div>
 
     <!--預設顯示分類及商品-->
-    <div class="text-center">
+    <div class="text-center min-vh-100">
         <div id="category" class="btn-group ">
             <span>
                 <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
@@ -119,6 +117,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <script>
@@ -135,7 +134,6 @@
                 ],
                 productsData: [], //全部商品資料
                 productsCategory: [],
-                isQuery: false,
                 imgUrl: "",
                 categorySelect: "all", //預設全部商品
                 modalData: {
@@ -196,14 +194,9 @@
                             this.imgUrl = "";
                             break;
                     }
-                    this.isQuery = true;
-                    if (this.distVal != "default") {
+                    if (this.menuDistVal != "") {
                         $("#menuModal").modal('show');
                     }
-                },
-                //價目表查詢
-                changeItem() {
-                    this.isQuery = false;
                 },
                 //點擊商品圖片跳出modal
                 modalProduct(id) {

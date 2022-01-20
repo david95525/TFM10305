@@ -4,11 +4,14 @@
 }
 
 <fieldset id="ordersHistory">
-    <legend style="font-family: DFKai-SB;">@ViewData["Title"]</legend>
-    <div class="container">
+
+    <div class="container history">
+        <!--標題-->
+        <h4 class="fs-5 font-weight-bold mb-4">@ViewData["Title"]</h4>
+        <!--明細-->
         <table class="table table-light table-hover">
             <thead>
-                <tr style="background-color: antiquewhite; font-size: large; font-family: DFKai-SB;">
+                <tr style="background-color: antiquewhite; font-size: large; ">
                     <td>訂單編號</td>
                     <td>訂購門市</td>
                     <td>訂購日期</td>
@@ -20,13 +23,11 @@
                     <td>{{item.orderID}}</td>
                     <td>{{item.storeName}}</td>
                     <td>{{item.orderDate}}</td>
-                    <td><button class="btn btn-secondary" v-on:click="showOrderDetails($event,item.orderID)">查看明細</button></td>
+                    <td><button class="btn btn-light" v-on:click="showOrderDetails($event,item.orderID)">查看明細</button></td>
                 </tr>
             </tbody>
         </table>
     </div>
-
-
     <!--顯示訂購明細 對話盒-->
     <div class="modal fade" id="showOrderDetailsDialog" tabindex="-1" aria-labelledby="showOrderDetailsDialogLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
@@ -39,31 +40,36 @@
                     <div class="table-responsive">
                         <table class="table table-light table-hover">
                             <thead>
-                                <tr style="background-color: antiquewhite; font-size: large; font-family: DFKai-SB;">
+                                <tr style="background-color: antiquewhite; font-size: large; ">
                                     <td>訂購品項</td>
                                     <td class="col-2">商品單價</td>
                                     <td class="col-1">訂購數量</td>
                                     <td class="col-2">小計</td>
-                                    <td class="col-4">備　　註</td>
+                                    <td class="col-5">備　　註</td>
                                 </tr>
                             </thead>
                             <tbody id="tableBody">
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5">{{orderNote}}</td>
+                                    <td colspan="5">{{orderNote[0]}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">{{orderNote[1]}} ／ {{orderNote[2]}}</td>                                    
+                                </tr>
+                                <tr>
+                                    <td colspan="5">{{orderNote[3]}}</td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
         </div>
     </div>
-
 </fieldset>
 
 
@@ -91,7 +97,8 @@
             ordersData: [], //訂購紀錄資料模組            
             orderDetailsData: [], //訂單明細資料模組
             priceSum: 0,  //訂單總價
-            orderNote:'' //備註
+            orderCus:[], //客製化內容
+            orderNote:[] //備註
         },
         methods: {
             //查詢訂單明細
@@ -103,7 +110,7 @@
                 }
                 ).done(function (data, status, xhr) {
                     app.cleanDialog();
-                    orderDetailsData = data;                    
+                    orderDetailsData = data;
                     app.priceSum=0;
                     $('#showOrderDetailsDialog h5').text('訂單編號：' + id);
                     for (index = 0; index < orderDetailsData.length; index++)
@@ -116,8 +123,12 @@
                         $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].unitPrice + "</td>");
                         $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].quantity + "</td>");
                         $('#tableBody').find('#tr' + index).append("<td >" + orderDetailsData[index].totalPrice + "</td>");
-                        $('#tableBody').find('#tr' + index).append("<td>" + orderDetailsData[index].customization + "</td>");                       
-                        app.orderNote = orderDetailsData[0].note;
+                        //訂購備註(customization)
+                        app.orderCus = orderDetailsData[index].customization.split(',');
+                        console.log(app.orderCus);
+                        $('#tableBody').find('#tr' + index).append("<td>" + app.orderCus[0] + "</br>" + app.orderCus[1] + "</td>");
+                        //訂購資訊(note)
+                        app.orderNote = orderDetailsData[0].note.split(',');
                         app.priceSum = app.priceSum + orderDetailsData[index].totalPrice;
                     }
                     $('#tableBody').append('<tr id="totalprice"></tr>');

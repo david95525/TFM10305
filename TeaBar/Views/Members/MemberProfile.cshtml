@@ -4,51 +4,47 @@
 }
 
 <fieldset id="customers">
-    <legend>@ViewData["Title"]</legend>
-    <!--區塊上層-->
-    <!--查詢結果輸出-->
-    <fieldset>
+
+    <div class="profile rounded container p-4">
+        <h4 class="fs-5 font-weight-bold mb-5">@ViewData["Title"]</h4>
+        <!--查詢結果輸出-->
         <form>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--Email-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
-                    <label for="InpEmail" class="form-label">Email</label>
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
+                    <label for="InpEmail" class="form-label ">Email</label>
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control form-control-sm" id="InpEmail" v-model="memberData.Email" disabled>
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--姓名-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpLastName" class="form-label">姓　</label>
                 </div>
-                <div class="form-outline col-auto mr-4">
+                <div class="form-outline col-auto">
                     <input type="text" class="form-control form-control-sm" id="InpLastName" v-model="memberData.LastName">
                 </div>
-                <div class="col-auto">
+                <div class="col-1">
                     <label for="InpFirstName" class="form-label">名　</label>
                 </div>
                 <div class="form-outline col-auto">
                     <input type="text" class="form-control form-control-sm" id="InpFirstName" v-model="memberData.FirstName">
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--電話-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpPhone" class="form-label">電話</label>
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control form-control-sm" id="InpPhone" v-model="memberData.PhoneNumber">
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--地址-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpAddress" class="form-label">地址</label>
                 </div>
                 <div class="col-auto">
@@ -61,18 +57,18 @@
                         <!--鄉鎮區選單-->
                     </select>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <input type="text" class="form-control form-control-sm" id="InpAddress" v-model="memberData.Address">
                 </div>
             </div>
-            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
         </form>
-    </fieldset>
-    <!--查詢結果輸出-->
-    <!--觸發修改作業按鈕-->
-    <div>
-        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveProfileDialog">儲存修改</button>
+        <!--觸發修改作業按鈕-->
+        <div>
+            <button type="submit" class="btn btn-light float-right" data-bs-toggle="modal" data-bs-target="#saveProfileDialog">儲存修改</button>
+        </div>
     </div>
+    <!--查詢結果輸出-->
+
 
     <!--確認儲存資料 對話盒-->
     <div class="modal fade" id="saveProfileDialog" tabindex="-1" aria-labelledby="saveProfileDialogLabel" aria-hidden="true">
@@ -84,8 +80,8 @@
                 </div>
                 <div class="modal-body">是否確定變更會員資料？</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" v-on:click="saveCustomerProfile">儲存變更</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-light" v-on:click="saveCustomerProfile">儲存變更</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>
@@ -101,7 +97,7 @@
                 </div>
                 <div class="modal-body">會員資料已更新</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">確認</button>
                 </div>
             </div>
         </div>

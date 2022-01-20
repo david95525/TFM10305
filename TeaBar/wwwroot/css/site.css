@@ -132,14 +132,14 @@ li:hover{
     padding:12px;
 }
 .btn-addtocart {
-    width: 90px;
+    width: 150px;
 }
 .list-header {
-    width:80px;
+    width:120px;
     height:30px;
 }
 .list-content{
-    max-width:300px;
+/*    max-width:200px;*/
     margin-right:40px;
 }
 .imageSize {
@@ -157,8 +157,9 @@ li:hover{
 
 }
 /*orderProducts*/
+
 .modal-height {
-    height:20px;
+    height: 20px;
 }
 
 #orderInfo p {
@@ -166,7 +167,7 @@ li:hover{
 }
 
 #quantity {
-    width: 50px;
+    width: 80px;
 }
 /*修改bootstrap樣式*/
 .btn-light {
@@ -243,19 +244,30 @@ li:hover{
     border-width:2px
 }
 /*News*/
-.bg-img {
-    background-image: url("/images/news/pexels-pixabay-511407.jpg");
-    background-repeat: no-repeat;
-    background-size: auto;
-    width: auto;
-    height: 100px;
-    line-height: 100px;
+.card-height {
+    height: 500px;
 }
-.bg-img-old {
-    background-image: url("/images/news/pexels-pixabay-5.jpg");
-    background-repeat: no-repeat;
-    background-size: auto;
-    width: auto;
-    height: 100px;
-    line-height: 100px;
+.img-size {
+    width:50%;
+
+}
+/*memberpassword*/
+.password {
+    max-width: 400px;
+    margin: 25px auto;
+    height: 300px;
+    background-color: #f3f3f3;
+}
+.history {
+    max-width: 1200px;
+    margin: 25px auto;
+}
+.profile {
+    max-width: 600px;
+    margin: 25px auto;
+    height: 400px;
+    background-color: #f3f3f3;
+}
+#memberPWD {
+    min-height:350px;
 }

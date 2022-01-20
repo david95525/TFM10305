@@ -5,12 +5,12 @@
     ViewData["Title"] = "交易結果";
 
     OutputDataModel data = null;
-    IHtmlContent htmlcode = Html.Raw("[]");
+
     if (ViewBag.result != null)
     {
         data = ViewBag.result as OutputDataModel;
-        htmlcode = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(data.CodeNo));
-        <div id="result">
+        
+        <div id="result"  >
 
             <div class="card">
                 <div class="card-header">
@@ -49,29 +49,44 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" v-on:click="SaveOrder">確認訂單</button>
+            <button class="btn btn-primary" v-on:click="ToOrderhistory">查看訂單</button>
         </div>
     }
 }
 
 <script>
+
+        if (location.href.indexOf('#reloaded') == -1)
+        {
+                    $.ajax({
+                    url: "@Url.Action("Saveorder","OrderAPI")",
+                    type: "GET"
+                }).done(function (msg) {
+
+                }).fail(function (err) {
+                    alert(err.responseText);
+            });
+            location.href = location.href + "#reloaded";
+            location.reload();
+        }
+
     var app = new Vue({
         el: '#result',
         data: {
-            code:@htmlcode,
             ordersData: [],
             total: 0,
             isShow:false
         },
-         mounted() {
+        mounted() {
+
             $.ajax({
                 url:"@Url.Action("Readcart", "OrderAPI")",
                 type:"GET",
                 contentType: "application/json"
             }).done(
                 function (data) {
+
                     app.ordersData = data;
-                    console.log(app.ordersData);
                     for (let i = 0; i < app.ordersData.length; i++) {
                         app.total = app.total + app.ordersData[i].subtotal;
                     }
@@ -80,27 +95,28 @@
                 }).fail(
                     function (err) {
                     console.log(err.responseText);
-                });
+                    });
+
         },
         methods: {
 
-            SaveOrder: function () {
-                app.ordersData[0].orderID = app.code;
-                var jsonstring = JSON.stringify(app.ordersData);
+            ToOrderhistory: function () {
+
                 $.ajax({
-                    url: "@Url.Action("Saveorder","OrderAPI")",
-                    type: "GET"
-                }).done(function (msg) {
-                console.log(msg);
-                location.href = "@Url.Action("OrdersHistory", "Members")";
-                }).fail(function (err) {
-                    alert(err.responseText);
-            });
+                url:"@Url.Action("DeleteCart", "OrderAPI")",
+                type:"GET",
+                contentType: "application/json"
+            }).done(
+                function (Message) {
+                    console.log(Message.Msg);
+                    location.href = "@Url.Action("OrdersHistory", "Members")";
+                }).fail(
+                    function (err) {
+                    console.log(err.responseText);
+                    });
 
             }
         }
-
-
     });
 </script>
 

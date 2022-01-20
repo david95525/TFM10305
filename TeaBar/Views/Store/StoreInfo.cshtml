@@ -30,16 +30,16 @@
                     <option value="default">選擇地區</option>
                     <option :value="dist" v-for="dist in distList">{{dist}}</option>
                 </select>
-                <input type="text" name="store" value="" placeholder="請輸入門市名稱" v-model="keyWord" class="form-control form-inline" @@input="storeSearch" />
+                <input type="text" name="store" value="" placeholder="請輸入關鍵字" v-model="keyWord" class="form-control form-inline" @@input="storeSearch" />
             </div>
             <!--門市清單-->
             <div id="storeList" class="container p-0">
                 <ul style="list-style-type:none" class="list-group" v-for="list in storeList">
                     <li class="list-group-item pointer d-flex justify-content-center mb-2 shadow-sm list-color" :value="list.StoreID" @@click="changeMap(list.StoreID)">
-                        <h5 class="font-weight-bold fs-5 list-header">{{list.StoreName}}</h5>
+                        <h5 class="font-weight-bold fs-5 list-header mr-3 mt-1">{{list.StoreName}}</h5>
                         <div class="list-content">
                             <p class="mb-1">{{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}}</p>
-                            <p>{{list.StorePhone}}</p>
+                            <p class="mb-0">{{list.StorePhone}}</p>
                         </div>
                         <button type="button" class="btn btn-light rounded-pill btn-addtocart align-self-center" @@click="selectStore(list.StoreID)">前往訂餐</button>
                     </li>
@@ -205,7 +205,7 @@
                         this.distList = [];
                         //傳回搜尋結果
                         this.storeList = [];
-                        this.storeList = this.allStoreData.filter(searchResult => searchResult.StoreName.match(this.keyWord));
+                        this.storeList = this.allStoreData.filter(searchResult => searchResult.StoreName.match(this.keyWord) || searchResult.StoreAddress.match(this.keyWord));
                     } else {
                         this.storeList = this.allStoreData;
                     }
