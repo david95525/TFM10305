@@ -59,10 +59,12 @@ namespace TeaBar.Controllers
                 List<CartViewModel> carts = JsonConvert.DeserializeObject<List<CartViewModel>>(cartstring);
                 //決定orderid
                 string orderid = DateTime.Now.ToString("MMddHHmmssyyyy");
-                foreach (CartViewModel item in carts)
-                {
-                    orderid = orderid + item.ProductId.ToString() + item.Quantity.ToString();
-                }
+                //隨機抽取其中的商品id來隨機價入當orderid
+                Random oid = new Random();
+              int index=  oid.Next(0, carts.Count - 1);
+
+                orderid = orderid + carts[index].ProductId;//決定orderid
+                
                 carts[0].OrderID = orderid;
            
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
