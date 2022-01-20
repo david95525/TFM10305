@@ -1,4 +1,5 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUsers> SignInManager
 @{
     ViewData["Title"] = "門市據點";
 }
@@ -41,8 +42,10 @@
                             <p class="mb-1">{{list.StoreCity}}{{list.StoreDistrict}}{{list.StoreAddress}}</p>
                             <p class="mb-0">{{list.StorePhone}}</p>
                         </div>
-                        <button type="button" class="btn btn-light rounded-pill btn-addtocart align-self-center" @@click="selectStore(list.StoreID)">前往訂餐</button>
-                    </li>
+                        @if (!User.IsInRole("Manager"))
+                        {
+                            <button type="button" class="btn btn-light rounded-pill btn-addtocart align-self-center" @@click="selectStore(list.StoreID)">前往訂餐</button>
+                        } </li>
                 </ul>
             </div>
         </div>

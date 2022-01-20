@@ -1,11 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUsers> SignInManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TeaBar</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    
+
 
     <script src="~/js/vue.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -45,7 +47,7 @@
                 <div class="justify-content-center">
                     <a class="navbar-brand mb-0 h1" asp-area="" asp-controller="Home" asp-action="Index">
                         <img src="~/images/icon_logo.png" class="ms-3" height="50" alt="TeaBar Logo" />
-                        <img src="~/images/logo_teabar.png" height="50"/>
+                        <img src="~/images/logo_teabar.png" height="50" />
                         @*<span class="fs-3">TeaBar茶</span>*@
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCentered" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +59,7 @@
                 <div class="collapse navbar-collapse justify-content-center" id="navbarCentered">
                     <ul class="navbar-nav mb-lg-0 p-0">
                         <li class="nav-item mx-2 mb-lg-0">
-                            <a class="nav-link active menu" style="font-size: 22px;"  asp-controller="Store" asp-action="StoreInfo" >門市據點</a>
+                            <a class="nav-link active menu" style="font-size: 22px;" asp-controller="Store" asp-action="StoreInfo">門市據點</a>
                         </li>
                         <li class="nav-item mx-2 mb-lg-0">
                             <a class="nav-link active menu" style="font-size: 22px;" asp-controller="NewsPost" asp-action="showNews">最新消息</a>
@@ -65,9 +67,12 @@
                         <li class="nav-item mx-2">
                             <a class="nav-link active menu" style="font-size: 22px;" asp-controller="Products" asp-action="ProductsIntro">TeaBar飲品</a>
                         </li>
-                        <li class="nav-item mx-2">
-                            <a class="nav-link active menu" style="font-size: 22px;" asp-controller="Products" asp-action="OrderProducts">線上點餐</a>
-                        </li>
+                        @if (!User.IsInRole("Manager"))
+                     { 
+                            <li class="nav-item mx-2">
+                                <a class="nav-link active menu" style="font-size: 22px;" asp-controller="Products" asp-action="OrderProducts">線上點餐</a>
+                            </li>
+                        }
                     </ul>
                 </div>
 

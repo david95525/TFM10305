@@ -110,9 +110,6 @@ body {
     margin: 15px auto;
 }
 
-.btnCategory {
-    margin: 10px 5px;
-}
 
 #nemuModal {
     text-align: center;
@@ -157,9 +154,34 @@ li:hover{
 
 }
 /*orderProducts*/
+.btn-style {
+    margin: 10px 5px;
+}
 
+.btn-size {
+    box-sizing: border-box;
+    width: 140px;
+    height: 60px;
+}
+
+.input-style {
+    border: 1px solid rgba(82, 88, 93, 0.5);
+    border-radius: 0rem;
+}
+.btn-minus-add {
+    width: 50px;
+    height: 38px;
+    line-height: 38px;
+}
+.btn-detail {
+    max-width: 500px;
+}
 .modal-height {
     height: 20px;
+}
+.productimg {
+    max-width:250px;
+    height:100%;
 }
 
 #orderInfo p {
@@ -270,4 +292,12 @@ li:hover{
 }
 #memberPWD {
     min-height:350px;
+}
+
+/*cart*/
+.detail-width {
+    width:40px;
+}
+.td-img-width {
+    width:80px;
 }
