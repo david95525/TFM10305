@@ -383,7 +383,7 @@
                             data: data,
                         }).then(response => {
                             if (response.data == null) {
-                                  location.href = "@Url.Action("ShoppingCart","CartOrder")";
+                                  location.href = "@Url.Action("Index","Home")";
                             }else if (response.status == 200) {
                                 alert("加入購物車成功!");
                             }
