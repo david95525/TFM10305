@@ -10,7 +10,7 @@
     {
         data = ViewBag.result as OutputDataModel;
         htmlcode = Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(data.CodeNo));
-        <div id="result">
+        <div id="result"  >
 
             <div class="card">
                 <div class="card-header">
@@ -55,6 +55,7 @@
 }
 
 <script>
+    location.reload();
     var app = new Vue({
         el: '#result',
         data: {
@@ -63,7 +64,8 @@
             total: 0,
             isShow:false
         },
-         mounted() {
+        mounted() {
+   
             $.ajax({
                 url:"@Url.Action("Readcart", "OrderAPI")",
                 type:"GET",
