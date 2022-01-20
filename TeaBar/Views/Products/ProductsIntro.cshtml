@@ -98,11 +98,11 @@
         <div id="category" class="btn-group ">
             <span>
                 <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
-                <label class="btn btn-light btnCategory rounded-pill" for="all">全部商品</label>
+                <label class="btn btn-light btn-style rounded-pill" for="all">全部商品</label>
             </span>
             <span v-for="c in productsCategory">
                 <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
-                <label class="btn btn-light btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
+                <label class="btn btn-light btn-style rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
             </span>
         </div>
         <!--商品清單card-->
