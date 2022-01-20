@@ -69,7 +69,7 @@
     <!--價目表查詢-->
     <div id="menu" class="mb-0 ">
         <select v-model="menuDistVal" class="form-select mb-2" id="menuSelect">
-            <option value="" selected>選擇區域價目表</option>
+            <option value="" selected>查看區域價目表</option>
             <option :value="dist.item" v-for="dist in district">{{dist.item}}</option>
         </select>
         <button class="btn btn-dark" @@click="showMenu" data-bs-target="#menuModal"> <i class="fas fa-search"></i> </button>

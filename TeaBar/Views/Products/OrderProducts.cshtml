@@ -443,7 +443,7 @@
                 setTimeout(() => { this.getPickUpTime(); }, 300000);
 
                 //判斷現在時間有沒有在營業時間之內
-                if (nowTime < closeTime && nowTime > openTime) {
+                if (nowTime < closeTime && nowTime >= openTime) {
                     this.isOpen = true;
                 } else {
                     this.isOpen = false;
