@@ -2,15 +2,9 @@
 @{
     ViewData["Title"] = "購物車";
 }
-
 <style>
     .green {
         background-color: lightgreen;
-    }
-
-    #productpic {
-        width: 10%;
-        height: 10%;
     }
 </style>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -24,42 +18,42 @@
         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
     </symbol>
 </svg>
-<fieldset id="ShoppingCart" >
+<fieldset id="ShoppingCart">
     <div v-if="isExist">
-        <h1>購物車</h1>
-        <div>
-            <h2>{{name}}</h2>
-        </div>
+        <h4 class="font-weight-bold fs-4 mb-3">購物車</h4>
+        @*<div>
+                <p class="fs-5">{{name}}</p>
+            </div>*@
         <div v-if="isShow">
-            <h4>{{store.storeCity}} {{store.storeName}} </h4>
+            <p class="fs-5 font-weight-bold">{{store.storeCity}}{{store.storeName}} </p>
         </div>
-        <div class="font-italic text-danger" style="font-size:24px;"></div>
-        <table class="table">
+        <table class="table table-light table-hover">
             <thead>
                 <tr>
-                    <td></td>
-                    <td>商品名稱</td>
-                    <td>單價</td>
-                    <td>數量</td>                 
-                    <td>其他加價</td>
-                    <td>細項總額</td>
-                    <td>詳細</td>
+                    <th scope="col"></th>
+                    <th scope="col">商品名稱</th>
+                    <th scope="col">單價</th>
+                    <th scope="col">數量</th>
+                    <th scope="col">其他加價</th>
+                    <th scope="col">細項總額</th>
+                    <th scope="col">詳細</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody v-if="isShow">
                 <tr v-for="pd in cartsData">
-                    <td>
-                        <img v-bind:src="pd.picture" id="productpic" />
+                    <td scope="row">
+                        <img v-bind:src="pd.picture" class="td-img-width" />
                     </td>
                     <td>{{pd.productName}}</td>
                     <td>{{pd.unitPrice}}</td>
                     <td>{{pd.quantity}}</td>
-                    <td><span v-for="item in pd.ingredient">{{item}}</span></td>
+                    <td><span v-for="item in pd.ingredient">{{item}} </span></td>
                     <td>{{pd.subtotal}}</td>
-                    <td>{{pd.size}}/{{pd.sweetness}}/{{pd.ice}}</td>
+                    <td>{{pd.size}}/ {{pd.sweetness}}/ {{pd.ice}}</td>
                     <td>
                         <div v-on:click="Todelete(pd.productId)">
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
                         </div>
                     </td>
                 </tr>
@@ -71,10 +65,10 @@
             </div>
             <div class="card-body">
                 <div>
-                    <div class="row-1">總額:${{origintotal}}</div>
-                    <div class="row-1" v-if="discount!=1">{{discount}}折</div>
-                    <div class="row-1" v-if="discount===1">無</div>
-                    <div class="row-1">折扣後總額:${{total}}</div>
+                    <div class="row-1 p">總金額: ${{origintotal}}</div>
+                    <div class="row-1" v-if="discount!=1">折扣: {{discount}}折</div>
+                    <div class="row-1" v-if="discount===1">折扣: 無</div>
+                    <div class="row-1">折扣後總金額: ${{total}}</div>
                 </div>
             </div>
         </div>
@@ -96,10 +90,10 @@
             </div>
         </div>
         <!--#endregion -->
-        <button type="button" class="btn btn-primary" v-on:click="ToOrder">前往結帳</button>
+        <button type="button" class="btn btn-light" v-on:click="ToOrder">前往結帳</button>
     </div>
     <div v-if="!isExist">
-        <div class="alert alert-warning d-flex align-items-center" role="alert" >
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
             <div> 無商品</div>
         </div>
@@ -130,7 +124,7 @@
                             url: "@Url.Action("Readcart", "OrderAPI")",
                             type: 'GET'
                         }).done(
-                            function(result, status, xhr) {                               
+                            function(result, status, xhr) {
                                 if (result == null) {
                                 }
                                 else {
@@ -141,7 +135,7 @@
                                     app.total = app.total + app.cartsData[i].subtotal;
                                     if (app.cartsData[i].ingredient ==null) {
                                         app.cartsData[i].isIngredient = 0;
-                                    } 
+                                    }
                                     }
                                 app.origintotal = app.total;
                                 app.total = Math.round( app.total * app.cartsData[0].discount);
@@ -151,7 +145,7 @@
                                     if (app.discount % 10 ===0 ) {
                                         app.discount = Math.round(app.discount / 10);
                                     }
-                                }    
+                                }
                                 }
                             }).fail(function (err) {
                             alert(err.responseText);
@@ -179,7 +173,7 @@
                         app.total = Math.round(app.total - app.cart.subtotal * app.cart.discount);
                         let index = app.cartsData.indexOf(app.cart);
                         app.cartsData.splice(index, 1);
-                        
+
                             //存session
                             $.ajax(
                                 {
@@ -225,4 +219,4 @@
             }
     );
 </script>
-    
+

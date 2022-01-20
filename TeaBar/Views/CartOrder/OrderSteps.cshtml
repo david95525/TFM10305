@@ -13,10 +13,6 @@
     .pointer {
         cursor: pointer
     }
-
-    .bg-color {
-        background-color: papayawhip;
-    }
     /*#region 必填欄位*/
     .redstar::before {
         content: "*";
@@ -46,15 +42,15 @@
         transform: translateX(100%);
     }
     /*#endregion */
-    #store {
-        color: green;
-    }
+    /*#store {
+        color: #7fad39;
+    }*/
     /*#region 頁首效果*/
     #circleone {
         width: 30px;
         height: 30px;
         border-radius: 999em;
-        background-color: forestgreen;
+        background-color: #7fad39;
         margin: 0 auto;
     }
 
@@ -83,10 +79,20 @@
     }
     /*設定地圖大小*/
     #map {
-        height:400px;
+        height: 400px;
         width: 40vw;
     }
     /*#endregion */
+    /* Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
 </style>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
@@ -109,15 +115,15 @@
     <div class="container">
         <div class="row" id="stepnumber">
             <div class="col">
-                <h3>訂單明細</h3>
+                <h4>訂單明細</h4>
                 <div id="circleone"><p id="number">1</p></div>
             </div>
             <div class="col ">
-                <h3>選擇付款</h3>
+                <h4>選擇付款</h4>
                 <div id="circletwo"><p id="number">2</p></div>
             </div>
             <div class="col ">
-                <h3>確認結帳</h3>
+                <h4>確認結帳</h4>
                 <div id="circlethree"><p id="number">3</p></div>
             </div>
         </div>
@@ -129,9 +135,9 @@
             <!--#region 店家 -->
             <div class="card">
                 <div class="card-body" v-if="isShow">
-                    <div v-for="s in store" id="store">
-                        <div><h5>Teabar{{s.storeCity}}{{s.storeName}}</h5></div>
-                        <div>{{s.storePhone}}</div>
+                    <div v-for="s in store" id="store" >
+                        <h5 class="font-weight-bold fs-4">Teabar {{s.storeCity}}{{s.storeName}}</h5>
+                        <p class="fs-6 text-center">{{s.storePhone}}</p>
                     </div>
                 </div>
             </div>
@@ -139,17 +145,17 @@
             <!--#region 取餐方式 -->
             <div class="card">
                 <div class="card-header">
-                    <label class="redstar">取餐方式</label>
+                    <label class="redstar fs-5">取餐方式</label>
                 </div>
                 <div class="card-body">
                     <div>
-                        <div class="right">
+                        <div class="right" v-on:click="initMap">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" checked v-on:click="How(0)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
                             <label class="form-check-label"> 自取</label>
                             <div v-if="isTakeout" class=" pointer">
                                 <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 可點擊刷新</label>
-                                <div v-on:click="initMap">
+                                <div  class="mb-2">
                                     <span v-if="isShow">
                                         <i class="fas fa-map-marker-alt"></i>
                                         {{store[0].storeAddress}}
@@ -157,7 +163,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="map" class="embed-responsive" v-if="!isDelivery"></div>
+                        <div id="map" class="embed-responsive mb-3" v-if="!isDelivery"></div>
                         <div class="right">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" v-on:click="How(1)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" checked v-on:click="How(1)">
@@ -210,16 +216,16 @@
             <!--#region 訂單內容 -->
             <div class="card">
                 <div class="card-header">
-                    <label>訂單內容</label>
+                    <label class="fs-5">訂單內容</label>
                 </div>
                 <div class="card-body">
                     <div class="row" v-if="isIN">
-                        <div class="col-11">{{orderData[0].customerId}} </div>
+                        <div class="col">{{orderData[0].customerId}} </div>
                     </div>
                     <div class="row row-cols-1 row-cols-md-4 g-4">
-                        <div class="col" v-for="orderitem in orderData">
+                        <div class="col m-3" v-for="orderitem in orderData">
                             <div class="card" style="width: 18rem;">
-                                <img v-bind:src="order.picture" class="pointer card-img-top" v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
+                                <img v-bind:src="orderitem.picture" class="pointer card-img-top mr-auto ml-auto mt-4" v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog" />
 
                                 <div class="card-body">
                                     <div v-on:click="ToEdit(orderitem.productId)" data-bs-toggle="modal" data-bs-target="#modifydialog">
@@ -230,7 +236,7 @@
                                             </div>
                                             <div class="bg-color">
                                                 <div class="bg-color">{{orderitem.size}}/{{orderitem.ice}}/{{orderitem.sweetness}}</div>
-                                                <div class="bg-color"><span v-for="item in orderitem.ingredient">{{item}} </span></div> 
+                                                <div class="bg-color"><span v-for="item in orderitem.ingredient">{{item}} </span></div>
                                             </div>
                                             <div class="bg-color">
                                                 <div>$ {{orderitem.subtotal}}</div>
@@ -241,7 +247,7 @@
                                         </div>
                                     </div>
                                     <div v-on:click="Todelete(orderitem.productId)">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
+                                        <button type="button" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#deldialog">刪除</button>
                                     </div>
                                 </div>
                             </div>
@@ -254,7 +260,7 @@
             <div class="card">
                 <div v-if="isIN">
                     <div class="card-header">
-                        <label>訂單滙總</label>
+                        <label class="fs-5">訂單滙總</label>
                     </div>
                     <div class="card-body">
                         <div class="row-1">總額:${{origintotal}}</div>
@@ -283,7 +289,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label redstar">電話</label>
-                        <input type="text" class="form-control" v-model:value="shipData.phone">
+                        <input type="tel" class="form-control" v-model:value="shipData.phone">
                     </div>
                 </div>
             </div>
@@ -382,12 +388,12 @@
     <!-- #endregion -->
     <!--#region 固定頁尾 -->
     <div>
-        <button class="btn btn-primary" v-if="link=='a'" v-on:click="Back">回購物車</button>
-        <button class="btn btn-primary" v-on:click.prevent="OneContactTwo" v-if="link=='a'">下一步</button>
-        <button class="btn btn-primary" v-on:click.prevent="OneContactTwo" v-if="link=='b'">上一步</button>
-        <button class="btn btn-primary" v-on:click.prevent="TwoContactThree" v-if="link=='b'">下一步</button>
-        <button class="btn btn-primary" v-on:click.prevent="TwoContactThree" v-if="link=='c'">上一步</button>
-        <button class="btn btn-primary" v-if="link=='c'" v-on:click="ToPay">付款確認</button>
+        <button class="btn btn-secondary" v-if="link=='a'" v-on:click="Back">回購物車</button>
+        <button class="btn btn-light" v-on:click.prevent="OneContactTwo" v-if="link=='a'">下一步</button>
+        <button class="btn btn-secondary" v-on:click.prevent="OneContactTwo" v-if="link=='b'">上一步</button>
+        <button class="btn btn-light" v-on:click.prevent="TwoContactThree" v-if="link=='b'">下一步</button>
+        <button class="btn btn-secondary" v-on:click.prevent="TwoContactThree" v-if="link=='c'">上一步</button>
+        <button class="btn btn-danger" v-if="link=='c'" v-on:click="ToPay">付款確認</button>
 
     </div>
     <!-- #endregion -->
@@ -424,26 +430,28 @@
                         </select>
                     </div>
                     <div class="input-group mb-3">
-                        <label class="input-group-text" for="ingredient">加料</label>
-                        <select class="form-select" id="ingredient" v-model="Ingredient" multiple>
-                            <option v-for="ing in inglist" >{{ing}}</option>
-                            
-                        </select>
+                        <label class="input-group-text" for="ingredient">加料(複選)</label>
+                        <div class="btn-group " role="group">
+                            <span v-for="ing in inglist">
+                                <input type="checkbox" class="btn-check d-none" :id="ing" autocomplete="off" v-model="Ingredient" :value="ing">
+                                <label class="btn btn-outline-dark btnCategory" :for="ing">{{ing}}</label>
+                            </span>
+                        </div>
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">備註</label>
                         <input type="text" v-model:text="order.description" class="form-control" />
                     </div>
-                    <div class="col-4">
+                    <div class="mb-3">
                         <div class="pointer input-group mb-3">
                             <i class="far fa-minus-square input-group-text" v-on:click="EditQ(order.productId,false)"></i>
-                            <input type="text" v-model:value="order.quantity" class="form-control" id="qty" />
+                            <input type="number" v-model:value="order.quantity" class="form-control" id="qty" />
                             <i class="far fa-plus-square input-group-text" v-on:click="EditQ(order.productId,true)"></i>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" v-on:click="LUEdit(true)">更新</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" v-on:click="LUEdit(true)">更新</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             v-on:click="LUEdit(false)">
                         取消
@@ -464,7 +472,7 @@
                     確認刪除?
                 </div>
                 <div class="modal-footer" v-bind="order">
-                    <button type="button" class="btn btn-primary" v-on:click="deleteItem(order.productId)" data-bs-dismiss="modal">是</button>
+                    <button type="button" class="btn btn-danger" v-on:click="deleteItem(order.productId)" data-bs-dismiss="modal">是</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">否</button>
                 </div>
             </div>
@@ -483,7 +491,6 @@
             shipData: {},//寄送資料
             store: [],   //店家資料
             Ingredient:[],//複數加料
-            storemap: {},
             temp: [],     //暫存
             order: {}, //單一訂單內容
             countyData: [],//縣市資料
@@ -492,7 +499,7 @@
             discount: 0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
             icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
-            inglist: ["珍珠" , "椰果" ,"小芋圓" ,  "寒天" , "雙Q" ,  "蜂蜜" ,"無"],
+            inglist: ["珍珠" , "椰果" ,"小芋圓" ,  "寒天" , "雙Q" ,  "蜂蜜"],
             sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
@@ -559,18 +566,34 @@
                 .fail(function (err) {
                     alert("error");
                 });
+            //取得地圖資料
             axios('/api/StoreService/store')
                 .then(response => {
                     this.mapData = JSON.parse(response.data);
-                    //取得第一筆經緯度
-                    this.googleMap.lat = this.mapData [0].Lat;
-                    this.googleMap.lng = this.mapData [0].Lng;
+                    let map = this.mapData.find(m => m.StoreID == this.store[0].storeID);
+                    //取得經緯度
+                    this.googleMap.lat = map.Lat;
+                    this.googleMap.lng = map.Lng;
                     this.initMap();
                 })
                 .catch(error => console.log(error));
-
-
-
+             $.ajax(
+                {
+                    url: '@Url.Action("memberProfileQry", "MemberService")',
+                    type: 'GET'
+                }
+             ).done(function (data) {
+                 let user = JSON.parse(data);
+                 app.shipData.phone = user.PhoneNumber;
+                 app.shipData.receiver = user.LastName + user.FirstName;
+                 app.shipData.receipt = '';
+                 app.shipData.companyreceipt = '';
+                 app.shipData.phonereceipt = '';
+                 app.shipData.county = user.City;
+                 app.shipData.district = user.District;
+                 app.shipData.address = user.Address;
+                 app.shipData.desc ="";
+            }).fail();
         },
         //#endregion
         //#region Vue方法
@@ -630,13 +653,17 @@
                     app.order.subtotal = app.temp[5];
                     app.order.size = app.temp[6];
                 } else {
-                    if (typeof (app.order.quantity) != "number") {
-                        alert("請輸入大於0的數字");
+                    if (app.order.quantity<1) {
+                        alert("請輸入正確格式");
                         app.order.quantity = app.temp[3];
                         app.order.subtotal = app.temp[5];
                     }
-                    //更新資料
-                 app.order.ingredient=   app.Ingredient ;
+                    //更新加料資料
+                    if (this.Ingredient.length === 0) {
+                        this.Ingredient[0] = "無";
+                    }
+                    app.order.ingredient = app.Ingredient;
+                    //更新subtotal
                     app.order.subtotal = app.order.unitPrice * app.order.quantity;
                     for (let i = 0; i < app.order.ingredient.length; i++) {
                         if (app.order.ingredient[i] === "珍珠" || app.order.ingredient[i] === "椰果"
@@ -648,7 +675,7 @@
                     }
                     app.origintotal = app.origintotal - app.temp[5] + app.order.subtotal;
                     app.total = Math.round(app.origintotal * app.order.discount);
-                    Save();
+                    Save();//存session
                 }
             },
             //#endregion
@@ -685,11 +712,11 @@
                         if (app.link === 'a') {
                             app.link = 'b';
                             one.style.backgroundColor = 'black';
-                            two.style.backgroundColor = 'forestgreen';
+                            two.style.backgroundColor = '#7fad39';
 
                         } else {
                             app.link = 'a';
-                            one.style.backgroundColor = 'forestgreen';
+                            one.style.backgroundColor = '#7fad39';
                             two.style.backgroundColor = 'black';
                         }
                         Save();
@@ -701,21 +728,15 @@
                     if (app.link === 'a') {
                         app.link = 'b';
                         one.style.backgroundColor = 'black';
-                        two.style.backgroundColor = 'forestgreen';
+                        two.style.backgroundColor = '#7fad39';
 
                     } else {
                         app.link = 'a';
-                        one.style.backgroundColor = 'forestgreen';
+                        one.style.backgroundColor = '#7fad39';
                         two.style.backgroundColor = 'black';
                     }
                     Save();
-                    if (JSON.stringify(app.shipData) === "{}") {
-                        app.shipData.phone = '';
-                        app.shipData.receiver = '';
-                        app.shipData.receipt = '';
-                        app.shipData.companyreceipt = '';
-                        app.shipData.phonereceipt = '';
-                    }
+
                 }
             },
             //#endregion
@@ -742,10 +763,10 @@
                     if (app.link === 'b') {
                         app.link = 'c';
                         two.style.backgroundColor = 'black';
-                        three.style.backgroundColor = 'forestgreen';
+                        three.style.backgroundColor = '#7fad39';
                     } else {
                         app.link = 'b';
-                        two.style.backgroundColor = 'forestgreen';
+                        two.style.backgroundColor = '#7fad39';
                         three.style.backgroundColor = 'black';
                     }
                     if (app.isPaper === true) {
@@ -793,15 +814,12 @@
                     app.isTakeout = true;
                     app.isDelivery = false;
                 } else if (status === 1) {
-                    readCountyorDistrict(0,"");
-                    //初始化shipData
-                    if (JSON.stringify(app.shipData) === '{}') {
-                        app.shipData.county = ''; app.shipData.countycode = 0; app.shipData.district = '';app.shipData.address = '';app.shipData.desc = '';app.shipData.phone = '';
-                        app.shipData.receiver = '';app.shipData.receipt = '';app.shipData.companyreceipt = '';app.shipData.phonereceipt = '';
-                    }
+                    readCountyorDistrict(0, "");
+                    readCountyorDistrict(1, app.shipData.county);
                     //顯示與否
                     app.isTakeout = false;
                     app.isDelivery = true;
+
                 } else if (status === 2) {
                     //去掉按鈕
                     $('#delivery').hide();
@@ -810,8 +828,8 @@
             //#endregion
             //#region 縣市變動
             ChangeCounty: function () {
-              let  name = $('#county').get(0).value;
-                readCountyorDistrict(1, name);
+
+                readCountyorDistrict(1, app.shipData.county);
             },
             //#endregion
             //#region 去金流頁面
@@ -820,17 +838,17 @@
                 //自取或外送資料
                 if (app.isTakeout) {
                     app.orderData[i].note =
-                        "備註:自取-" + app.store[0].storeName + "地址:" + app.store[0].storeAddress;
+                        "自取:" + app.store[0].storeName ;
                 } else {
                     app.orderData[i].note =
-                        "備註:外送-" + app.shipData.county + app.shipData.district
-                        + app.shipData.addrsss + app.shipData.desc;
+                        "外送:" + app.shipData.county + app.shipData.district
+                    +app.shipData.address+ app.shipData.desc;
                 }
                 // 寄送資訊記在note
 
                     app.orderData[i].note = app.orderData[i].note
-                        + " 取貨人:" + app.shipData.receiver + "電話:" + app.shipData.phone +
-                        "發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
+                        + ",取貨人:" + app.shipData.receiver + ",電話:" + app.shipData.phone +
+                        ",發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
                 }
                    if (app.orderData.length != 0) {
                     $.ajax({
@@ -891,14 +909,13 @@
                 });
         } //讀區域
         else {
-            console.log(name);
                $.ajax({
                 url: "@Url.Action("readDistrict", "CountyDistrict")",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Content-Type", "application/json");
                 },
                    type: 'POST',
-                   data: JSON.stringify( name)
+                   data: JSON.stringify(name)
             })
                 .done(function (data, status, xhr) {
                     app.districtData = data;

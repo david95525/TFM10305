@@ -3,7 +3,7 @@
 }
 
 <!--幻燈片-->
-<div id="carouselPhoto" class="carousel slide" data-bs-ride="carousel">
+<div id="carouselPhoto" class="carousel slide" data-bs-ride="carousel" >
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#carouselPhoto" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#carouselPhoto" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -29,3 +29,32 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
+<footer class="bg-white" style="padding-top:50px">
+    <hr class="p-0 m-0 b-0">
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-lg-6 col-md-6 mb-4 mb-lg-0">
+                <h6 class="text-uppercase font-weight-bold mb-4">About</h6>
+                <div class="list-unstyled mb-0">
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempora doloremque ratione cumque molestias quos totam veritatis nisi, blanditiis eum necessitatibus, molestiae rerum fugit accusamus natus impedit recusandae voluptatibus. Provident, deserunt.</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                <h6 class="text-uppercase font-weight-bold mb-4">Offer</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-3"><a asp-controller="Products" asp-action="ProductsIntro" class="text-muted" style="text-decoration:none"><i class="fas fa-glass-cheers  mr-3"></i>Products</a></li>
+                    <li class="mb-3"><a asp-controller="Products" asp-action="OrderProducts" class="text-muted" style="text-decoration:none"><i class="fas fa-cart-arrow-down mr-3"></i>Order</a></li>
+                    <li class="mb-3"><a asp-controller="NewsPost" asp-action="showNews" class="text-muted" style="text-decoration:none"><i class="fas fa-comment-dots mr-3"></i>News</a></li>                    
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-lg-0">
+                <h6 class="text-uppercase font-weight-bold mb-4">Contact</h6>
+                <p class="text-muted mb-3"><i class="fas fa-home mr-3"></i>台北市中山區南京東路三段219號5樓</p>
+                <p class="text-muted mb-3"><i class="fas fa-envelope mr-3"></i>teabar10305@gmail.com</p>
+                <p class="text-muted mb-3"><i class="fas fa-phone mr-3"></i>02-56781234</p>
+            </div>
+        </div>
+    </div>
+    <hr class="p-0 m-0 b-0">
+</footer>

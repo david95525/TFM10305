@@ -59,10 +59,12 @@ namespace TeaBar.Controllers
                 List<CartViewModel> carts = JsonConvert.DeserializeObject<List<CartViewModel>>(cartstring);
                 //決定orderid
                 string orderid = DateTime.Now.ToString("MMddHHmmssyyyy");
-                foreach (CartViewModel item in carts)
-                {
-                    orderid = orderid + item.ProductId.ToString() + item.Quantity.ToString();
-                }
+                //隨機抽取其中的商品id來隨機價入當orderid
+                Random oid = new Random();
+              int index=  oid.Next(0, carts.Count - 1);
+
+                orderid = orderid + carts[index].ProductId;//決定orderid
+                
                 carts[0].OrderID = orderid;
            
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
@@ -261,28 +263,14 @@ namespace TeaBar.Controllers
                 // 取得回傳參數(ex:key1=value1&key2=value2),儲存為NameValueCollection
                 NameValueCollection decryptTradeCollection = HttpUtility.ParseQueryString(decryptTradeInfo);
                 OutputDataModel convertModel = LambdaUtility.DictionaryToObject<OutputDataModel>
-                    (decryptTradeCollection.AllKeys.ToDictionary(k => k, k => decryptTradeCollection[k]));
-                //if (HttpContext.Session.Keys.Contains("identitycookiename"))
-                //{
-                //    if(HttpContext.Session.Keys.Contains("identitycookvalue"))
-                //    { 
-                //        string cookiename = HttpContext.Session.GetString("identitycookiename");
-                //        string cookievalue = HttpContext.Session.GetString("identitycookvalue");
-                //        CookieOptions option = new CookieOptions();
-                //        option.Expires = DateTime.Now.AddDays(5);
-                //        HttpContext.Response.Cookies.Append(cookiename, cookievalue, option);
-                //    }
-                //}
-                
+                    (decryptTradeCollection.AllKeys.ToDictionary(k => k, k => decryptTradeCollection[k]));     
                 ViewBag.result = convertModel;
                 return View();
             }
             else
             {
-                Console.WriteLine("MerchantID/TradeSha驗證錯誤");
+                return RedirectToAction("Index", "Home");
             }
-
-            return Content(string.Empty);
         }
         #endregion
         #region ATM返回商店
@@ -314,28 +302,14 @@ namespace TeaBar.Controllers
                 NameValueCollection decryptTradeCollection = HttpUtility.ParseQueryString(decryptTradeInfo);
                 OutputDataModel convertModel = LambdaUtility.DictionaryToObject<OutputDataModel>
                     (decryptTradeCollection.AllKeys.ToDictionary(k => k, k => decryptTradeCollection[k]));
-
-                //if (HttpContext.Session.Keys.Contains("identitycookiename"))
-                //{
-                //    if (HttpContext.Session.Keys.Contains("identitycookvalue"))
-                //    {
-                //        string cookiename = HttpContext.Session.GetString("identitycookiename");
-                //        string cookievalue = HttpContext.Session.GetString("identitycookvalue");
-                //        CookieOptions option = new CookieOptions();
-                //        option.Expires = DateTime.Now.AddDays(5);
-                //        HttpContext.Response.Cookies.Append(cookiename, cookievalue, option);
-                //    }
-                //}
-               
+        
                 ViewBag.result = convertModel;
                 return View("Cashflowreturn");
             }
             else
             {
-                Console.WriteLine("MerchantID/TradeSha驗證錯誤");
+                return RedirectToAction("Index", "Home");
             }
-
-            return Content(string.Empty);
         }
         #endregion
 

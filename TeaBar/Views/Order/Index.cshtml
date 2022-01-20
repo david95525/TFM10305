@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-
-
 <style>
 
     #order {
@@ -31,7 +29,7 @@
 <fieldset id="order">
     <div>
         <div id="app">
-           
+
             <div style="background-color:lavender">總共{{quantity}}筆訂單</div>
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -53,8 +51,10 @@
                         </li>
                     </ul>
                     <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="search" placeholder="search" v-model="search">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="button" v-on:click="Search($event)">Search</button>
+                        <div>
+                            <input class="form-control mr-sm-2" placeholder="search" v-model="search" v-on:keyup.enter="Search($event)">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="button" v-on:click="Search($event)">訂單搜尋</button>
+                        </div>
                     </form>
                 </div>
             </nav>
@@ -123,7 +123,7 @@
             </div>
 
 
-            <!-- 刪除Modal -->
+            @*刪除Modal*@
             <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -144,8 +144,11 @@
                 </div>
             </div>
 
+   
 
-            <!--  detail Modal -->
+
+
+            @*detail Modal*@
             <div class="modal fade" id="detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -163,11 +166,11 @@
                                     <td>產品編號</td>
                                     <td>單價</td>
                                     <td>數量</td>
-                                    <td>註記</td>
+                                    <td width="250px">註記</td>
                                     <td>客製化</td>
                                 </tr>
                                 <template v-for="item in Orderdetail">
-                                    <tr>
+                                    <tr v-on:keyup.enter="item.edit = false; $emit('update')">
                                         <td>{{item.orderDetailID}}</td>
 
                                         <td>{{item.orderID}}</td>
@@ -191,12 +194,12 @@
                                         </td>
 
                                         <td>
-                                            <input v-if="item.edit" v-model="item.note"
-                                                   v-on:blur="item.edit = false; $emit('update')"
-                                                   v-on:keyup.enter="Showorder($event,1)">
+                                            <textarea style="height:100px" v-if="item.edit2" v-model="item.note"
+                                                      v-on:blur="item.edit2 = false; $emit('update')"
+                                                      v-on:keyup.enter="Showorder($event,1,false)"></textarea>
                                             <div v-else>
-                                                <label v-on:click="item.edit = true;">
-                                                    <label v-on:click="Showorder($event,1)">
+                                                <label v-on:click="item.edit2 = true;">
+                                                    <label v-on:click="Showorder($event,1,false)">
                                                         <i class="fas fa-edit"></i>
                                                         {{item.note}}
                                                     </label>
@@ -211,7 +214,7 @@
                             </table>
                         </div>
                         <div class="modal-footer">
-                            <h1>總價:{{discounttotal}}</h1>
+                            <h1>總價:{{discounttotal}} NTD</h1>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>
                             <div>
                                 <button class="btn btn-primary" v-on:click="Saveedit">儲存</button>
@@ -220,7 +223,10 @@
                         </div>
                     </div>
                 </div>
+
             </div>
+
+            
 
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end">
@@ -230,7 +236,7 @@
                             <span class="sr-only">Previous</span>
                         </a>
                     </li>
-                    <li class="page-item" v-for="item in Ordercounts"><a class="page-link" href="#" v-on:click="Showorder($event,item)">{{item}}</a></li>
+                    <li class="page-item" v-for="item in Ordercounts"><a class="page-link" href="#" v-on:click="Showorder($event,item,true)">{{item}}</a></li>
                     <li class="page-item">
                         <a class="page-link" href="#" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
@@ -259,7 +265,7 @@
                 OrderObject: {},
                 Delete: false,
                 Detail: false,
-                Orderdetail: [{ 'quantity': 'Orderdetail.quantity', 'edit': false }, { 'note': 'Orderdetail.note', 'edit': false }],
+                Orderdetail: [{ quantity: 'Orderdetail.quantity', 'edit': false }, { note: 'Orderdetail.note', 'edit2': false }],
                 orderdetailobjact: {},
                 quantity: 0,
                 product: [],
@@ -273,16 +279,19 @@
                 discountobject: {},
                 pageSize: 10,
                 pageIndex: [],
+                pagetemp:0,
                 diccocunt: [],
                 discounttotal: 0,
                 search: "",
                 Ordercount: [],
                 Ordercounts: [],
-                TotalOlder:[],
+                TotalOlder: [],
+                Quantitytemp: [],
+                quantitytest: 0,
             },
             mounted: function () {
 
-
+                /*預設顯示前10筆訂單*/
                 let apiserver = '/api/OrderService/Showorder/10/' + 1;
                 $.ajax(
                     {
@@ -300,6 +309,8 @@
 
                     }
                 );
+
+                /*顯示總訂單數*/
                 let sserver = '/api/OrderService/Showorder1';
                 $.ajax(
                     {
@@ -312,16 +323,15 @@
                             else {
                                 for (i = 0; i < result.length; i++) {
                                     app.TotalOlder.push(result[i]);
-                                } 
+                                }
+                                app.Quantitytemp.push(result.length);
                                 app.quantity = result.length;
-
-
                             }
                         }
 
                     }
                 );
-
+                /*依據總訂單數載入頁簽碼*/
                 $.ajax({
                     url: '/api/OrderService/Ordercount',
                     type: 'GET',
@@ -358,13 +368,13 @@
                         }
                     );
                 },
-
+                /*計算頁數*/
                 OrderCount: function (e) {
                     app.Ordercount = [];
                     app.Ordercounts = [];
                     $.ajax({
-                        url:'/api/OrderService/Ordercount',
-                        type:'GET',
+                        url: '/api/OrderService/Ordercount',
+                        type: 'GET',
                         success: function (result, status) {
                             app.Ordercount = result;
                             for (i = 0; i < app.Ordercount; i++) {
@@ -374,11 +384,14 @@
                     });
 
                 },
-                Showorder: function (e, id) {
+                /*初始顯示訂單*/
+                Showorder: function (e, id,bol) {
                     Orders = [];
                     /*app.pageIndex.push(id);*/
-                    var pageindex = id;
-
+                    if (bol == true) {
+                        app.pagetemp = id;
+                    }
+                    var pageindex = app.pagetemp;
                     $.ajax(
                         {
                             url: '/api/OrderService/Showorder/10/' + pageindex,
@@ -400,9 +413,12 @@
                         }
                     );
                 },
+                /*抓取訂單物件 => 準備刪除資料*/
                 Temp: function (e, id) {
                     app.OrderObject = app.Orders.find(o => o.orderID == id);
                 },
+
+                /*刪除功能*/
                 Orderdelete: function (id) {
                     /*抓到Orders陣列裡的orderid,放入OrderObject物件準備刪除*/
                     let ooid = app.OrderObject.orderID;
@@ -416,35 +432,67 @@
                         {
                             url: "/api/OrderService/Delete/" + ooid,
                             type: 'DELETE',
-                            async: false,
+                            /*async: false,*/
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("Content-Type", "application/json")
                             },
-                        }
-                    );
-                    $.ajax(
-                        {
-                            url: '/api/OrderService/Showorder1',
-                            type: 'GET',
-                            async: false,
-                            success: function (result, status) {
-                                if (result.length == 0) {
-                                    alert('目前尚無訂單');
-                                }
-                                else {
+                            success: function () {
+                                //alert('delete');
+                                $.ajax(
+                                    {
+                                        url: '/api/OrderService/Showorder1',
+                                        type: 'GET',
+                                       /* async: false,*/
+                                        success: function (result, status) {
+                                            console.log(result);
+                                            if (result.length == 0) {
+                                                alert('目前尚無訂單');
+                                            }
 
-                                    app.quantity = result.length;
-                                }
+                                            else {
+                                                app.quantitytest = result.length;
+                                                app.quantity = result.length;
+                                                if (((app.quantity) / 10 == (app.Quantitytemp.length) / 10) && (app.quantity) % 10 != 0) {
+
+                                                } else {
+                                                    app.Ordercounts.length = 0,
+                                                        $.ajax({
+                                                            url: '/api/OrderService/Ordercount',
+                                                            type: 'GET',
+                                                            async: true,
+                                                            success: function (result, status) {
+                                                                console.log(result);
+                                                                app.Ordercount = result;
+
+                                                                for (i = 0; i < app.Ordercount; i++) {
+                                                                    app.Ordercounts.push(i + 1);
+                                                                }
+                                                            }
+                                                        });
+                                                }
+                                            }
+                                        },
+                                        error: function (xhr, status,err) {
+                                            console.log(xhr.responseText);
+                                        }
+
+                                    }
+                                );//重新計算總訂單
+
                             }
-
+                            
                         }
                     );
+                    /*"刪除後"重新計算訂單數量*/
+                    
                 },
+
+                /*抓取訂單詳細*/
                 Details: function (e, id) {
                     diccocunt = [];
                     app.Orderdetail = [];
                     app.product = [];
-                    
+
                     app.productobject = {};
                     app.discountobject = {};
 
@@ -485,6 +533,7 @@
                     app.TotalPrice.length = 0;
                 },
 
+                /*儲存編輯*/
                 Saveedit: function (e) {
 
                     app.editobject = app.Orderdetail;
@@ -495,10 +544,36 @@
                         data: editjsonString,
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("Content-Type", "application/json")
-                        }
+                        },
+                        //error: function () {
+                        //    console.log(app.pagetemp);
+                        //    alert("沒進來啦");
+                        //},
+                        //success: function (result, status) {
+                        //    var newpage = app.pagetemp.length;
+                        //    $.ajax(
+                        //        {
+                        //            url: '/api/OrderService/Showorder/10/' + newpage,
+                        //            type: 'GET',
+                        //            beforeSend: function (xhr) {
+                        //                xhr.setRequestHeader("Content-Type", "application/json")
+                        //            },
+                        //            success: function (result, status) {
+                        //                if (result.length == 0) {
+                        //                    alert('目前尚無訂單');
+                        //                }
+                        //                else {
 
+                        //                    app.Orders = result;
+                                            
+                        //                }
+                        //            }
+
+                        //        }
+                        //    );
+                        //}
                         //}//success
-                    })//Saveajax
+                    });//Saveajax
                     app.total = 0;
                     app.TotalPrice.length = 0;
                     for (let i = 0; i < app.Orderdetail.length; i++) {
@@ -512,6 +587,8 @@
                 editTodo: function (todo) {
                     this.editedTodo = todo;
                 },
+
+                /*關鍵字搜尋*/
                 Search: function (e) {
 
                     searchword = app.search;
@@ -523,7 +600,7 @@
                             xhr.setRequestHeader("Content-Type", "application/json")
                         },
                         success(result, xhr) {
-                      
+
                             app.Orders = result;
                         }
                     });

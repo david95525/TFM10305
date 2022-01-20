@@ -79,21 +79,32 @@ namespace TeaBar.Controllers.APIs
             {
                 string oldcart= HttpContext.Session.GetString(userName);
                 carts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(oldcart);
-               //找出購物車裡是否加入過同樣商品
-                CartViewModel temp = carts.FirstOrDefault(c => c.ProductId == cart.ProductId);
-               //否的話 直接新增
-                if(temp==null)
+                if(carts[0].StoreID==cart.StoreID)
                 {
-                    carts.Add(cart);
+                    //找出購物車裡是否加入過同樣商品
+                    CartViewModel temp = carts.FirstOrDefault(c => c.ProductId == cart.ProductId);
+                    //否的話 直接新增
+                    if (temp == null)
+                    {
+                        carts.Add(cart);
+                    }
+                    else if (temp.Ingredient != cart.Ingredient||temp.Ice!=cart.Ice
+                        ||temp.Size!=cart.Size||temp.Sweetness!=cart.Sweetness)
+                    {
+                        carts.Add(cart);
+                    }
+                    else  //是的話 原來數量+選購數量
+                    {
+                        index = carts.IndexOf(temp);
+                        carts[index].Quantity = carts[index].Quantity + cart.Quantity;
+                        carts[index].Subtotal = carts[index].Subtotal + cart.Subtotal;
+                    }
                 }
-                //是的話 原來數量+選購數量
                 else
                 {
-                    index = carts.IndexOf(temp);
-                    carts[index].Quantity= carts[index].Quantity+cart.Quantity;
-                    carts[index].Subtotal = carts[index].Subtotal+ cart.Subtotal;
-                }
-              
+                    carts.Clear();
+                    carts.Add(cart);
+                }              
             }
             else
             //在空的購物車填入
@@ -105,7 +116,6 @@ namespace TeaBar.Controllers.APIs
                 string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
                 //存入session
                 HttpContext.Session.SetString(userName, jsonstring);
-
             }
             catch (InvalidCastException e)
             {
