@@ -64,8 +64,8 @@
     </div>
     <!--Title-->
     <div class="topic">
-            <h3 class="h3">Products</h3>
-        </div>
+        <h3 class="h3">Products</h3>
+    </div>
     <!--價目表查詢-->
     <div id="menu" class="mb-0 ">
         <select v-model="menuDistVal" class="form-select mb-2" id="menuSelect">
@@ -87,22 +87,46 @@
             <option :value="dist" v-for="dist in distList">{{dist}}</option>
         </select>
         <!--選擇分店-->
-        <select v-model="storeVal" class="form-select m-1" @@change="getCategory()">
+        <select v-model="storeVal" class="form-select m-1" @@change="getCategory(storeVal)">
             <option value="default">選擇分店</option>
             <option :value="store.storeID" v-for="store in storeList">{{store.storeName}}</option>
         </select>
     </div>
 
-    <!--預設顯示分類及商品-->
-    <div class="text-center min-vh-100">
+    <!--預設顯示第一間店分類及商品-->
+    <div class="text-center min-vh-100" v-if="isDefaultStore">
         <div id="category" class="btn-group ">
             <span>
                 <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
-                <label class="btn btn-light btnCategory rounded-pill" for="all">全部商品</label>
+                <label class="btn btn-light btn-style rounded-pill" for="all">全部商品</label>
             </span>
             <span v-for="c in productsCategory">
                 <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
-                <label class="btn btn-light btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
+                <label class="btn btn-light btn-style rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
+            </span>
+        </div>
+        <!--商品清單card-->
+        <div class="row">
+            <div class="col-md-3" v-for="item in showProduct">
+                <div class="card shadow-sm">
+                    <img :src="item.picture" :alt="item.productName" data-bs-target="#productModal" data-bs-toggle="modal" @@click="modalProduct(item.productID)" class="pointer img-fluid card-img-top rounded" />
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{item.productName}}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--篩選顯示分類及商品-->
+    <div class="text-center min-vh-100" v-else>
+        <div id="category" class="btn-group ">
+            <span>
+                <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
+                <label class="btn btn-light btn-style rounded-pill" for="all">全部商品</label>
+            </span>
+            <span v-for="c in productsCategory">
+                <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
+                <label class="btn btn-light btn-style rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
             </span>
         </div>
         <!--商品清單card-->
@@ -147,6 +171,7 @@
                 cityList: [],
                 distList: [],
                 storeList: [],
+                isDefaultStore: false,
 
             },
             methods: {
@@ -206,21 +231,24 @@
                     this.modalData.name = modalProduct[0].productName;//商品名稱
                 },
                 //取得分類和產品
-                getCategory() {
+                getCategory(store) {
                     //分類
-                    axios.get(`/api/ProductsService/Category/${this.storeVal}`)
+                    axios.get(`/api/ProductsService/Category/${store}`)
                         .then(response => { this.productsCategory = response.data })
                         .catch(error => console.log(error));
                     //產品
-                    axios.get(`/api/ProductsService/Products/${this.storeVal}`)
+                    axios.get(`/api/ProductsService/Products/${store}`)
                         .then(response => { this.productsData = response.data })
                         .catch(error => console.log(error));
                     
-                }
+                },
+                getProducts(){},
             },
+
             computed: {
                 //點分類篩選商品
                 showProduct() {
+                    this.isDefaultStore = false;
                     const arr = { item: [] };
                     if (this.categorySelect == "all") {
                         //預設選全部商品
@@ -238,7 +266,8 @@
                 await axios('/api/StoreService/city')
                     .then(response => { this.cityList = response.data })
                     .catch(error => console.log(error));
-
+                //取得產品分類(預設緯育)
+                this.getCategory("9de59954-8571-4744-93ad-43d11c74491a");
 
             },
         }

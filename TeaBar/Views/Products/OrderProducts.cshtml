@@ -1,4 +1,5 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUsers> SignInManager
 @{
     ViewData["Title"] = "線上點餐";
 }
@@ -18,7 +19,7 @@
                 <div class="modal-body p-4">
                     <div class="d-flex">
                         <!--產品內容-->
-                        <div>
+                        <div class="mr-2 productimg">
                             <!--產品圖片-->
                             <img :src="modalData.imgUrl" :alt="modalData.name" style="width:100vw;" class="img-fluid mb-3" />
                             <!--名稱及單價-->
@@ -27,57 +28,51 @@
                             <p class="">{{modalData.description}}</p>
                         </div>
                         <!--form post資料到後端-->
-                        <div class="container">
+                        <div class="container btn-detail">
                             <!--容量-->
+                            <div>
+                                <span class="text-danger fs-4">*</span>
+                                <h6 class="d-inline">容量 </h6>
+                                <span v-show="errors.has('Size')" class="text-danger">此項必填</span>
+                            </div>
                             <div class="row">
-                                <div>
-                                    <span class="text-danger fs-4">*</span>
-                                    <h6 class="d-inline-block">容量 </h6>
-                                    <span v-show="errors.has('Size')" class="text-danger">此項必填</span>
-                                </div>
-                                <div class="btn-group form-group" role="group">
-                                    <span v-for="item in size">
-                                        <input type="radio" v-validate="'required'" class="btn-check d-none" name="Size" :value="item" :id="item.name" v-model="orderDetail.Size" />
-                                        <label class="btn btn-outline-dark btnCategory" :for="item.name">{{item.name}} ${{item.price}}</label>
-                                    </span>
+                                <div v-for="item in size" class="btn-group col-2 mr-2 btn-size" role="group">
+                                    <input type="radio" v-validate="'required'" class="btn-check d-none" name="Size" :value="item" :id="item.name" v-model="orderDetail.Size" />
+                                    <label class="btn btn-outline-secondary rounded mt-auto mb-auto" :for="item.name">{{item.name}} ${{item.price}}</label>
                                 </div>
                             </div>
                             <!--甜度-->
+                            <div class=" justify-content-center">
+                                <span class="text-danger fs-4">*</span>
+                                <h6 class="d-inline-block">甜度 </h6>
+                                <span v-show="errors.has('Sweetness')" class="text-danger">此項必填</span>
+                            </div>
                             <div class="row">
-                                <div>
-                                    <span class="text-danger fs-4">*</span>
-                                    <h6 class="d-inline-block">甜度 </h6>
-                                    <span v-show="errors.has('Sweetness')" class="text-danger">此項必填</span>
-                                </div>
-                                <div class="btn-group form-group" role="group">
-                                    <span v-for="item in sweetness">
-                                        <input type="radio" v-validate="'required'" class="btn-check d-none" name="Sweetness" :value="item" :id="item" v-model="orderDetail.Sweetness" />
-                                        <label class="btn btn-outline-dark btnCategory" :for="item">{{item}}</label>
-                                    </span>
+                                <div v-for="item in sweetness" class="btn-group col-2  mr-2  btn-size" role="group">
+                                    <input type="radio" v-validate="'required'" class="btn-check d-none" name="Sweetness" :value="item" :id="item" v-model="orderDetail.Sweetness" />
+                                    <label class="btn btn-outline-secondary rounded mt-auto mb-auto" :for="item">{{item}}</label>
                                 </div>
                             </div>
                             <!--溫度-->
+                            <div>
+                                <span class="text-danger fs-4">*</span>
+                                <h6 class="d-inline-block">溫度 </h6>
+                                <span v-show="errors.has('Ice')" class="text-danger">此項必填</span>
+                            </div>
                             <div class="row">
-                                <div>
-                                    <span class="text-danger fs-4">*</span>
-                                    <h6 class="d-inline-block">溫度 </h6>
-                                    <span v-show="errors.has('Ice')" class="text-danger">此項必填</span>
-                                </div>
-                                <div class="btn-group form-group" role="group">
-                                    <span v-for="item in Ice">
-                                        <input type="radio" v-validate="'required'" class="btn-check d-none" name="Ice" :value="item" :id="item" v-model="orderDetail.Ice" />
-                                        <label class="btn btn-outline-dark btnCategory" :for="item">{{item}}</label>
-                                    </span>
+                                <div v-for="item in Ice" class="btn-group col-2  mr-2 btn-size" role="group">
+                                    <input type="radio" v-validate="'required'" class="btn-check d-none" name="Ice" :value="item" :id="item" v-model="orderDetail.Ice" />
+                                    <label class="btn btn-outline-secondary rounded mt-auto mb-auto" :for="item">{{item}}</label>
                                 </div>
                             </div>
                             <!--加料-->
-                            <div class="row">
+                            <div>
                                 <h6 class="d-inline-block">加料 ( 複選 )</h6>
-                                <div class="btn-group " role="group">
-                                    <span v-for="item in Ingredient">
-                                        <input type="checkbox" class="btn-check d-none" name="Ingredient" :value="item" :id="item.name" v-model="orderDetail.Ingredient" />
-                                        <label class="btn btn-outline-dark btnCategory" :for="item.name">{{item.name}} ${{item.price}}</label>
-                                    </span>
+                            </div>
+                            <div class="row d-flex align-items-center">
+                                <div v-for="item in Ingredient" class="btn-group col-2 mr-1 btn-size" role="group">
+                                    <input type="checkbox" class="btn-check d-none" name="Ingredient" :value="item" :id="item.name" v-model="orderDetail.Ingredient" />
+                                    <label class="btn btn-outline-secondary rounded mt-auto mb-auto" :for="item.name">{{item.name}} ${{item.price}}</label>
                                 </div>
                             </div>
                             <!--小計及加入購物車-->
@@ -85,17 +80,20 @@
                                 <h6>小計: {{calSubtotal}}元</h6>
 
                                 <div class="d-flex justify-content-between">
-                                    <div>
+                                    <div class="d-flex">
                                         <!--數量-->
-                                        <button type="button" @@click="minusOne()" class="btn btn-outline-dark">-</button>
-                                        <input type="number" min="1" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
-                                        <button type="button" @@click="addOne()" class="btn btn-outline-dark">+</button>
-                                        <!--表單驗證訊息-->
+                                        <div class="d-flex text-center">
+                                            <div type="button" @@click="minusOne()" class="btn-minus-add btn-secondary rounded-start m-0 fs-4">-</div>
+                                            <input type="number" min="1" value="" name="Quantity" class="form-control d-inline-block input-style" id="quantity" v-model="orderDetail.Quentity">
+                                            <div type="button" @@click="addOne()" class="btn-minus-add btn-secondary rounded-end mr-3 fs-4">+</div>
+                                        </div>
                                         <!--點擊將資料post到後端api-->
-                                        <button type="button" class="btn btn-outline-dark d-inline-block" @@click="AddToCart()">加入購物車</button>
-                                    </div>
+                                        @if (!User.IsInRole("Manager"))
+                                        {
+                                            <button type="button" class="btn btn-light d-inline-block" @@click="AddToCart()">加入購物車</button>
+                                        }</div>
                                     <div>
-                                        <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-dark d-inline-block">返回</button>
+                                        <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-dark d-inline-block">返回</button>
                                     </div>
                                 </div>
                             </div>
@@ -140,9 +138,6 @@
                         <a href="/Store/StoreInfo" class="btn btn-dark">回門市據點</a>
                     </div>
                 </div>
-                
-
-
             </div>
         </div>
     </div>
@@ -154,11 +149,11 @@
             <div id="productsCategory" class="btn-group">
                 <span>
                     <input type="radio" name="category" value="all" v-model="categorySelect" class="d-none btn-check" id="all" />
-                    <label class="btn btn-light btnCategory rounded-pill" for="all">全部商品</label>
+                    <label class="btn btn-light btn-style rounded-pill" for="all">全部商品</label>
                 </span>
                 <span v-for="c in productsCategory">
                     <input type="radio" name="category" :value="c.categoryID" v-model="categorySelect" class="d-none btn-check" :id="c.categoryName" />
-                    <label class="btn btn-light btnCategory rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
+                    <label class="btn btn-light btn-style rounded-pill" :for="c.categoryName">{{c.categoryName}}</label>
                 </span>
             </div>
             <!--商品card-->
@@ -178,13 +173,14 @@
         <div class=" w-25 p-3" id="orderInfo">
             <div class="border border-1 rounded border-color p-3 mb-4">
                 <!--顯示訂購分店名稱-->
+                <div class="d-flex flex-row align-items-end justify-content-between mb-1">
+                    <p class="fs-6">訂購門市:</p>
+                    <!--更改分店-->
+                    <button type="button" data-bs-target="#selectStoreModal" data-bs-toggle="modal" class="btn btn-outline-dark btn-sm">修改</button>
+                </div>
                 <!--從cookie帶入選擇的門市名稱-->
                 <div v-if="hasCookie" class="mb-3">
-                    <div class="d-flex flex-row align-items-end justify-content-between mb-1">
-                        <p class="fs-6">訂購門市:</p>
-                        <!--更改分店-->
-                        <button type="button" data-bs-target="#selectStoreModal" data-bs-toggle="modal" class="btn btn-outline-dark btn-sm">修改</button>
-                    </div>
+
                     <p class="fs-5 fw-bold">{{orderStoreData[0].StoreName}}</p>
                     <p>{{orderStoreData[0].StoreAddress}}</p>
                     <hr />
@@ -383,7 +379,7 @@
                             data: data,
                         }).then(response => {
                             if (response.data == null) {
-                                  location.href = "@Url.Action("ShoppingCart","CartOrder")";
+                                  location.href = "@Url.Action("Index","Home")";
                             }else if (response.status == 200) {
                                 alert("加入購物車成功!");
                             }

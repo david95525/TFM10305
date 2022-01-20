@@ -150,6 +150,7 @@ namespace TeaBar.Controllers
                 string Carts = HttpContext.Session.GetString(username);
                 List<CartViewModel> carts = Newtonsoft.Json.JsonConvert.
                     DeserializeObject<List<CartViewModel>>(Carts);
+              
                 #endregion
                 #region 存入order表
                 //台北時間
@@ -190,11 +191,15 @@ namespace TeaBar.Controllers
                     {
                         if (i == "珍珠" || i== "椰果" || i== "寒天" || i== "雙Q")
                         {
-                            ing =ing+ i+ "+10元";
+                            ing =ing+ i+ "+10元 ";
                         }
                         else if (i== "小芋圓" || i == "蜂蜜")
                         {
-                            ing =ing+ i + "+15元";
+                            ing =ing+ i + "+15元 ";
+                        }
+                        else
+                        {
+                            ing = "無";
                         }
                     }
                     
@@ -207,7 +212,7 @@ namespace TeaBar.Controllers
                         UnitPrice = item.UnitPrice,
                         Quantity = item.Quantity,
                         Note = item.Note,
-                        Customization = "甜度:" + item.Sweetness + "冰塊:" + item.Ice + "加料:" + ing
+                        Customization = "甜度:" + item.Sweetness + "/冰塊:" + item.Ice + ",加料:" + ing
                     };
                     index++;
                     try
@@ -226,5 +231,17 @@ namespace TeaBar.Controllers
             return msg;
         }
         #endregion
+        public Message DeleteCart()
+        {
+            string username = HttpContext.Session.GetString("username");
+            HttpContext.Session.Remove(username);
+            Message msg = new Message()
+            {
+                Code = 200,
+                Msg = "購物車清除成功",
+                Now = DateTime.Now
+            };
+            return msg;
+        }
     }
 }
