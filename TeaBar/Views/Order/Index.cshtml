@@ -182,10 +182,10 @@
                                         <td>
                                             <input v-if="item.edit" v-model="item.quantity"
                                                    v-on:blur="item.edit = false; $emit('update')"
-                                                   v-on:keyup.enter="Showorder($event,1)">
+                                                   v-on:keyup.enter="Showorder($event,1,false)">
                                             <div v-else>
                                                 <label v-on:click="item.edit = true;">
-                                                    <label v-on:click="Showorder($event,1)">
+                                                    <label v-on:click="Showorder($event,1,false)">
                                                         <i class="fas fa-edit"></i>
                                                         {{item.quantity}}
                                                     </label>
@@ -279,7 +279,7 @@
                 discountobject: {},
                 pageSize: 10,
                 pageIndex: [],
-                pagetemp:0,
+                pagetemp:1,
                 diccocunt: [],
                 discounttotal: 0,
                 search: "",
