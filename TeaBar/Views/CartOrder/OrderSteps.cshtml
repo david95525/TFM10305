@@ -153,13 +153,13 @@
                 </div>
                 <div class="card-body">
                     <div>
-                        <div class="right">
+                        <div class="right" v-on:click="initMap">
                             <input type="radio" class="form-check-input" name="how" v-if="isTakeout" checked v-on:click="How(0)">
                             <input type="radio" class="form-check-input" name="how" v-if="isDelivery" v-on:click="How(0)">
                             <label class="form-check-label"> 自取</label>
                             <div v-if="isTakeout" class=" pointer">
                                 <label for="storelocation" class="col-form-label-sm">請確認取貨門市位置 可點擊刷新</label>
-                                <div v-on:click="initMap">
+                                <div >
                                     <span v-if="isShow">
                                         <i class="fas fa-map-marker-alt"></i>
                                         {{store[0].storeAddress}}
@@ -593,6 +593,10 @@
                  app.shipData.receipt = '';
                  app.shipData.companyreceipt = '';
                  app.shipData.phonereceipt = '';
+                 app.shipData.county = user.City;             
+                 app.shipData.district = user.District;
+                 app.shipData.address = user.Address;
+                 app.shipData.desc ="";
             }).fail();
         },
         //#endregion
@@ -814,15 +818,12 @@
                     app.isTakeout = true;
                     app.isDelivery = false;
                 } else if (status === 1) {
-                    readCountyorDistrict(0,"");
-                    //初始化shipData
-                    if (JSON.stringify(app.shipData) === '{}') {
-                        app.shipData.county = ''; app.shipData.countycode = 0; app.shipData.district = '';app.shipData.address = '';app.shipData.desc = '';app.shipData.phone = '';
-                        app.shipData.receiver = '';app.shipData.receipt = '';app.shipData.companyreceipt = '';app.shipData.phonereceipt = '';
-                    }
+                    readCountyorDistrict(0, "");
+                    readCountyorDistrict(1, app.shipData.county);
                     //顯示與否
                     app.isTakeout = false;
                     app.isDelivery = true;
+                
                 } else if (status === 2) {
                     //去掉按鈕
                     $('#delivery').hide();
@@ -831,8 +832,8 @@
             //#endregion
             //#region 縣市變動
             ChangeCounty: function () {
-              let  name = $('#county').get(0).value;
-                readCountyorDistrict(1, name);
+                
+                readCountyorDistrict(1, app.shipData.county);
             },
             //#endregion
             //#region 去金流頁面
@@ -845,7 +846,7 @@
                 } else {
                     app.orderData[i].note =
                         "外送:" + app.shipData.county + app.shipData.district
-                        + app.shipData.addrsss + app.shipData.desc;
+                    +app.shipData.address+ app.shipData.desc;
                 }
                 // 寄送資訊記在note
 
@@ -912,14 +913,13 @@
                 });
         } //讀區域
         else {
-            console.log(name);
                $.ajax({
                 url: "@Url.Action("readDistrict", "CountyDistrict")",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Content-Type", "application/json");
                 },
                    type: 'POST',
-                   data: JSON.stringify( name)
+                   data: JSON.stringify(name)
             })
                 .done(function (data, status, xhr) {
                     app.districtData = data;
