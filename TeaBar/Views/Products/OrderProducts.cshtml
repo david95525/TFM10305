@@ -88,7 +88,7 @@
                                     <div>
                                         <!--數量-->
                                         <button type="button" @@click="minusOne()" class="btn btn-outline-dark">-</button>
-                                        <input type="tel" maxlength="2" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
+                                        <input type="number" min="1" value="" name="Quantity" class="form-control d-inline-block" id="quantity" v-model="orderDetail.Quentity">
                                         <button type="button" @@click="addOne()" class="btn btn-outline-dark">+</button>
                                         <!--表單驗證訊息-->
                                         <!--點擊將資料post到後端api-->
@@ -274,15 +274,13 @@
             },
             //數量減一
             minusOne() {
-                if (this.orderDetail.Quentity > 2) {
+                if (this.orderDetail.Quentity > 1) {
                     this.orderDetail.Quentity--;
                 }
             },
             //數量加一
             addOne() {
-                if (this.orderDetail.Quentity <= 20) {
                     this.orderDetail.Quentity++
-                }
             },
             //時間一位數補0
             timeFormat(item) {
