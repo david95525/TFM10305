@@ -196,6 +196,10 @@ namespace TeaBar.Controllers
                         {
                             ing =ing+ i + "+15元 ";
                         }
+                        else
+                        {
+                            ing = "無";
+                        }
                     }
                     
                     //建立orderdetails集合
