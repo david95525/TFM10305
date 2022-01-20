@@ -83,7 +83,7 @@ namespace TeaBar.Controllers
 
                     #endregion
                     #region 存session
-                    HttpContext.Session.SetString("cartItem", jsonstring);
+                    HttpContext.Session.SetString(userName, jsonstring);
                     msg.Msg = "成功存入session";
                     #endregion
                 }
@@ -106,16 +106,16 @@ namespace TeaBar.Controllers
         public List<CartViewModel> Readcart()
         #region 購物車資料讀取
         {
-            
-                #region 讀session
-                if (HttpContext.Session.Keys.Contains("cartItem"))
+            string userName = HttpContext.Session.GetString("username");
+            #region 讀session
+            if (HttpContext.Session.Keys.Contains(userName))
                 {
-                    string jsonstring = HttpContext.Session.GetString("cartItem");
+                    string jsonstring = HttpContext.Session.GetString(userName);
                     List<CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
                     return data;
                 }
                 #endregion
-            }
+            
 
                 #region 讀cookie
                 //if (HttpContext.Request.Cookies[username] != null)
@@ -143,7 +143,7 @@ namespace TeaBar.Controllers
             };
             string username = HttpContext.Session.GetString("username");
             //if (HttpContext.Request.Cookies[username] != null)
-                if(HttpContext.Session.Keys.Contains("cartItem"))
+            if (HttpContext.Session.Keys.Contains(username))
             {
                 #region 讀cart
                 //string Carts = HttpContext.Request.Cookies[username];

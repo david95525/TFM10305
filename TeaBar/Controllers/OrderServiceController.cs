@@ -37,9 +37,12 @@ namespace TeaBar.Controllers
             if (count == 0)
             {
                 return countten;
-            }else
+            }else if(countten >= 1 && count != 0)
             {
                 return countten + 1;
+            }else
+            {
+                return 1;
             }
 
         }
@@ -130,6 +133,35 @@ namespace TeaBar.Controllers
 
         }
 
+
+        //[HttpGet]
+        //[Route("Showordertest")]
+        //[Produces("application/json")]
+        //public List<TopOrederview> Showordertest()
+        //{
+
+        //    List<TopOrederview> Orderlist = (from p in _dBContext.UserOfCustomer
+        //                                     join q in _dBContext.Orders on p.UserID equals q.UserID
+        //                                     join r in _dBContext.Discount on q.DiscountID equals r.DiscountID
+        //                                     join t in _dBContext.OrderDetails on q.OrderID equals t.OrderID
+        //                                     join u in _dBContext.Products on t.ProductID equals u.ProductID
+        //                                     join v in _dBContext.Categories on u.CategoryID equals v.CategoryID
+        //                                     join w in _dBContext.Stores on v.StoreID equals w.StoreID
+        //                                     select new TopOrederview
+        //                                     {
+        //                                         OrderID = t.OrderID,
+        //                                         FirstName = p.FirstName,
+        //                                         LastName = p.LastName,
+        //                                         StoreName = w.StoreName,
+        //                                         OrderDate = q.OrderDate,
+        //                                         DiscountRule = r.DiscountRule,
+
+        //                                     }).Distinct().ToList();
+
+        //    return Orderlist;
+
+        //}
+
         [HttpPost]
         [Route("Save")]
         [Produces("application/json")]
@@ -204,7 +236,7 @@ namespace TeaBar.Controllers
         [HttpDelete]
         [Route("Delete/{id}")]
         [Produces("application/json")]
-        public IActionResult Delete(string id)
+        public void Delete(string id)
         {
 
             List<OrderDetails> result = (from d in _dBContext.OrderDetails where d.OrderID == id select d).ToList();
@@ -223,7 +255,7 @@ namespace TeaBar.Controllers
             _dBContext.Orders.RemoveRange(result2);
             _dBContext.SaveChanges();
 
-            return RedirectToAction("Index");
+            //return RedirectToAction("Index");
         }
     }
 }
