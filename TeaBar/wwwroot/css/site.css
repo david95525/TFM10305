@@ -266,9 +266,20 @@ li:hover{
 /*memberpassword*/
 .password {
     max-width: 400px;
-    margin: 0 auto;
+    margin: 25px auto;
+    height: 300px;
+    background-color: #f3f3f3;
+}
+.history {
+    max-width: 1200px;
+    margin: 25px auto;
 }
 .profile {
-    max-width: 500px;
-    margin: 0 auto;
+    max-width: 600px;
+    margin: 25px auto;
+    height: 400px;
+    background-color: #f3f3f3;
+}
+#memberPWD {
+    min-height:350px;
 }
