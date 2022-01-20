@@ -434,24 +434,26 @@
                         </select>
                     </div>
                     <div class="input-group mb-3">
-                        <label class="input-group-text" for="ingredient">加料</label>
-                        <select class="form-select" id="ingredient" v-model="Ingredient" multiple>
-                            <option v-for="ing in inglist" >{{ing}}</option>
-                            
-                        </select>
-                    </div>
-                    <div class="input-group mb-3">
-                        <label class="input-group-text">備註</label>
-                        <input type="text" v-model:text="order.description" class="form-control" />
-                    </div>
-                    <div class="col-4">
-                        <div class="pointer input-group mb-3">
-                            <i class="far fa-minus-square input-group-text" v-on:click="EditQ(order.productId,false)"></i>
-                            <input type="number" v-model:value="order.quantity" class="form-control" id="qty" />
-                            <i class="far fa-plus-square input-group-text" v-on:click="EditQ(order.productId,true)"></i>
+                        <label class="input-group-text" for="ingredient">加料(複選)</label>
+                        <div class="btn-group " role="group">
+                            <span v-for="ing in inglist">
+                                <input type="checkbox" class="btn-check d-none" :id="ing" autocomplete="off" v-model="Ingredient" :value="ing" >
+                                <label class="btn btn-outline-dark btnCategory" :for="ing">{{ing}}</label>
+                           </span>
                         </div>
                     </div>
-                </div>
+                        <div class="input-group mb-3">
+                            <label class="input-group-text">備註</label>
+                            <input type="text" v-model:text="order.description" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <div class="pointer input-group mb-3">
+                                <i class="far fa-minus-square input-group-text" v-on:click="EditQ(order.productId,false)"></i>
+                                <input type="number" v-model:value="order.quantity" class="form-control" id="qty" />
+                                <i class="far fa-plus-square input-group-text" v-on:click="EditQ(order.productId,true)"></i>
+                            </div>
+                        </div>
+                    </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" v-on:click="LUEdit(true)">更新</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -493,7 +495,6 @@
             shipData: {},//寄送資料
             store: [],   //店家資料
             Ingredient:[],//複數加料
-            storemap: {},
             temp: [],     //暫存
             order: {}, //單一訂單內容
             countyData: [],//縣市資料
@@ -502,7 +503,7 @@
             discount: 0,//折扣
             sugarlist: ["全糖", "少糖", "半糖", "微糖", "無糖"],
             icelist: ["正常冰", "少冰", "半冰", "微冰", "去冰", "溫", "熱"],
-            inglist: ["珍珠" , "椰果" ,"小芋圓" ,  "寒天" , "雙Q" ,  "蜂蜜" ,"無"],
+            inglist: ["珍珠" , "椰果" ,"小芋圓" ,  "寒天" , "雙Q" ,  "蜂蜜"],
             sizelist: ["大杯", "中杯"],
             total: 0,
             origintotal: 0,
@@ -569,18 +570,17 @@
                 .fail(function (err) {
                     alert("error");
                 });
+            //取得地圖資料
             axios('/api/StoreService/store')
                 .then(response => {
                     this.mapData = JSON.parse(response.data);
-                    //取得第一筆經緯度
-                    this.googleMap.lat = this.mapData [0].Lat;
-                    this.googleMap.lng = this.mapData [0].Lng;
+                    let map = this.mapData.find(m => m.StoreID == this.store[0].storeID);
+                    //取得經緯度
+                    this.googleMap.lat = map.Lat;
+                    this.googleMap.lng = map.Lng;
                     this.initMap();
                 })
                 .catch(error => console.log(error));
-
-
-
         },
         //#endregion
         //#region Vue方法
@@ -645,8 +645,12 @@
                         app.order.quantity = app.temp[3];
                         app.order.subtotal = app.temp[5];
                     }
-                    //更新資料
-                 app.order.ingredient=   app.Ingredient ;
+                    //更新加料資料
+                    if (this.Ingredient.length === 0) {
+                        this.Ingredient[0] = "無";
+                    }
+                    app.order.ingredient = app.Ingredient;
+                    //更新subtotal
                     app.order.subtotal = app.order.unitPrice * app.order.quantity;
                     for (let i = 0; i < app.order.ingredient.length; i++) {
                         if (app.order.ingredient[i] === "珍珠" || app.order.ingredient[i] === "椰果"
@@ -658,7 +662,7 @@
                     }
                     app.origintotal = app.origintotal - app.temp[5] + app.order.subtotal;
                     app.total = Math.round(app.origintotal * app.order.discount);
-                    Save();
+                    Save();//存session
                 }
             },
             //#endregion
@@ -830,17 +834,17 @@
                 //自取或外送資料
                 if (app.isTakeout) {
                     app.orderData[i].note =
-                        "備註:自取-" + app.store[0].storeName + "地址:" + app.store[0].storeAddress;
+                        "自取:" + app.store[0].storeName ;
                 } else {
                     app.orderData[i].note =
-                        "備註:外送-" + app.shipData.county + app.shipData.district
+                        "外送:" + app.shipData.county + app.shipData.district
                         + app.shipData.addrsss + app.shipData.desc;
                 }
                 // 寄送資訊記在note
 
                     app.orderData[i].note = app.orderData[i].note
-                        + " 取貨人:" + app.shipData.receiver + "電話:" + app.shipData.phone +
-                        "發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
+                        + ",取貨人:" + app.shipData.receiver + ",電話:" + app.shipData.phone +
+                        ",發票樣式:" + app.shipData.receipt + app.shipData.phonereceipt + app.shipData.companyreceipt;
                 }
                    if (app.orderData.length != 0) {
                     $.ajax({

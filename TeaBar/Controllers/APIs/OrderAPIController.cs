@@ -190,11 +190,11 @@ namespace TeaBar.Controllers
                     {
                         if (i == "珍珠" || i== "椰果" || i== "寒天" || i== "雙Q")
                         {
-                            ing =ing+ i+ "+10元";
+                            ing =ing+ i+ "+10元 ";
                         }
                         else if (i== "小芋圓" || i == "蜂蜜")
                         {
-                            ing =ing+ i + "+15元";
+                            ing =ing+ i + "+15元 ";
                         }
                     }
                     
@@ -207,7 +207,7 @@ namespace TeaBar.Controllers
                         UnitPrice = item.UnitPrice,
                         Quantity = item.Quantity,
                         Note = item.Note,
-                        Customization = "甜度:" + item.Sweetness + "冰塊:" + item.Ice + "加料:" + ing
+                        Customization = "甜度:" + item.Sweetness + "/冰塊:" + item.Ice + ",加料:" + ing
                     };
                     index++;
                     try
