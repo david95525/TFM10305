@@ -20,6 +20,13 @@
 </div>
 
 <script>
+
+     if (location.href.indexOf('#reloaded') == -1)
+        {                 
+            location.href = location.href + "#reloaded";
+            location.reload();
+        }
+
     var app = new Vue(
         {
             el: '#Vuechart',

@@ -14,12 +14,18 @@
 <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreProduct'" value="商家商品數量分析" class="btn btn-info rounded-pill" />
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<div id="Vuechart" style="height:80%;width:80%">
+<div id="Vuechart" style="height:90%;width:80%">
     @*圖表*@
     <canvas id="myChart"></canvas>
 </div>
 
 <script>
+
+    if (location.href.indexOf('#reloaded') == -1) {
+        location.href = location.href + "#reloaded";
+        location.reload();
+    }
+
     var app = new Vue(
         {
             el: '#Vuechart',
