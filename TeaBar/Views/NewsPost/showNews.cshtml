@@ -1,7 +1,14 @@
 ﻿
 @{ ViewData["Title"] = "最新消息"; }
+
+<style>
+    body {
+        background: url("/images/bg1.jpg") 100% 100%;
+    }
+</style>
+
 <fieldset id="newslist">
-    <p class="fs-2 text-center font-weight-bold rounded mb-4 mt-4">@ViewData["Title"]</p>
+    <p class="fs-2 text-center font-weight-bold rounded-pill mb-4 mt-4 title-style">@ViewData["Title"]</p>
     <!--即時公告顯示區塊-->
     <div class="container p-0">
         <div class="shadow p-3 mb-5 bg-body rounded" v-for="item in items">
@@ -27,7 +34,7 @@
 
 
     <!--歷史公告顯示區塊-->
-    <p class="fs-2 text-center font-weight-bold rounded mb-4 mt-4">近期公告</p>
+    <p class="fs-2 text-center font-weight-bold rounded-pill mb-4 mt-4 bg-img title-style">近期公告</p>
     <div class="container">
         <div class="row ">
             <div class="col-4" v-for="item in historyItems">
