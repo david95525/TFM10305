@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using TeaBar.Models;
 
 namespace TeaBar.Controllers
 {
+    [Authorize(Roles = "Manager")]
     public class ProductManageController : Controller
     {
         private readonly ApplicationDbContext _context;

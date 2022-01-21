@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using TeaBar.Data;
 
 namespace TeaBar.Controllers
 {
+    [Authorize]
     public class MembersController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
