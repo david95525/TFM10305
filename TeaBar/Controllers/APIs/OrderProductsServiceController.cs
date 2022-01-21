@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using TeaBar.Models.ViewModels;
 
 namespace TeaBar.Controllers.APIs
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OrderProductsServiceController : ControllerBase
