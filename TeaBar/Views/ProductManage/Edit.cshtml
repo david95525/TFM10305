@@ -1,7 +1,7 @@
 ﻿@model TeaBar.Models.Products
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "修改畫面";
 }
 <script>
 
@@ -12,52 +12,66 @@
     );
 </script>
 
-<h1>修改</h1>
+<style>
+    .modal-backdrop {
+        background-color: rgb(160, 82, 5);
+    }
+</style>
+
+@*<h1>修改</h1>*@
 <hr />
-<fieldset id="新增畫面">
-    <div class="modal fade" id="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="row">
-                        <div class="col-md-4" style="width:300px;">
-                            <form asp-action="Edit">
-                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                <input type="hidden" asp-for="ProductID" />
+<fieldset id="修改">
+    <div class="modal fade border border-5 border-success" id="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content ">
+                <div class="modal-header ">
+                    <h5 class="modal-title" id="staticBackdropLabel">修改畫面</h5>
+                </div>
+                <div class="row align-self-center">
+                    <div class="col-md-4" style="width:800px;">
+                        <form asp-action="Edit">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="ProductID" />
+                            <div class="form-group">
+                                <label asp-for="ProductName" class="control-label">商品名稱:</label>
+                                <input asp-for="ProductName" class="form-control" />
+                                <span asp-validation-for="ProductName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CategoryID" class="control-label">商品種類</label>
+                                <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.CategoryID"></select>
+                                <span asp-validation-for="CategoryID" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UnitPrice" class="control-label">商品價格:</label>
+                                <input asp-for="UnitPrice" class="form-control" />
+                                <span asp-validation-for="UnitPrice" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style=" width:100px">
+                                <label asp-for="Description" class="control-label">商品介紹:</label>
+                                <input asp-for="Description" class="form-control" maxlength="30" style=" width:800px" />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="form-group ">
+                                <label asp-for="Picture" class="control-label">圖片</label>
+                                @*readonly*@
+                                <input asp-for="Picture" class="form-control" style="display:none" />
+                                <span asp-validation-for="Picture" class="text-danger"></span>
+                                <img src="@Html.ViewData.Model.Picture" alt="..." style="width:auto;height:200px" />
+                            </div>
+                            <br />  
+                            <div class=" ">
                                 <div class="form-group">
-                                    <label asp-for="ProductName" class="control-label"></label>
-                                    <input asp-for="ProductName" class="form-control" />
-                                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                                    <input type="submit" class="btn btn-light rounded-pill position-absolute bottom-0 start-50" value="確定修改" />
+                                    <input type="button" class="btn btn-dark  rounded-pill position-absolute bottom-0 end-0"
+                                           onclick="javascript:location.href='/ProductManage/Index'" value="取消修改" />
+                                    @*<a asp-action="Index" style="color:white" class="abutton btn-dark rounded-pill btn-addtocart align-self-end">取消修改</a>*@
                                 </div>
-                                <div class="form-group">
-                                    <label asp-for="CategoryID" class="control-label"></label>
-                                    <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.CategoryID"></select>
-                                    <span asp-validation-for="CategoryID" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="UnitPrice" class="control-label"></label>
-                                    <input asp-for="UnitPrice" class="form-control" />
-                                    <span asp-validation-for="UnitPrice" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Description" class="control-label"></label>
-                                    <input asp-for="Description" class="form-control" maxlength="30" />
-                                    <span asp-validation-for="Description" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Picture" class="control-label"></label>
-                                    <input asp-for="Picture" class="form-control" readonly />
-                                    <span asp-validation-for="Picture" class="text-danger"></span>
-                                </div>
-                                <br />
-                                <div class="form-group">
-                                    <input type="submit" style="color:blue" value="修改" class="btn btn-light" />
-                                    <a class="abutton" style="color:gray" asp-action="Index">取消</a>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -66,11 +80,11 @@
 
 
 
-<style>
-    .abutton {
-        text-decoration: none
-    }
-</style>
+@*<style>
+        .abutton {
+            text-decoration: none
+        }
+    </style>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

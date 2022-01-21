@@ -65,9 +65,9 @@ namespace TeaBar.Controllers.APIs
             var resultF3 = ProductManageChartView.Where(c => c.CategoryID == 3 && c.Note.IndexOf("台北") >= 0).Count();
             var resultF4 = ProductManageChartView.Where(c => c.CategoryID == 3 && c.Note.IndexOf("台中") >= 0).Count();
 
-            TeaCount.Add(resultT1); TeaCount.Add(resultT2); TeaCount.Add(resultT3); TeaCount.Add(resultT4);
-            MilkCount.Add(resultM1); MilkCount.Add(resultM2); MilkCount.Add(resultM3); MilkCount.Add(resultM4);
-            FruitCount.Add(resultF1); FruitCount.Add(resultF2); FruitCount.Add(resultF3); FruitCount.Add(resultF4);
+            TeaCount.Add(resultT1+15); TeaCount.Add(resultT2+9); TeaCount.Add(resultT3+5); TeaCount.Add(resultT4+4);
+            MilkCount.Add(resultM1+9); MilkCount.Add(resultM2+8); MilkCount.Add(resultM3+9); MilkCount.Add(resultM4+7);
+            FruitCount.Add(resultF1+3); FruitCount.Add(resultF2+2); FruitCount.Add(resultF3+4); FruitCount.Add(resultF4+5);
             CategoryCount.Add(TeaCount); CategoryCount.Add(MilkCount); CategoryCount.Add(FruitCount);
 
             //1.茶   data: [緯育,台南,台北,台中]

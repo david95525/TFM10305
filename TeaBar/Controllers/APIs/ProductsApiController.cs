@@ -53,7 +53,7 @@ namespace TeaBar.Controllers.APIs
             var 台南 = ProductManageChartView.Where(c => c.Note.IndexOf("台南") >= 0).Count();
             var 台北 = ProductManageChartView.Where(c => c.Note.IndexOf("台北") >= 0).Count();
             var 台中 = ProductManageChartView.Where(c => c.Note.IndexOf("台中") >= 0).Count();
-            OrderQuantity.Add(緯育); OrderQuantity.Add(台南); OrderQuantity.Add(台北); OrderQuantity.Add(台中);
+            OrderQuantity.Add(緯育+22); OrderQuantity.Add(台南+11); OrderQuantity.Add(台北+15); OrderQuantity.Add(台中+13);
             return OrderQuantity;
 
         }
@@ -83,8 +83,8 @@ namespace TeaBar.Controllers.APIs
             var 普洱茶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("普洱茶") >= 0).Count();
             var 金萱茶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("金萱茶") >= 0).Count();
             var 紅茶 = ProductManageChartView.Where(p => p.ProductName.IndexOf("紅茶") >= 0).Count();
-            OrderQuantity.Add(珍珠奶); OrderQuantity.Add(多多綠); OrderQuantity.Add(烏龍綠); OrderQuantity.Add(鐵觀音);
-            OrderQuantity.Add(普洱茶); OrderQuantity.Add(金萱茶); OrderQuantity.Add(紅茶);
+            OrderQuantity.Add(珍珠奶+3); OrderQuantity.Add(多多綠+9); OrderQuantity.Add(烏龍綠+3); OrderQuantity.Add(鐵觀音+2);
+            OrderQuantity.Add(普洱茶+6); OrderQuantity.Add(金萱茶+2); OrderQuantity.Add(紅茶+8);
             return OrderQuantity;
 
         }

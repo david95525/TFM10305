@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "新增商品資料";
+    ViewData["Title"] = "新增畫面";
 }
 
 <script>
@@ -12,10 +12,16 @@
     );
 </script>
 
+<style>
+    .modal-backdrop {
+        background-color: rgb(160, 82, 5);
+    }
+</style>
+
 <!-- Modal -->
 <fieldset id="新增畫面">
-    <div class="modal fade" id="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
+    <div class="modal fade border border-5 border-success" id="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">新增畫面</h5>
@@ -28,31 +34,31 @@
                             @*enctype="multipart/form-data"才抓得到照片*@
                             <form enctype="multipart/form-data" action="~/ProductManage/upload" method="post">
                                 <div>
-                                    <label class="form-label">商品名稱</label>
+                                    <label class="form-label">商品名稱:</label>
                                     <input class="form-control" type="text" required name="ProductName" />
                                 </div>
                                 <div>
-                                    <label class="form-label">種類</label>
+                                    <label class="form-label">商品種類:</label>
                                     <select class="form-select" name="CategoryID" id="">
                                         <option v-for="item in categories" :value="item.categoryID">{{item.categoryName}}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="form-label">價格</label>
+                                    <label class="form-label">商品價格:</label>
                                     <input class="form-control" required name="UnitPrice" id="">
                                 </div>
                                 <div>
-                                    <label class="form-label">介紹</label>
+                                    <label class="form-label">商品介紹:</label>
                                     <textarea class="form-control" required name="Description" id="" maxlength="30" cols="30" rows="10"></textarea>
                                 </div>
                                 <div>
-                                    <label class="form-label">選擇圖片</label>
+                                    <label class="form-label">選擇圖片:</label>
                                     <input class="form-control" type="file" name="Picture" id="inp1" value="選擇圖片" />
                                 </div>
                                 <br />
                                 <div class="modal-footer">
-                                    <button class="btn-primary">新增</button>
-                                    <input type="button" onclick="javascript:location.href='Index'" value="回上一頁" />
+                                    <button class="btn btn-light rounded-pill position-absolute bottom-0 start-50 ">確定新增</button>
+                                    <input class="btn btn-dark  rounded-pill position-absolute bottom-0 end-0" type="button" onclick="javascript:location.href='Index'" value="取消新增" />
                                 </div>
                                 <br />
                             </form>
