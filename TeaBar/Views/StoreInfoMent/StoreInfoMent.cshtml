@@ -3,46 +3,42 @@
     ViewData["Title"] = "門市資訊";
 }
 
-<fieldset id="stores">
-    <legend>@ViewData["Title"]</legend>
+<fieldset id="stores">    
     <!--區塊上層-->
     <!--查詢結果輸出-->
-    <fieldset>
+    <div class="profile rounded container p-4">
+        <h4 class="fs-5 font-weight-bold mb-5">@ViewData["Title"]</h4>
         <form>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--Email-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpEmail" class="form-label">Email</label>
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control form-control-sm" id="InpEmail" v-model="storeData.Email" disabled>
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--門市-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpStoreName" class="form-label">門市</label>
                 </div>
                 <div class="form-outline col-auto mr-4">
                     <input type="text" class="form-control form-control-sm" id="InpStoreName" v-model="storeData.StoreName">
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--電話-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpStorePhone" class="form-label">電話</label>
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control form-control-sm" id="InpStorePhone" v-model="storeData.StorePhone">
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--地址-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-5">
+                <div class="col-1 p-0">
                     <label for="InpAddress" class="form-label">地址</label>
                 </div>
                 <div class="col-auto">
@@ -55,18 +51,19 @@
                         <!--鄉鎮區選單-->
                     </select>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <input type="text" class="form-control form-control-sm" id="InpStoreAddress" v-model="storeData.StoreAddress">
                 </div>
             </div>
-            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
         </form>
-    </fieldset>
-    <!--查詢結果輸出-->
-    <!--觸發修改作業按鈕-->
-    <div>
-        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveDialog">儲存修改</button>
+        <!--觸發修改作業按鈕-->
+        <div>
+            <button type="submit" class="btn btn-light float-right" data-bs-toggle="modal" data-bs-target="#saveDialog">儲存修改</button>
+        </div>
+
     </div>
+    <!--查詢結果輸出-->
+    
 
     <!--確認儲存資料 對話盒-->
     <div class="modal fade" id="saveDialog" tabindex="-1" aria-labelledby="saveDialogLabel" aria-hidden="true">
@@ -78,8 +75,8 @@
                 </div>
                 <div class="modal-body">是否確定變更門市資料？</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" v-on:click="saveStoreInfo">儲存變更</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-light" v-on:click="saveStoreInfo">儲存變更</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>
@@ -95,7 +92,7 @@
                 </div>
                 <div class="modal-body">門市資料已更新</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">確認</button>
                 </div>
             </div>
         </div>
