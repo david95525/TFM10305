@@ -4,32 +4,31 @@
 }
 
 <fieldset id="ManagerRegister">
-    <legend>@ViewData["Title"]</legend>
-    <fieldset>
-        <form method="post" action="taebarManagerRegister">
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+
+    <div class="manageprofile rounded container p-4">
+        <h4 class="fs-5 font-weight-bold mb-5">@ViewData["Title"]</h4>
+
+        <form method="post" action="taebarManagerRegister">           
             <!--Email-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-2 p-0">
                     <label for="InpEmail" class="form-label">Email</label>
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control form-control-sm" id="InpEmail" name="Email" required>
                 </div>
-            </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            </div>            
             <!--密碼-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-5">
+                <div class="col-2 p-0">
                     <label for="InpPassword" class="form-label">密碼</label>
                 </div>
                 <div class="col-auto">
-                    <input type="password" class="form-control form-control-sm" id="InpPassword" name="PasswordHash">
+                    <input type="password" class="form-control form-control-sm" id="InpPassword" name="PasswordHash" required>
                 </div>
-            </div>
-            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+            </div>            
 
-            <button type="submit" class="btn btn-primary">註冊</button>
+            <button type="submit" class="btn btn-light float-right"><i class="far fa-address-card"></i> 註冊</button>
         </form>
-    </fieldset>
+    </div>
 </fieldset>
