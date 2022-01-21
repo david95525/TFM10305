@@ -27,23 +27,29 @@ namespace TeaBar.Controllers.APIs
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             List<Orders> orders = _dbContext.Orders.Where(o => o.UserID == id).OrderByDescending(o => o.OrderDate).ToList<Orders>();
             List<HistoryOrdersViewModel> data = new List<HistoryOrdersViewModel>();
-
-            foreach (Orders item in orders)
+            
+            if (orders == null)
             {
-                var od = _dbContext.OrderDetails.Where(od => od.OrderID == item.OrderID).FirstOrDefault();
-                var p = _dbContext.Products.Where(p => p.ProductID == od.ProductID).FirstOrDefault();
-                var c = _dbContext.Categories.Where(c => c.CategoryID == p.CategoryID).FirstOrDefault();
-                var s = _dbContext.Stores.Where(s => s.StoreID == c.StoreID).FirstOrDefault();
-                var storename = s.StoreName;
-                var historyOrders = new HistoryOrdersViewModel
-                {
-                    OrderID = item.OrderID,
-                    OrderDate = item.OrderDate,
-                    StoreName = storename
-                };
-                data.Add(historyOrders);
+                return data = null;
             }
-
+            else
+            {
+                foreach (Orders item in orders)
+                {
+                    var od = _dbContext.OrderDetails.Where(od => od.OrderID == item.OrderID).FirstOrDefault();
+                    var p = _dbContext.Products.Where(p => p.ProductID == od.ProductID).FirstOrDefault();
+                    var c = _dbContext.Categories.Where(c => c.CategoryID == p.CategoryID).FirstOrDefault();
+                    var s = _dbContext.Stores.Where(s => s.StoreID == c.StoreID).FirstOrDefault();
+                    var storename = s.StoreName;
+                    var historyOrders = new HistoryOrdersViewModel
+                    {
+                        OrderID = item.OrderID,
+                        OrderDate = item.OrderDate,
+                        StoreName = storename
+                    };
+                    data.Add(historyOrders);
+                }
+            }
             return data;
         }
 
