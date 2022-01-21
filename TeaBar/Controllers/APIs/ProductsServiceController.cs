@@ -10,7 +10,6 @@ using TeaBar.Models;
 
 namespace TeaBar.Controllers.APIs
 {
-    [Authorize(Roles = "Manager")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsServiceController : ControllerBase

@@ -10,8 +10,7 @@ using TeaBar.Models;
 using TeaBar.Models.ViewModels;
 
 namespace TeaBar.Controllers.APIs
-{
-    [Authorize]
+{   
     [Route("api/[controller]")]
     [ApiController]
     public class OrderProductsServiceController : ControllerBase
