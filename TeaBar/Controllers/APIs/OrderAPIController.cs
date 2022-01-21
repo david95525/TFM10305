@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using TeaBar.Models;
 
 namespace TeaBar.Controllers
 {
+    [Authorize]
     public class OrderAPIController : ControllerBase
     {
         private readonly ApplicationDbContext _db;

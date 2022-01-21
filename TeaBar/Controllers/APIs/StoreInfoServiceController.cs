@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using TeaBar.Models.ViewModels;
 
 namespace TeaBar.Controllers.APIs
 {
+    [Authorize(Roles = "Admin")]
     public class StoreInfoServiceController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

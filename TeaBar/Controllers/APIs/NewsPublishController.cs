@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace TeaBar.Controllers.APIs
             this._dbContext = _dbContext;
         }
 
-
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public string SaveNews([FromBody]News data)     //儲存公告發佈內容
         {
