@@ -96,25 +96,24 @@
                     function (err) {
                     console.log(err.responseText);
                     });
-
-        },
-        methods: {
-
-            ToOrderhistory: function () {
-
-                $.ajax({
+            $.ajax({
                 url:"@Url.Action("DeleteCart", "OrderAPI")",
                 type:"GET",
                 contentType: "application/json"
             }).done(
                 function (Message) {
                     console.log(Message.Msg);
-                    location.href = "@Url.Action("OrdersHistory", "Members")";
+
                 }).fail(
                     function (err) {
                     console.log(err.responseText);
                     });
 
+        },
+        methods: {
+
+            ToOrderhistory: function () {
+                       location.href = "@Url.Action("OrdersHistory", "Members")";
             }
         }
     });
