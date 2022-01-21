@@ -115,15 +115,15 @@
     <div class="container">
         <div class="row" id="stepnumber">
             <div class="col">
-                <h4>訂單明細</h4>
+                <h4>取餐與訂單內容</h4>
                 <div id="circleone"><p id="number">1</p></div>
             </div>
             <div class="col ">
-                <h4>選擇付款</h4>
+                <h4>取餐人資訊</h4>
                 <div id="circletwo"><p id="number">2</p></div>
             </div>
             <div class="col ">
-                <h4>確認結帳</h4>
+                <h4>確認訂單資訊</h4>
                 <div id="circlethree"><p id="number">3</p></div>
             </div>
         </div>
@@ -194,9 +194,6 @@
 
                                         <input type="text" class="form-control" placeholder="公司/地標/樓層" id="addressdesc" v-model="shipData.desc">
                                     </div>
-                                </div>
-                                <div class="input-group">
-                                    <button class="btn btn-primary" v-on:click="How(2)">確定</button>
                                 </div>
                             </div>
                         </div>
@@ -429,13 +426,11 @@
                             <option v-for="st in sugarlist">{{st}}</option>
                         </select>
                     </div>
-                    <div class="input-group mb-3">
+                    <div class="row d-flex align-items-center">
                         <label class="input-group-text" for="ingredient">加料(複選)</label>
-                        <div class="btn-group " role="group">
-                            <span v-for="ing in inglist">
+                        <div class="btn-group col-2 mr-1 btn-size " role="group" v-for="ing in inglist">                          
                                 <input type="checkbox" class="btn-check d-none" :id="ing" autocomplete="off" v-model="Ingredient" :value="ing">
-                                <label class="btn btn-outline-dark btnCategory" :for="ing">{{ing}}</label>
-                            </span>
+                                <label class="btn btn-outline-secondary rounded mt-auto mb-auto" :for="ing">{{ing}}</label>         
                         </div>
                     </div>
                     <div class="input-group mb-3">
@@ -810,6 +805,7 @@
             //#region 取餐方式
             How: function (status) {
                 if (status === 0) {
+                    $('#delivery').hide();
                     //顯示與否
                     app.isTakeout = true;
                     app.isDelivery = false;
@@ -820,10 +816,7 @@
                     app.isTakeout = false;
                     app.isDelivery = true;
 
-                } else if (status === 2) {
-                    //去掉按鈕
-                    $('#delivery').hide();
-                }
+                } 
             },
             //#endregion
             //#region 縣市變動

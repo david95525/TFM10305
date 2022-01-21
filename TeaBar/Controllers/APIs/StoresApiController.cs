@@ -26,8 +26,8 @@ namespace TeaBar.Controllers.APIs
         [Produces("application/json")]
         public List<string> GetStoreName() //取得分店店名
         {
-            var result = _context.Stores                
-                .Select(s => s.StoreName).Distinct().ToList();            
+            var result = _context.Stores
+                .Select(s => s.StoreName).OrderByDescending(s => s).ToList();                
             return result;
         }
 

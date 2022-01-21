@@ -88,7 +88,8 @@ namespace TeaBar.Controllers.APIs
                     {
                         carts.Add(cart);
                     }
-                    else if (temp.Ingredient != cart.Ingredient)
+                    else if (temp.Ingredient != cart.Ingredient||temp.Ice!=cart.Ice
+                        ||temp.Size!=cart.Size||temp.Sweetness!=cart.Sweetness)
                     {
                         carts.Add(cart);
                     }
