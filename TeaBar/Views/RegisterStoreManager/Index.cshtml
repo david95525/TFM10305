@@ -4,53 +4,49 @@
 }
 
 <fieldset id="storeManagerRegister">
-    <legend>@ViewData["Title"]</legend>
-    <fieldset>
+    
+    <div class="adminprofile rounded container p-4">
         <form method="post" action="storeManagerRegister">
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
-            <!--姓名-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
-                    <label for="InpStoreName" class="form-label">門市名稱</label>
+            <h4 class="fs-5 font-weight-bold mb-5">@ViewData["Title"]</h4>
+            <!--門市名稱-->
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
+                    <label for="InpStoreName" class="form-label">門市名</label>
                 </div>
                 <div class="col-auto">
                     <input type="text" class="form-control form-control-sm" id="InpStoreName" name="StoreName" required>
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--Email-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpEmail" class="form-label">Email</label>
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control form-control-sm" id="InpEmail" name="Email" required>
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--密碼-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpPassword" class="form-label">密碼</label>
                 </div>
                 <div class="col-auto">
                     <input type="password" class="form-control form-control-sm" id="InpPassword" name="Password" maxlength="30" required>
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--電話-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-4">
+                <div class="col-1 p-0">
                     <label for="InpStorePhone" class="form-label">電話</label>
                 </div>
                 <div class="col-auto">
                     <input type="text" class="form-control form-control-sm" id="InpStorePhone" name="StorePhone" maxlength="10">
                 </div>
             </div>
-            <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <!--地址-->
-            <div class="row g-3 align-items-center">
-                <div class="col-1">
+            <div class="row align-items-center m-2 mb-5">
+                <div class="col-1 p-0">
                     <label for="InpAddress" class="form-label">地址</label>
                 </div>
                 <div class="col-auto">
@@ -67,13 +63,12 @@
                     <input type="text" class="form-control form-control-sm" id="InpAddress" name="StoreAddress">
                 </div>
             </div>
-            <div style="height:50px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
 
-            <button type="submit" class="btn btn-primary">註冊</button>
+            <button type="submit" class="btn btn-light float-right"><i class="far fa-address-card"></i> 註冊</button>
 
         </form>
 
-    </fieldset>
+    </div>
 </fieldset>
 
 <script>
