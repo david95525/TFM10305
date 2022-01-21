@@ -69,19 +69,13 @@ namespace TeaBar.Controllers
                 Msg ="cookie刪除",
                 Now = DateTime.Now
             };
-            if (carts!=null)
+            if (carts.Count!=0)
             {
                 string userName = HttpContext.Session.GetString("username");
                 try
                 {
                     string jsonstring = Newtonsoft.Json.JsonConvert.SerializeObject(carts);
-                    #region 存cookie
-                    //CookieOptions option = new CookieOptions();
-                    //option.Expires = DateTime.Now.AddDays(5);
-                    //HttpContext.Response.Cookies.Append(Resources.cartcookie, jsonstring, option);
-                    //msg.Msg = "成功存入cookie";
 
-                    #endregion
                     #region 存session
                     HttpContext.Session.SetString(userName, jsonstring);
                     msg.Msg = "成功存入session";
@@ -95,7 +89,11 @@ namespace TeaBar.Controllers
                 }
 
             }
-            
+            else
+            {
+                string userName = HttpContext.Session.GetString("username");
+                HttpContext.Session.Remove(userName);
+            }          
             return msg;
         }
         #endregion
@@ -115,16 +113,6 @@ namespace TeaBar.Controllers
                     return data;
                 }
                 #endregion
-            
-
-                #region 讀cookie
-                //if (HttpContext.Request.Cookies[username] != null)
-                //{
-                //    string jsonstring = HttpContext.Request.Cookies[username];             
-                //      List <CartViewModel> data = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartViewModel>>(jsonstring);
-                //    return data;
-                //}
-                #endregion
 
                 return null;
         }
@@ -142,11 +130,11 @@ namespace TeaBar.Controllers
                 Now = DateTime.Now
             };
             string username = HttpContext.Session.GetString("username");
-            //if (HttpContext.Request.Cookies[username] != null)
+     
             if (HttpContext.Session.Keys.Contains(username))
             {
                 #region 讀cart
-                //string Carts = HttpContext.Request.Cookies[username];
+       
                 string Carts = HttpContext.Session.GetString(username);
                 List<CartViewModel> carts = Newtonsoft.Json.JsonConvert.
                     DeserializeObject<List<CartViewModel>>(Carts);
