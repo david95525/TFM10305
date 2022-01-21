@@ -290,6 +290,7 @@ li:hover{
     height: 400px;
     background-color: #f3f3f3;
 }
+
 #memberPWD {
     min-height:350px;
 }
@@ -300,4 +301,18 @@ li:hover{
 }
 .td-img-width {
     width:80px;
+}
+
+/*register*/
+.manageprofile {
+    max-width: 400px;
+    margin: 25px auto;
+    height: 300px;
+    background-color: #f3f3f3;
+}
+.adminprofile {
+    max-width: 650px;
+    margin: 25px auto;
+    height: 480px;
+    background-color: #f3f3f3;
 }
