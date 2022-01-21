@@ -52,8 +52,13 @@
                                     <textarea class="form-control" required name="Description" id="" maxlength="30" cols="30" rows="10"></textarea>
                                 </div>
                                 <div>
-                                    <label class="form-label">選擇圖片:</label>
-                                    <input class="form-control" type="file" name="Picture" id="inp1" value="選擇圖片" />
+                                    <label class="form-label">商品圖片:</label>
+                                    @*<input class="form-control" type="file" name="Picture" id="inp1" value="選擇圖片" />*@
+                                    <input class="form-control" id="showPic" type="image" src="~/images/tea.jpg" alt="~/images/tea.jpg" name="Picture" style="width:300px;height:300px;" disabled="disabled"/>
+                                    <label class="btn btn-secondary" style="margin-top: 5px; height: 40px">
+                                        <input name="Picture" id="uploadImg" v-on:change="ChangePic" style="display:none;" type="file" accept="image/png, image/jpeg, image/gif, image/jpg" required >
+                                        選擇圖片
+                                    </label>
                                 </div>
                                 <br />
                                 <div class="modal-footer">
@@ -61,6 +66,7 @@
                                     <input class="btn btn-dark  rounded-pill position-absolute bottom-0 end-0" type="button" onclick="javascript:location.href='Index'" value="取消新增" />
                                 </div>
                                 <br />
+                                
                             </form>
                         </div>
                     </div>
@@ -93,6 +99,23 @@
                         }//逐一push進data:categories
                     });//.then(function (dataJson)
             },//mounted
+            methods: {
+                ChangePic: function () {
+
+                    var reads = new FileReader();
+
+                    f = document.getElementById('uploadImg').files[0];
+
+                    reads.readAsDataURL(f);
+
+                    reads.onload = function (e) {
+
+                        document.getElementById('showPic').src = this.result;
+
+                    };
+                },
+            }
+
         }
     );
 </script>
