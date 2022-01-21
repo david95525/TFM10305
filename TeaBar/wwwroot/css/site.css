@@ -273,6 +273,12 @@ li:hover{
     width:50%;
 
 }
+.title-style {
+    max-width:200px;
+    background:#7fad39;
+    color:#fff;
+    margin:0 auto;
+}
 /*memberpassword*/
 .password {
     max-width: 400px;

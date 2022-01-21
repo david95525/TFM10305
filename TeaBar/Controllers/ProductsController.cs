@@ -26,10 +26,10 @@ namespace TeaBar.Controllers
             return View();
         }
 
-        public string GetSession() //測試讀取session
-        {
-            var data = HttpContext.Session.GetString("userName");
-            return data;
-        }
+        //public string GetSession() //測試讀取session
+        //{
+        //    var data = HttpContext.Session.GetString("userName");
+        //    return data;
+        //}
     }
 }

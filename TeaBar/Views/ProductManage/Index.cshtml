@@ -26,8 +26,8 @@
                 <p class="card-text">商品價格:{{item.unitPrice}}</p>
                 <p class="card-text" style="height:60px"><small class="text-muted">商品介紹:{{item.description}}</small></p>
                 @*修改刪除鈕*@
-                <a class="abutton" style="color:blue" text-decoration: none :href="'/ProductManage/Edit/' + item.productID">修改</a>
-                <a class="abutton" style="color:red" :href="'/ProductManage/Delete/' + item.productID">刪除</a>
+                <a class="abutton btn btn-primary rounded-pill" style="color:linen"  :href="'/ProductManage/Edit/' + item.productID" text-decoration: none>修改</a>
+                <a class="abutton btn btn-danger rounded-pill" style="color:honeydew" :href="'/ProductManage/Delete/' + item.productID">刪除</a>
             </div>
         </div>
     </div>

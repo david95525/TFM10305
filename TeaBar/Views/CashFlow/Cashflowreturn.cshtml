@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" v-on:click="ToOrderhistory">查看訂單</button>
+            <button class="btn btn-light" v-on:click="ToOrderhistory">查看訂單</button>
         </div>
     }
 }
@@ -96,25 +96,24 @@
                     function (err) {
                     console.log(err.responseText);
                     });
-
-        },
-        methods: {
-
-            ToOrderhistory: function () {
-
-                $.ajax({
+            $.ajax({
                 url:"@Url.Action("DeleteCart", "OrderAPI")",
                 type:"GET",
                 contentType: "application/json"
             }).done(
                 function (Message) {
                     console.log(Message.Msg);
-                    location.href = "@Url.Action("OrdersHistory", "Members")";
+
                 }).fail(
                     function (err) {
                     console.log(err.responseText);
                     });
 
+        },
+        methods: {
+
+            ToOrderhistory: function () {
+                       location.href = "@Url.Action("OrdersHistory", "Members")";
             }
         }
     });
