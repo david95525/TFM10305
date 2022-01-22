@@ -3,8 +3,9 @@
     ViewData["Title"] = "會員註冊";
 }
 
-<fieldset id="memberRegister">
-    <legend>@ViewData["Title"]</legend>
+<fieldset id="memberRegister" class="p-4 rounded">
+    <h4 class="font-weight-bold text-center">@ViewData["Title"]</h4>
+    <hr />
     <fieldset>
         <form method="post" action="RegisterMember/memberRegister">
             <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
@@ -100,7 +101,7 @@
             </div>
             <div style="height:30px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
             <div>
-                <button type="submit" class="btn btn-primary"><i class="far fa-address-card"></i> 提交</button>
+                <button type="submit" class="btn btn-light float-right"><i class="far fa-address-card"></i> 提交</button>
             </div>
         </form>
     </fieldset>

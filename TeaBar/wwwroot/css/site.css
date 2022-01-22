@@ -322,3 +322,17 @@ li:hover{
     height: 480px;
     background-color: #f3f3f3;
 }
+/*login*/
+.login {
+    max-width: 500px;
+    margin: 25px auto;
+    height: 640px;
+    background-color: #f3f3f3;
+}
+/*member register*/
+#memberRegister {
+    max-width: 700px;
+    margin: 25px auto;
+    height: 600px;
+    background-color: #f3f3f3;
+}
