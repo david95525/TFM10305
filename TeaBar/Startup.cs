@@ -70,7 +70,7 @@ namespace TeaBar
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 //options.Cookie.SameSite = SameSiteMode.None;
                 options.LoginPath = "/Identity/Account/Login"; //�n�J��
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";//�n�XAction
