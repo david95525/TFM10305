@@ -56,13 +56,13 @@
 
 <script>
 
-        if (location.href.indexOf('#reloaded') == -1)
+        if (location.href.indexOf('#reloaded') ==-1)
         {
                     $.ajax({
                     url: "@Url.Action("Saveorder","OrderAPI")",
                     type: "GET"
-                }).done(function (msg) {
-
+                    }).done(function (msg) {
+                        console.log(msg);
                 }).fail(function (err) {
                     alert(err.responseText);
             });
@@ -85,8 +85,8 @@
                 contentType: "application/json"
             }).done(
                 function (data) {
-
                     app.ordersData = data;
+                    console.log(app.ordersData);
                     for (let i = 0; i < app.ordersData.length; i++) {
                         app.total = app.total + app.ordersData[i].subtotal;
                     }

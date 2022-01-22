@@ -41,17 +41,8 @@ namespace TeaBar.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-            //記錄登陸狀態cookie
 
-            //if (HttpContext.Request.Cookies[".AspNetCore.Identity.Application"] != null)
-            //{
-            //    string cookievalue = HttpContext.Request.Cookies[".AspNetCore.Identity.Application"];
-            //    string cookiename = ".AspNetCore.Identity.Application";
-            //    HttpContext.Session.SetString("identitycookvalue", cookievalue);
-            //    HttpContext.Session.SetString("identitycookiename", cookiename);
-            //}
             string userName = User.Identity.Name;
-            //if (HttpContext.Request.Cookies[userName] != null)
             if(HttpContext.Session.Keys.Contains(userName))
             {
                 
