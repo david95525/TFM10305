@@ -56,67 +56,70 @@
 
 <script>
 
-        if (location.href.indexOf('#reloaded') ==-1)
-        {
-                    $.ajax({
+
+    if (location.href.indexOf('#reloaded') == -1) {
+          $.ajax({
                     url: "@Url.Action("Saveorder","OrderAPI")",
                     type: "GET"
-                    }).done(function (msg) {
-                        console.log(msg);
+                }).done(function (msg) {
+                    console.log(msg);
                 }).fail(function (err) {
                     alert(err.responseText);
-            });
-            location.href = location.href + "#reloaded";
-            location.reload();
-        }
+                });
+        location.href = location.href + "#reloaded";
+        location.reload();
+    } else {
+        var app = new Vue({
+            el: '#result',
+            data: {
+                ordersData: [],
+                total: 0,
+                isShow: false
+            },
+            mounted() {
 
-    var app = new Vue({
-        el: '#result',
-        data: {
-            ordersData: [],
-            total: 0,
-            isShow:false
-        },
-        mounted() {
 
-            $.ajax({
-                url:"@Url.Action("Readcart", "OrderAPI")",
-                type:"GET",
-                contentType: "application/json"
-            }).done(
-                function (data) {
-                    app.ordersData = data;
-                    console.log(app.ordersData);
-                    for (let i = 0; i < app.ordersData.length; i++) {
-                        app.total = app.total + app.ordersData[i].subtotal;
-                    }
-                    app.total = Math.round(app.total * app.ordersData[0].discount);
-                   app.isShow = true;
-                }).fail(
-                    function (err) {
-                    console.log(err.responseText);
-                    });
-            $.ajax({
-                url:"@Url.Action("DeleteCart", "OrderAPI")",
-                type:"GET",
-                contentType: "application/json"
-            }).done(
-                function (Message) {
-                    console.log(Message.Msg);
 
-                }).fail(
-                    function (err) {
-                    console.log(err.responseText);
-                    });
 
-        },
-        methods: {
+                $.ajax({
+                    url: "@Url.Action("Readcart", "OrderAPI")",
+                    type: "GET",
+                    contentType: "application/json"
+                }).done(
+                    function (data) {
+                        app.ordersData = data;
+                        console.log(app.ordersData);
+                        for (let i = 0; i < app.ordersData.length; i++) {
+                            app.total = app.total + app.ordersData[i].subtotal;
+                        }
+                        app.total = Math.round(app.total * app.ordersData[0].discount);
+                        app.isShow = true;
+                    }).fail(
+                        function (err) {
+                            console.log(err.responseText);
+                        });
+                $.ajax({
+                    url: "@Url.Action("DeleteCart", "OrderAPI")",
+                    type: "GET",
+                    contentType: "application/json"
+                }).done(
+                    function (Message) {
+                        console.log(Message.Msg);
 
-            ToOrderhistory: function () {
-                       location.href = "@Url.Action("OrdersHistory", "Members")";
+                    }).fail(
+                        function (err) {
+                            console.log(err.responseText);
+                        });
+
+            },
+            methods: {
+
+                ToOrderhistory: function () {
+                    location.href = "@Url.Action("OrdersHistory", "Members")";
+                }
             }
-        }
-    });
+        });
+    }
 </script>
 
 

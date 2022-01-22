@@ -48,8 +48,9 @@ namespace TeaBar.Controllers
                 
                 string cartstring = HttpContext.Session.GetString(userName);
                 List<CartViewModel> carts = JsonConvert.DeserializeObject<List<CartViewModel>>(cartstring);
+                DateTimeOffset taipeiStandardTimeOffset = DateTimeOffset.Now.ToOffset(new TimeSpan(8, 0, 0));
                 //決定orderid
-                string orderid = DateTime.Now.ToString("MMddHHmmssyyyy");
+                string orderid = taipeiStandardTimeOffset.ToString("MMddHHmmssyyyy");
                 //隨機抽取其中的商品id來隨機價入當orderid
                 Random oid = new Random();
               int index=  oid.Next(0, carts.Count - 1);
@@ -79,9 +80,9 @@ namespace TeaBar.Controllers
             MerchantID = "MS129744283",
             HashKey = "OPvfUPvr2OcBgHGkVcOun9QO2iXxhVjJ",
             HashIV = "ChERSoTztRqSljjP",
-            ReturnURL = webstring + "/CashFlow/CashflowreturnAsync",
+            ReturnURL = webstring + "/CashFlow/Cashflowreturn",
             NotifyURL = null,
-            CustomerURL = webstring + "/CashFlow/CashflowcustomerAsync",
+            CustomerURL = webstring + "/CashFlow/Cashflowcustomer",
             AuthUrl = "https://ccore.spgateway.com/MPG/mpg_gateway",
             CloseUrl = "https://core.newebpay.com/API/CreditCard/Close"
         };
@@ -229,7 +230,7 @@ namespace TeaBar.Controllers
         /// [智付通]金流介接(結果: 支付完成 返回商店網址)
         /// </summary>
         [HttpPost]
-        public IActionResult CashflowreturnAsync()
+        public IActionResult Cashflowreturn()
         {
 
             HttpContext.Request.LogFormData("Cashflowreturn(支付完成)");
@@ -267,7 +268,7 @@ namespace TeaBar.Controllers
         #region ATM返回商店
         ///Atm轉帳
         [HttpPost]
-        public IActionResult CashflowcustomerAsync()
+        public IActionResult Cashflowcustomer()
 
         {
             Request.LogFormData("Cashflowcustomer(資料回傳)");
@@ -295,7 +296,7 @@ namespace TeaBar.Controllers
                     (decryptTradeCollection.AllKeys.ToDictionary(k => k, k => decryptTradeCollection[k]));
         
                 ViewBag.result = convertModel;
-                return View("CashflowreturnAsync");
+                return View("Cashflowreturn");
             }
             else
             {
