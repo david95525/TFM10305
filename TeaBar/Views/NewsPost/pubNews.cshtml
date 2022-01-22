@@ -3,10 +3,14 @@
     ViewData["Title"] = "發佈最新消息";
 }
 
+<style>
+    body {
+        background: url("/images/bg1.jpg") 100% 100%;
+    }
+</style>
 <fieldset id="news">
-    <legend>@ViewData["Title"]</legend>
+    <legend class="fs-4 font-weight-bold mt-4 mb-4 ">@ViewData["Title"]</legend>
     <form>
-        <div style="height:20px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
         <h5 for="InpTopic" class="form-label">標題</h5>
         <input type="text" class="form-control form-control-lg" id="InpTopic" v-model:text="news.topic">
         <div style="height:10px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
@@ -18,7 +22,7 @@
     </form>
 
     <div>
-        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsDialog">發布公告</button>
+        <button type="submit" class="btn btn-light float-right" data-bs-toggle="modal" data-bs-target="#addNewsDialog">發布公告</button>
     </div>
 
     <!--確認發佈 對話盒-->
@@ -34,7 +38,7 @@
                     <p style="display:inline;font-size:large;">確定發佈？</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" v-on:click="newsPost">發佈</button>
+                    <button type="button" class="btn btn-danger" v-on:click="newsPost">發佈</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                 </div>
             </div>
@@ -53,7 +57,7 @@
                     <p style="display:inline;font-size:large;"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">確認</button>
                 </div>
             </div>
         </div>
