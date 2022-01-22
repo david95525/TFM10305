@@ -170,7 +170,9 @@
                         app.cart = app.cartsData.find(c => c.productId === pid);
                     },//刪除
                     deleteItem: function () {
-                        app.total = Math.round(app.total - app.cart.subtotal * app.cart.discount);
+                        app.origintotal = app.origintotal - app.cart.subtotal ;
+                        app.total = Math.round(app.origintotal * app.cart.discount);
+                        
                         let index = app.cartsData.indexOf(app.cart);
                         app.cartsData.splice(index, 1);
 
