@@ -79,9 +79,9 @@ namespace TeaBar.Controllers
             MerchantID = "MS129744283",
             HashKey = "OPvfUPvr2OcBgHGkVcOun9QO2iXxhVjJ",
             HashIV = "ChERSoTztRqSljjP",
-            ReturnURL = webstring + "/CashFlow/Cashflowreturn",
+            ReturnURL = webstring + "/CashFlow/CashflowreturnAsync",
             NotifyURL = null,
-            CustomerURL = webstring + "/CashFlow/Cashflowcustomer",
+            CustomerURL = webstring + "/CashFlow/CashflowcustomerAsync",
             AuthUrl = "https://ccore.spgateway.com/MPG/mpg_gateway",
             CloseUrl = "https://core.newebpay.com/API/CreditCard/Close"
         };
