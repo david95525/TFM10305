@@ -23,12 +23,11 @@
 <fieldset id="修改">
     <div class="modal fade border border-5 border-success" id="dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-            <div class="modal-content ">
+            <div class="modal-content">
                 <div class="modal-header ">
                     <h5 class="modal-title" id="staticBackdropLabel">修改商品畫面</h5>
                 </div>
-                <div class="row align-self-center">
-                    <div class="col-md-4" style="width:800px;">
+                <div class="modal-body">
                         <form asp-action="Edit">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <input type="hidden" asp-for="ProductID" />
@@ -38,7 +37,7 @@
                                 <span asp-validation-for="ProductName" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="CategoryID" class="control-label">商品種類</label>
+                                <label asp-for="CategoryID" class="control-label">商品種類:</label>
                                 <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.CategoryID"></select>
                                 <span asp-validation-for="CategoryID" class="text-danger"></span>
                             </div>
@@ -47,31 +46,26 @@
                                 <input asp-for="UnitPrice" class="form-control" />
                                 <span asp-validation-for="UnitPrice" class="text-danger"></span>
                             </div>
-                            <div class="form-group" style=" width:100px">
+                            <div class="form-group">
                                 <label asp-for="Description" class="control-label">商品介紹:</label>
-                                <input asp-for="Description" class="form-control" maxlength="30" style=" width:800px" />
+                                <input asp-for="Description" class="form-control" maxlength="30"/>
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                             <div class="form-group ">
-                                <label asp-for="Picture" class="control-label">圖片</label>
+                                <label asp-for="Picture" class="control-label">圖片:</label>
                                 @*readonly*@
                                 <input asp-for="Picture" class="form-control" style="display:none" />
                                 <span asp-validation-for="Picture" class="text-danger"></span>
                                 <img src="@Html.ViewData.Model.Picture" alt="..." style="width:auto;height:200px" />
                             </div>
-                            <br />  
-                            <div class=" ">
                                 <div class="form-group">
-                                    <input type="submit" class="btn btn-light rounded-pill position-absolute bottom-0 start-50" value="確定修改" />
-                                    <input type="button" class="btn btn-dark  rounded-pill position-absolute bottom-0 end-0"
+                                    <input type="submit" class="btn btn-light rounded-pill float-right" value="確定修改" />
+                                    <input type="button" class="btn btn-dark  rounded-pill float-right mr-2"
                                            onclick="javascript:location.href='/ProductManage/Index'" value="取消修改" />
                                     @*<a asp-action="Index" style="color:white" class="abutton btn-dark rounded-pill btn-addtocart align-self-end">取消修改</a>*@
                                 </div>
-                            </div>
                         </form>
-                    </div>
                 </div>
-
             </div>
         </div>
     </div>

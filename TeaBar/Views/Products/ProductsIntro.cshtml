@@ -184,7 +184,7 @@
                     this.distList = [];
                     this.storeList = [];
                     if (this.cityVal !== "default") {
-                        const qryServiceUrl = `/api/StoreService/${city}/dist`;
+                        const qryServiceUrl = `/api/StoreService/dist?city=${city}`;
                         axios(qryServiceUrl)
                             .then(response => { this.distList = response.data })
                             .catch(error => console.log(error));
@@ -197,7 +197,7 @@
                     //清空選項
                     this.storeList = [];
                     if (this.distVal !== "default") {
-                        const qryServiceUrl = `/api/StoreService/${dist}/store`;
+                        const qryServiceUrl = `/api/StoreService/store/${dist}`;
                         axios(qryServiceUrl)
                             .then(response => { this.storeList = response.data })
                             .catch(error => console.log(error));

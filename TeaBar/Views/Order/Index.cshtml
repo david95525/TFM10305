@@ -7,33 +7,32 @@
 
 <style>
 
-    #order {
-        background-color: bisque;
-    }
-
     #title {
         position: center;
     }
 
-    #toptable {
+/*    #toptable {
         width: 100%;
     }
-
-    #Toptable {
+*/
+   /* #Toptable {
         background-color: cadetblue
+    }*/
+    body {
+        background: url("/images/bg1.jpg") 100% 100%;
     }
 </style>
 
 
 
-<fieldset id="order">
+<fieldset id="order" class="p-3">
     <div>
         <div id="app">
 
-            <div style="background-color:lavender">總共{{quantity}}筆訂單</div>
+            <div style="background-color:lavender" class="p-2">總共 <span class="font-weight-bold">{{quantity}}</span> 筆訂單</div>
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="#">訂單管理系統</a>
+                <h4 class="navbar-brand font-weight-bold fs-4">訂單管理系統</h4>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -53,13 +52,13 @@
                     <form class="form-inline my-2 my-lg-0">
                         <div>
                             <input class="form-control mr-sm-2" placeholder="search" v-model="search" v-on:keyup.enter="Search($event)">
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="button" v-on:click="Search($event)">訂單搜尋</button>
+                            <button class="btn btn-light my-2 my-sm-0" type="button" v-on:click="Search($event)">訂單搜尋</button>
                         </div>
                     </form>
                 </div>
             </nav>
 
-            <table id="toptable" class="w3-table-all w3-hoverable">
+            <table id="toptable" class="w3-table-all w3-hoverable border-0 border-top">
                 <thead id="Toptable">
                     <tr>
                         <th>
@@ -104,7 +103,7 @@
                             {{item.discountRule}}
                         </td>
                         <td>
-                            <button v-on:click="Details($event,item.orderID)" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detail">
+                            <button v-on:click="Details($event,item.orderID)" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detail">
                                 詳細
                             </button>
                             <button v-on:click="Temp($event,item.orderID)" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete">

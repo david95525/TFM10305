@@ -4,30 +4,37 @@
     ViewData["Title"] = "商品頁面";
 }
 
-<h1>商品品項管理</h1>
+<style>
+    body {
+        background: url("/images/bg1.jpg") 100% 100%;
+    }
+</style>
+
+<h4 class="font-weight-bold mt-4 mb-4">商品品項管理</h4>
 <!--呈現處理結果-->
 <div style="color:red"><h3>@ViewBag.Message</h3></div>
-
-<input type="button" class="btn btn-light rounded-pill"
-       onclick="javascript:location.href='/ProductManage/Create'" value="新增" />
-@*分析*@
-<input type="button" class="alert-primary"
-       onclick="javascript:location.href='/ProductManageChart/StoreCategory'" value="後台分析" />
+<div class="mb-4">
+    <input type="button" class="btn btn-light rounded-pill mr-2"
+           onclick="javascript:location.href='/ProductManage/Create'" value="新增" />
+    @*分析*@
+    <input type="button" class="btn btn-secondary rounded-pill"
+           onclick="javascript:location.href='/ProductManageChart/StoreCategory'" value="後台分析" />
+</div>
 
 <div id="index" class="container-fluid">
     <div class="row">
-        <div class="col-sm-4" v-for="item in products">
-            <div class="card-body" style="width:auto;height:300px">
-                @*圖片限制100px*100px*@
-                <img :src="item.picture" class="card-img-bottom" alt="..." style="width:100px; height: 100px;" />
+        <div class="card shadow p-2 col-3 pt-4" style="width: 22rem;" v-for="item in products">
+            @*圖片限制100px*100px*@
+            <img :src="item.picture" class="mr-auto ml-auto" alt="..." style="width:200px; height: 100%;" />
+            <div class="card-body">
                 @*<h4 class="card-title">商品編號:{{item.productID}}</h4>*@
                 <h5 class="card-title">商品名稱:{{item.productName}}</h5>
                 @*<p class="card-text">商品種類:{{item.categoryID}}</p>*@
-                <p class="card-text">商品價格:{{item.unitPrice}}</p>
+                <p class="card-text text-center">商品價格:{{item.unitPrice}}</p>
                 <p class="card-text" style="height:60px"><small class="text-muted">商品介紹:{{item.description}}</small></p>
                 @*修改刪除鈕*@
-                <a class="abutton btn btn-primary rounded-pill" style="color:linen"  :href="'/ProductManage/Edit/' + item.productID" text-decoration: none>修改</a>
-                <a class="abutton btn btn-danger rounded-pill" style="color:honeydew" :href="'/ProductManage/Delete/' + item.productID">刪除</a>
+                <a class="abutton btn btn-primary rounded float-right" style="color:linen" :href="'/ProductManage/Edit/' + item.productID" text-decoration: none>修改</a>
+                <a class="abutton btn btn-danger rounded float-right  mr-2" style="color:honeydew" :href="'/ProductManage/Delete/' + item.productID">刪除</a>
             </div>
         </div>
     </div>

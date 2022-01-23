@@ -11,65 +11,68 @@
     );
 </script>
 
-<h1>是否確定刪除?</h1>
-<h1 style="color:red">@Html.DisplayFor(model => model.ProductName)</h1>
+    <div class="mt-4 mb-4">
+        <h4 class=" d-inline-block">是否確定刪除?</h4>
+        <h4 style="color:red" class="font-weight-bold  d-inline-block">@Html.DisplayFor(model => model.ProductName)</h4>
+    </div>
 
-<div>
-    <dl class="row" id="pic">
-        <dt class="col-sm-2">
-            商品名稱:
-        </dt>
-        <dd class="col-sm-10">
-            <h5>@Html.DisplayFor(model => model.ProductName)</h5>
-        </dd>
-        <dt class="col-sm-2">
-            商品價格:
-        </dt>
-        <dd class="col-sm-10">
-            <h5>@Html.DisplayFor(model => model.UnitPrice)</h5>
-        </dd>
-        <dt class="col-sm-2">
-            商品介紹:
-        </dt>
-        <dd class="col-sm-10">
-            <h6>@Html.DisplayFor(model => model.Description)</h6>
-        </dd>
-        <dt class="col-sm-2">
-            商品圖片:
-        </dt>
-        <dd class="col-sm-10">
-            <img src="@Html.ViewData.Model.Picture" alt="..." style="width:auto;height:200px" />
-        </dd>
-    </dl>
+    <div>
+        <dl class="row" id="pic">
+            <dt class="col-sm-2">
+                商品名稱:
+            </dt>
+            <dd class="col-sm-10">
+                <h5>@Html.DisplayFor(model => model.ProductName)</h5>
+            </dd>
+            <dt class="col-sm-2">
+                商品價格:
+            </dt>
+            <dd class="col-sm-10">
+                <h5>@Html.DisplayFor(model => model.UnitPrice)</h5>
+            </dd>
+            <dt class="col-sm-2">
+                商品介紹:
+            </dt>
+            <dd class="col-sm-10">
+                <h6>@Html.DisplayFor(model => model.Description)</h6>
+            </dd>
+            <dt class="col-sm-2">
+                商品圖片:
+            </dt>
+            <dd class="col-sm-10">
+                <img src="@Html.ViewData.Model.Picture" alt="..." style="width:auto;height:200px" />
+            </dd>
+        </dl>
 
-    @*<form asp-action="Delete">
-            <input type="hidden" asp-for="ProductID" />
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a asp-action="Index">Back to List</a>
-        </form>*@
-</div>
+        @*<form asp-action="Delete">
+                <input type="hidden" asp-for="ProductID" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-action="Index">Back to List</a>
+            </form>*@
+    </div>
 
-<!--<div id="delete" class="container-fluid">
-    <div class="row">
-        <div class="col-sm-4" v-for="item in products">
-            <div class="card-body">-->
-@*圖片限制100px*100px*@
-<!--<img :src="item.picture" class="card-img-bottom" alt="..." style="width:100px; height: 100px;" />
-                <p class="card-title">商品編號:{{item.productID}}</p>
-                <p class="card-text">商品價格:{{item.unitPrice}}</p>
-                <p class="card-text"><small class="text-muted">商品介紹:{{item.description}}</small></p>
+    <!--<div id="delete" class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4" v-for="item in products">
+                <div class="card-body">-->
+    @*圖片限制100px*100px*@
+    <!--<img :src="item.picture" class="card-img-bottom" alt="..." style="width:100px; height: 100px;" />
+                    <p class="card-title">商品編號:{{item.productID}}</p>
+                    <p class="card-text">商品價格:{{item.unitPrice}}</p>
+                    <p class="card-text"><small class="text-muted">商品介紹:{{item.description}}</small></p>
+                </div>
             </div>
         </div>
-    </div>
-</div>-->
+    </div>-->
 
-<div>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="ProductID" />
-        <input type="submit" style="color:red" value="確定刪除" class="btn btn-outline-danger rounded-pill  " />
-        <a class="abutton btn btn-dark  rounded-pill  " asp-action="Index">取消刪除</a>
-    </form>
-</div>
+    <div>
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="ProductID" />
+            <input type="submit" value="確定刪除" class="btn btn-danger rounded" />
+            <a class="abutton btn btn-dark  rounded " asp-action="Index">取消刪除</a>
+        </form>
+    </div>
+
 
 <style>
     .abutton {

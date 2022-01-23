@@ -3,15 +3,16 @@
     ViewData["Title"] = "商家商品數量分析";
 }
 
-<h1>商家商品數量分析</h1>
-
-<input type="button" onclick="javascript:location.href='/ProductManage/Index'" value="後台管理" class="alert-primary" />
-@*<input type="button" onclick="javascript:location.href='/ProductManageChart/Index'" value="後台分析" class="alert-success" />*@
-<input type="button" onclick="javascript:location.href='/ProductManageChart/StoreCategory'" value="商店類別分析" class="btn btn-light rounded-pill" />
-<input type="button" onclick="javascript:location.href='/ProductManageChart/ProductOrder'" value="產品訂單數量分析" class="btn btn-light rounded-pill" />
-<input type="button" onclick="javascript:location.href='/ProductManageChart/StoreOrder'" value="分店訂單數量分析" class="btn btn-light rounded-pill" />
-@*<input type="button" onclick="javascript:location.href='/ProductManageChart/StoreOrder" value="分店訂單數量分析" class="btn btn-light rounded-pill" />*@
-<input type="button" onclick="javascript:location.href='/ProductManageChart/StoreProduct'" value="商家商品數量分析" class="btn btn-info rounded-pill" />
+<h4 class="font-weight-bold mt-4 mb-4">商家商品數量分析</h4>
+<div class="mb-4">
+    <input type="button" onclick="javascript:location.href='/ProductManage/Index'" value="回後台管理" class="btn btn-secondary rounded mr-4" />
+    @*<input type="button" onclick="javascript:location.href='/ProductManageChart/Index'" value="後台分析" class="alert-success" />*@
+    <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreCategory'" value="商店類別分析" class="btn btn-light rounded-pill mr-2" />
+    <input type="button" onclick="javascript:location.href='/ProductManageChart/ProductOrder'" value="產品訂單數量分析" class="btn btn-light rounded-pill mr-2" />
+    <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreOrder'" value="分店訂單數量分析" class="btn btn-light rounded-pill mr-2" />
+    @*<input type="button" onclick="javascript:location.href='/ProductManageChart/StoreOrder" value="分店訂單數量分析" class="btn btn-light rounded-pill" />*@
+    <input type="button" onclick="javascript:location.href='/ProductManageChart/StoreProduct'" value="商家商品數量分析" class="btn btn-info rounded-pill mr-2" />
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div id="Vuechart" style="height:90%;width:80%">

@@ -86,7 +86,7 @@
                         //篩選門市清單
                         this.storeList = this.allStoreData.filter(i => i.StoreCity == city);
                         //取得區域資料
-                        axios(`/api/StoreService/${city}/dist`)
+                        axios(`/api/StoreService/dist?city=${city}`)
                             .then(response => { this.distList = response.data })
                             .catch(error => console.log(error));
                     } else {

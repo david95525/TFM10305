@@ -40,9 +40,9 @@ namespace TeaBar.Controllers.APIs
         }
 
         [HttpGet]
-        [Route("{city}/dist")]
+        [Route("dist")]
         [Produces("application/json")]
-        public List<string> GetDistList([FromRoute(Name = "city")] string city) //取得區域清單
+        public List<string> GetDistList([FromQuery] string city) //取得區域清單
         {
             var result = _dbcontext.Stores
                        .Where(d => d.StoreCity == city)
@@ -51,7 +51,7 @@ namespace TeaBar.Controllers.APIs
         }
 
         [HttpGet]
-        [Route("{dist}/store")]
+        [Route("store/{dist}")]
         [Produces("application/json")]
         public List<Stores> GetStoreList([FromRoute(Name = "dist")] string dist) //取得分店資料
         {
